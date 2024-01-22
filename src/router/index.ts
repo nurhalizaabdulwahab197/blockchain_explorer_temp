@@ -93,7 +93,21 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'view Blocks',
         meta: {
           title: t('router.blockList')
-        }
+        },
+        children: [
+          {
+            path: 'blockDetail/:id',
+            component: () => import('@/views/Block/BlockDetail.vue'),
+            name: 'BlockDetail',
+            meta: {
+              hidden: true,
+              title: t('router.blockDetail'),
+              canTo: true,
+              activeMenu: '/blockchain/blockList',
+              noTagsView: true
+            }
+          }
+        ]
       },
       {
         path: 'transactionList',
@@ -101,7 +115,21 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'view transactions',
         meta: {
           title: t('router.transactionList')
-        }
+        },
+        children: [
+          {
+            path: 'transactionDetail/:id',
+            component: () => import('@/views/Transaction/TransactionDetail.vue'),
+            name: 'TransactionDetail',
+            meta: {
+              hidden: true,
+              title: t('router.transactionDetail'),
+              canTo: true,
+              activeMenu: '/blockchain/transactionList',
+              noTagsView: true
+            }
+          }
+        ]
       }
     ]
   },

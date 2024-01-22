@@ -5,7 +5,6 @@ import { useTitle } from '@/hooks/web/useTitle'
 import { useNProgress } from '@/hooks/web/useNProgress'
 import { usePermissionStoreWithOut } from '@/store/modules/permission'
 import { usePageLoading } from '@/hooks/web/usePageLoading'
-import { NO_REDIRECT_WHITE_LIST } from '@/constants'
 import { useUserStoreWithOut } from '@/store/modules/user'
 
 const { start, done } = useNProgress()
