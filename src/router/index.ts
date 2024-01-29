@@ -96,7 +96,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         },
         children: [
           {
-            path: 'blockDetail/:id',
+            path: 'blockDetail',
             component: () => import('@/views/Block/BlockDetail.vue'),
             name: 'BlockDetail',
             meta: {
