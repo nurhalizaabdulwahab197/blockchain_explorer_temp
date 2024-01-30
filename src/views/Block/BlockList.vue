@@ -32,7 +32,7 @@ const temp = ref([
         </div>
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="rectangle"
+          <div class="drectangle"
             ><div style="height: 63px" class="overlapping-rectangle"></div
           ></div>
         </div>
