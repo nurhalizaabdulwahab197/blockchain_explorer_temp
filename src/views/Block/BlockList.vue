@@ -81,7 +81,9 @@ const temp = ref([
 
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle"></div></div>
+          <div class="drectangle"
+            ><div style="height: 33px" class="overlapping-rectangle"></div
+          ></div>
         </div>
 
         <Icon icon="bxs:right-arrow" class="blockarrow" />
