@@ -1,5 +1,4 @@
-<script setup lang="ts">
-//import { ContentWrap } from '@/components/ContentWrap'
+<script setup>
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
@@ -27,46 +26,62 @@ const temp = ref([
       <div class="block">
         <Icon icon="bxs:left-arrow" class="blockarrow" />
         <div class="rectangle-container">
-          <div class="rectangle"><div class="overlapping-rectangle1"></div></div>
+          <div class="rectangle"
+            ><div style="height: 40px" class="overlapping-rectangle"></div
+          ></div>
         </div>
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle2"></div></div>
-        </div>
-
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle3"></div></div>
-        </div>
-
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle4"></div></div>
+          <div class="rectangle"
+            ><div style="height: 63px" class="overlapping-rectangle"></div
+          ></div>
         </div>
 
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle5"></div></div>
+          <div class="drectangle"
+            ><div style="height: 60px" class="overlapping-rectangle"></div
+          ></div>
         </div>
 
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle6"></div></div>
+          <div class="drectangle"
+            ><div style="height: 55px" class="overlapping-rectangle"></div
+          ></div>
         </div>
 
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle7"></div></div>
+          <div class="drectangle"
+            ><div style="height: 40px" class="overlapping-rectangle"></div
+          ></div>
         </div>
 
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle8"></div></div>
+          <div class="drectangle"
+            ><div style="height: 38px" class="overlapping-rectangle"></div
+          ></div>
         </div>
 
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
-          <div class="drectangle"><div class="overlapping-rectangle9"></div></div>
+          <div class="drectangle"
+            ><div style="height: 45px" class="overlapping-rectangle"></div
+          ></div>
+        </div>
+
+        <Icon icon="bi:link" class="link" />
+        <div class="rectangle-container">
+          <div class="drectangle"
+            ><div style="height: 38px" class="overlapping-rectangle"></div
+          ></div>
+        </div>
+
+        <Icon icon="bi:link" class="link" />
+        <div class="rectangle-container">
+          <div class="drectangle"><div class="overlapping-rectangle"></div></div>
         </div>
 
         <Icon icon="bxs:right-arrow" class="blockarrow" />
@@ -190,84 +205,11 @@ const temp = ref([
   align-items: center;
 }
 
-.overlapping-rectangle1 {
+.overlapping-rectangle {
   position: absolute;
   bottom: 0;
   width: 100px;
-  height: 40px;
   background: #158fff;
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle2 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 63px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle3 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 60px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle4 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 55px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle5 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 40px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle6 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 38px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle7 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 45px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle8 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 38px;
-  background: rgb(21 143 255 / 50%);
-  border-radius: 0 0 30px 30px;
-}
-
-.overlapping-rectangle9 {
-  position: absolute;
-  bottom: 0;
-  width: 100px;
-  height: 35px;
-  background: rgb(21 143 255 / 50%);
   border-radius: 0 0 30px 30px;
 }
 
