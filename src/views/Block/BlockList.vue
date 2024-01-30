@@ -289,19 +289,19 @@ const temp = ref([
 .headerTitle2 {
   font-weight: 600;
   color: black;
-  flex-basis: 245px;
+  flex-basis: 237px;
 }
 
 .headerTitle3 {
   font-weight: 600;
   color: black;
-  flex-basis: 128px;
+  flex-basis: 129px;
 }
 
 .headerTitle4 {
   font-weight: 600;
   color: black;
-  flex-basis: 372px;
+  flex-basis: 368px;
 }
 
 .headerTitle5 {
