@@ -1,11 +1,27 @@
 <script setup>
-import 'bootstrap-icons/font/bootstrap-icons.css'
 import { ref, onMounted, watch } from 'vue'
 import ApexCharts from 'apexcharts'
 import { options } from './apexChartOpt'
 import { Icon } from '@iconify/vue'
 
-const temp = ref([{ a: 'a' }, { a: 'a' }, { a: 'a' }, { a: 'a' }, { a: 'a' }])
+const temp = ref([
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' },
+  { a: 'a' }
+])
 const chart = ref(null)
 
 onMounted(() => {
@@ -212,8 +228,9 @@ main {
 
 .item {
   display: flex;
-  height: 70px;
-  padding: 15px 20px;
+  height: 40px;
+  padding: 10px 20px;
+  font-size: 12px;
   color: white;
   border-bottom: 2px solid #4a4a4a;
   justify-content: space-between;
