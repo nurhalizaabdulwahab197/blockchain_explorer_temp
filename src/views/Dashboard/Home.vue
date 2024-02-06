@@ -229,8 +229,8 @@ main {
 .item {
   display: flex;
   height: 40px;
-  padding: 10px 20px;
-  font-size: 12px;
+  padding: 5px 20px;
+  font-size: 14px;
   color: white;
   border-bottom: 2px solid #4a4a4a;
   justify-content: space-between;
