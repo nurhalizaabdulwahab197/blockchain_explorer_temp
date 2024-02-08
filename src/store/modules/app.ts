@@ -50,8 +50,8 @@ export const useAppStore = defineStore('app', {
       screenfull: true, // 全屏图标
       size: true, // 尺寸图标
       locale: true, // 多语言图标
-      tagsView: true, // 标签页
-      tagsViewIcon: true, // 是否显示标签图标
+      tagsView: false, // 标签页
+      tagsViewIcon: false, // 是否显示标签图标
       logo: true, // logo
       fixedHeader: true, // 固定toolheader
       footer: true, // 显示页脚
@@ -121,7 +121,7 @@ export const useAppStore = defineStore('app', {
       return this.locale
     },
     getTagsView(): boolean {
-      return this.tagsView
+      return false
     },
     getTagsViewIcon(): boolean {
       return this.tagsViewIcon
@@ -148,7 +148,8 @@ export const useAppStore = defineStore('app', {
       return this.pageLoading
     },
     getLayout(): LayoutType {
-      return this.layout
+      console.log(this.layout)
+      return 'top'
     },
     getTitle(): string {
       return this.title

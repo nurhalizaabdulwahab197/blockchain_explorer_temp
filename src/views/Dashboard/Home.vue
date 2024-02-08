@@ -77,9 +77,9 @@ onMounted(() => {
       <div class="latestBlockContainer">
         <div class="header withBtn">
           <div class="headerTitle">Latest Blocks</div>
-          <RouterLink class="viewAllBtn" to="/blocks"
+          <a class="viewAllBtn" href="#/blockchain/blockList"
             >VIEW ALL BLOCKS <Icon icon="majesticons:arrow-right-line" />
-          </RouterLink>
+          </a>
         </div>
         <div class="list">
           <div class="item" v-for="v in temp" :key="v.id">
@@ -96,9 +96,9 @@ onMounted(() => {
       <div class="latestTransactionContainer">
         <div class="header withBtn">
           <div class="headerTitle">Latest Transactions</div>
-          <RouterLink class="viewAllBtn" to="/transactions"
+          <a class="viewAllBtn" href="#/blockchain/transactionList"
             >VIEW ALL TRANSACTIONS <Icon icon="majesticons:arrow-right-line" />
-          </RouterLink>
+          </a>
         </div>
         <div class="list">
           <div class="item" v-for="v in temp" :key="v.id">
@@ -130,7 +130,6 @@ main {
   min-width: 880px;
   min-height: 100vh;
   margin: auto;
-  background-color: #141414;
 }
 
 .header {

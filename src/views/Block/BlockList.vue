@@ -29,12 +29,18 @@ const temp = ref([
           <div class="rectangle"
             ><div style="height: 40px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374445</p>
+          </div>
         </div>
         <Icon icon="bi:link" class="link" />
         <div class="rectangle-container">
           <div class="drectangle"
             ><div style="height: 63px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374444</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -42,6 +48,9 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 60px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374443</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -49,6 +58,9 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 55px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374442</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -56,6 +68,9 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 40px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374441</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -63,6 +78,9 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 38px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374440</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -70,6 +88,9 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 45px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374439</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -77,6 +98,9 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 38px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374438</p>
+          </div>
         </div>
 
         <Icon icon="bi:link" class="link" />
@@ -84,47 +108,12 @@ const temp = ref([
           <div class="drectangle"
             ><div style="height: 33px" class="overlapping-rectangle"></div
           ></div>
+          <div class="blockno">
+            <p>#18374437</p>
+          </div>
         </div>
 
         <Icon icon="bxs:right-arrow" class="blockarrow" />
-      </div>
-
-      <div class="blockNumbers">
-        <div class="blockno">
-          <p>#18374445</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374444</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374443</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374442</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374441</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374440</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374439</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374438</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374437</p>
-        </div>
       </div>
 
       <div class="Seccontainer">
@@ -247,22 +236,9 @@ const temp = ref([
   font-size: 25px;
 }
 
-.blockNumbers {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 0;
-}
-
 .blockno p {
-  position: relative;
-  display: flex;
-  width: 100px; /* Set the width to match the rectangle */
   margin: 0 14px;
   text-align: center; /* Center text */
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
 }
 
 .header {
