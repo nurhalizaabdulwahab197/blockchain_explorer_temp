@@ -23,9 +23,12 @@ const temp = ref([
   { a: 'a' }
 ])
 const chart = ref(null)
+const chartHeight = ref(350)
 
 onMounted(() => {
   const chartOptions = { ...options, chart: { ...options.chart, id: 'chart' } }
+  // chartOptions.chart.width = 400
+  //chartOptions.chart.height = chartHeight.value
   chart.value = new ApexCharts(document.querySelector('#chart'), chartOptions)
   chart.value.render()
 })
@@ -127,7 +130,6 @@ onMounted(() => {
 <style scoped>
 main {
   width: 80%;
-  min-width: 880px;
   min-height: 100vh;
   margin: auto;
   background-color: #141414;
@@ -147,7 +149,6 @@ main {
 }
 
 .transactionHistory {
-  min-width: fit-content;
   margin: 0 0 20px;
   background-color: #282b2e;
   border-radius: 20px;
@@ -199,14 +200,14 @@ main {
 .container {
   display: flex;
   gap: 20px;
-  min-width: 880px;
 }
 
 .latestBlockContainer,
 .latestTransactionContainer {
-  flex: 1;
+  min-width: 300px;
   background-color: #282b2e;
   border-radius: 10px;
+  flex: 1;
 }
 
 .header.withBtn {
@@ -248,5 +249,40 @@ main {
 
 .item span {
   color: #1688f2;
+}
+
+@media screen and (width <= 880px) {
+  .graphDetailContainer {
+    display: flex;
+    width: 100%;
+    padding: 20px;
+    flex-direction: column;
+  }
+
+  .transactionHistory {
+    min-width: 300px;
+    margin: 0 0 20px;
+    background-color: #282b2e;
+    border-radius: 20px;
+  }
+
+  .transactionHistoryGraph {
+    padding: 0 10px;
+    color: black;
+  }
+
+  .separator {
+    display: none;
+  }
+
+  .details {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
 }
 </style>

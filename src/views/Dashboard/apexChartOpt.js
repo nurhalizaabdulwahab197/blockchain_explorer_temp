@@ -21,7 +21,7 @@ export const options = {
   chart: {
     type: 'area',
     stacked: false,
-    height: 350,
+    height: '100%',
     zoom: {
       type: 'x',
       enabled: true,
@@ -111,5 +111,52 @@ export const options = {
         show: false
       }
     }
-  }
+  },
+  responsive: [
+    {
+      breakpoint: 1000,
+      options: {
+        chart: {
+          height: '100%',
+          width: '100%'
+        }
+      }
+    },
+    {
+      breakpoint: 900,
+      options: {
+        chart: {
+          height: 250,
+          width: '90%'
+        }
+      }
+    },
+    {
+      breakpoint: 700,
+      options: {
+        chart: {
+          height: 250,
+          width: '90%'
+        }
+      }
+    },
+    {
+      breakpoint: 600,
+      options: {
+        chart: {
+          height: 200,
+          width: '90%'
+        }
+      }
+    },
+    {
+      breakpoint: 400,
+      options: {
+        chart: {
+          height: 150,
+          width: '90%'
+        }
+      }
+    }
+  ]
 }
