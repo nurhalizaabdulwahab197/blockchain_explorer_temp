@@ -715,6 +715,23 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: '/Account/accountOverview',
+    component: Layout,
+    name: 'Account Overview',
+    meta: {},
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/Account/AccountOverview.vue'),
+        name: 'Account Overview',
+        meta: {
+          title: 'Account Overview',
+          icon: 'codicon:account'
+        }
+      }
+    ]
   }
 ]
 
