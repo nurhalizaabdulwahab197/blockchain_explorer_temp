@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 
-import { ref, onMounted } from 'vue' // Import Vue composition API
+import { ref, onMounted } from 'vue'
 
 const thisPage = ref(1)
 const limit = 10
@@ -86,7 +86,7 @@ function goToPage(targetPage: string | number) {
             <div class="th th6">Amount</div>
             <div class="th th7">Age</div>
           </div>
-          <div v-for="index in 30" :key="index" class="row">
+          <div v-for="index in 20" :key="index" class="row">
             <div class="td td1">0x3916d1d5a3e98e5ae9....</div>
             <div class="td td2">18374438</div>
             <div class="td td3">2023-10-18 21:52:59</div>
