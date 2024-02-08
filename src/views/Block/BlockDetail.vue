@@ -67,12 +67,28 @@ export default {
         <div class="bardesign"></div
         ><div class="copymessage"
           ><div class="copymessagetitle"
-            ><Icon icon="mdi:tick-all" class="tickicon" />{{ copyMessageTitle }} </div
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.2em"
+              height="1.2em"
+              viewBox="0 0 24 24"
+              style="margin-right: 6px"
+            >
+              <path
+                fill="#1f51ff"
+                d="M.41 13.41L6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17L7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42l-6.35 6.35l1.42 1.41z"
+              /></svg
+            >{{ copyMessageTitle }} </div
           >{{ copyMessage }}</div
         >
       </div>
       <div class="title">
-        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" /><h2>Block 18374445</h2>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 56 56">
+          <path
+            fill="currentColor"
+            d="M28 4c13.255 0 24 10.745 24 24S41.255 52 28 52S4 41.255 4 28S14.745 4 28 4m0 4C16.954 8 8 16.954 8 28s8.954 20 20 20s20-8.954 20-20S39.046 8 28 8m.573 6.286v2.687c3.976.319 6.855 2.704 6.982 6.314h-3.308c-.207-2.004-1.638-3.165-3.674-3.419V26.5l.764.19c4.183.971 6.473 2.689 6.473 6.076c0 3.897-3.181 6.107-7.237 6.394v2.671h-1.797V39.16c-4.04-.303-7.236-2.577-7.347-6.394h3.292c.286 1.861 1.495 3.229 4.055 3.5V29.33l-.652-.16c-4.04-.937-6.218-2.75-6.218-5.979c0-3.563 2.862-5.916 6.87-6.219v-2.687zm0 15.458v6.537c2.72-.207 3.865-1.495 3.865-3.197c0-1.638-.89-2.608-3.865-3.34m-1.797-9.876c-2.29.286-3.499 1.606-3.499 3.054c0 1.447.955 2.512 3.5 3.149z"
+          /></svg
+        ><h2>Block 18374445</h2>
       </div>
       <div class="block">
         <Icon icon="bxs:left-arrow" class="blockarrow" />
@@ -91,7 +107,7 @@ export default {
         <div class="blockheight">
           <div class="blockheightcopy"
             ><h3>Block Height</h3
-            ><button class="copy" @click="copyBlockHeight"
+            ><button class="copy" style="margin-top: 3px" @click="copyBlockHeight"
               ><Icon icon="ion:copy" class="copyicon" /> CLICK TO COPY</button
             ></div
           >
@@ -104,7 +120,12 @@ export default {
         </div>
       </div>
       <div class="blockdetailtitle">
-        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" /><h2>Block Details</h2>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 56 56">
+          <path
+            fill="currentColor"
+            d="M28 4c13.255 0 24 10.745 24 24S41.255 52 28 52S4 41.255 4 28S14.745 4 28 4m0 4C16.954 8 8 16.954 8 28s8.954 20 20 20s20-8.954 20-20S39.046 8 28 8m.573 6.286v2.687c3.976.319 6.855 2.704 6.982 6.314h-3.308c-.207-2.004-1.638-3.165-3.674-3.419V26.5l.764.19c4.183.971 6.473 2.689 6.473 6.076c0 3.897-3.181 6.107-7.237 6.394v2.671h-1.797V39.16c-4.04-.303-7.236-2.577-7.347-6.394h3.292c.286 1.861 1.495 3.229 4.055 3.5V29.33l-.652-.16c-4.04-.937-6.218-2.75-6.218-5.979c0-3.563 2.862-5.916 6.87-6.219v-2.687zm0 15.458v6.537c2.72-.207 3.865-1.495 3.865-3.197c0-1.638-.89-2.608-3.865-3.34m-1.797-9.876c-2.29.286-3.499 1.606-3.499 3.054c0 1.447.955 2.512 3.5 3.149z"
+          /></svg
+        ><h2>Block Details</h2>
       </div>
       <div>
         <table>
@@ -187,7 +208,7 @@ export default {
 .blockinfo h3 {
   margin: 10px 0 0 15px;
   font-family: Inter, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
@@ -196,7 +217,7 @@ export default {
 
 .blockinfo p {
   font-family: Inter, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -309,6 +330,9 @@ export default {
 }
 
 .copymessagetitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 15px;
   font-size: 20px;
 }
@@ -321,6 +345,7 @@ export default {
 .alertbox {
   position: absolute;
   right: 10px;
+  z-index: 10000;
   display: flex;
   width: 450px;
   font-family: Inter, sans-serif;
