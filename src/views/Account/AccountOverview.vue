@@ -20,11 +20,31 @@ function loadItem() {
   })
 }
 
+const totalPages = ref(1)
+
 onMounted(() => {
-  // Populate the list array with elements from the NodeList
   list.value = Array.from(document.querySelectorAll('.row')) as HTMLElement[]
+  calculateTotalPages()
   loadItem()
 })
+
+function calculateTotalPages() {
+  totalPages.value = Math.ceil(list.value.length / limit)
+}
+
+function goToPage(targetPage: string | number) {
+  if (targetPage === 'first') {
+    thisPage.value = 1
+  } else if (targetPage === 'next' && thisPage.value < totalPages.value) {
+    thisPage.value += 1
+  } else if (typeof targetPage === 'number' && targetPage > 0 && targetPage <= totalPages.value) {
+    thisPage.value = targetPage
+  }
+
+  console.log(thisPage)
+
+  loadItem()
+}
 </script>
 
 <template>
@@ -66,7 +86,7 @@ onMounted(() => {
             <div class="th th6">Amount</div>
             <div class="th th7">Age</div>
           </div>
-          <div v-for="index in 20" :key="index" class="row">
+          <div v-for="index in 30" :key="index" class="row">
             <div class="td td1">0x3916d1d5a3e98e5ae9....</div>
             <div class="td td2">18374438</div>
             <div class="td td3">2023-10-18 21:52:59</div>
@@ -76,9 +96,16 @@ onMounted(() => {
             <div class="td td7">6 secs ago</div>
           </div>
           <div class="paginate">
-            <div class="prev">First Page</div>
-            <div class="page">1</div>
-            <div class="next">Next Page</div>
+            <div class="prev" @click="goToPage('first')">First Page</div>
+            <div
+              class="page"
+              v-for="pageNumber in totalPages"
+              :key="pageNumber"
+              @click="goToPage(pageNumber)"
+            >
+              {{ pageNumber }}
+            </div>
+            <div class="next" @click="goToPage('next')">Next Page</div>
           </div>
         </div>
       </div>
