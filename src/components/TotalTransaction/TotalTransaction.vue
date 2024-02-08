@@ -2,8 +2,8 @@
   <div class="transacDetail">
     <div style="display: flex; align-items: center">
       <span>Total Transactions: 23,498</span>
-      <span style=" display: flex;color: red; align-items: center">
-        <Icon icon="akar-icons:triangle-down-fill" style=" margin-right: 5px;font-size: 13px" />
+      <span style="display: flex; color: red; align-items: center">
+        <Icon icon="akar-icons:triangle-down-fill" style="margin-right: 5px; font-size: 13px" />
         -1.34%
       </span>
     </div>

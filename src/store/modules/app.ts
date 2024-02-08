@@ -149,7 +149,7 @@ export const useAppStore = defineStore('app', {
     },
     getLayout(): LayoutType {
       console.log(this.layout)
-      return 'top'
+      return this.layout
     },
     getTitle(): string {
       return this.title

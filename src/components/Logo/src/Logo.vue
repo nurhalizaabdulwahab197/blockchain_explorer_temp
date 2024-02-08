@@ -11,7 +11,7 @@ const appStore = useAppStore()
 
 const show = ref(true)
 
-const title = computed(() => appStore.getTitle)
+// const title = computed(() => appStore.getTitle)
 
 const layout = computed(() => appStore.getLayout)
 
@@ -59,19 +59,20 @@ watch(
       to="/"
     >
       <img src="@/assets/imgs/logo.png" class="h-[calc(var(--logo-height)-10px)]" />
-      <sapn style=" margin: 0 0 0 10px;font-size: 25px; color: white">BLOCKCHAIN EXPLORER</sapn>
       <div
         v-if="show"
         :class="[
           'ml-10px text-16px font-700',
           {
             'text-[var(--logo-title-text-color)]': layout === 'classic',
+            'text-25px': layout === 'top',
             'text-[var(--top-header-text-color)]':
               layout === 'topLeft' || layout === 'top' || layout === 'cutMenu'
           }
         ]"
       >
-        {{ title }}
+        <!-- {{ title }} -->
+        Blockchain Explorer
       </div>
     </router-link>
   </div>
