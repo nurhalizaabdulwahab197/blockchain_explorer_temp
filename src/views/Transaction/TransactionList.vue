@@ -4,13 +4,7 @@
       <!-- Body Content -->
       <main>
         <div class="logo-section">
-          <img
-            alt="Coin logo"
-            class="logo"
-            src="./assets/imgs/Coin logo.png"
-            width="57"
-            height="58"
-          />
+          <span class="dashicons--money-alt"></span>
           <h1>TRANSACTIONS</h1>
         </div>
 
@@ -309,6 +303,7 @@ main {
 .logo-section {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   margin-bottom: 20px;
   margin-left: 70px;
 }
@@ -421,5 +416,20 @@ tr:last-child td:last-child {
   color: #000;
   background-color: #909182;
   border-radius: 5px;
+}
+
+.dashicons--money-alt {
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23000' d='M10.6 9c-.4-.1-.8-.3-1.1-.6c-.3-.1-.4-.4-.4-.6c0-.2.1-.5.3-.6c.3-.2.6-.4.9-.3c.6 0 1.1.3 1.4.7l.9-1.2c-.3-.3-.6-.5-.9-.7c-.3-.2-.7-.3-1.1-.3V4H9.4v1.4c-.5.1-1 .4-1.4.8c-.4.5-.7 1.1-.6 1.7c0 .6.2 1.2.6 1.6c.5.5 1.2.8 1.8 1.1c.3.1.7.3 1 .5c.2.2.3.5.3.8c0 .3-.1.6-.3.9c-.3.3-.7.4-1 .4c-.4 0-.9-.1-1.2-.4c-.3-.2-.6-.5-.8-.8l-1 1.1c.3.4.6.7 1 1c.5.3 1.1.6 1.7.6V16h1.1v-1.5c.6-.1 1.1-.4 1.5-.8c.5-.5.8-1.3.8-2c0-.6-.2-1.3-.7-1.7c-.5-.5-1-.8-1.6-1M10 2c-4.4 0-8 3.6-8 8s3.6 8 8 8s8-3.6 8-8s-3.6-8-8-8m0 14.9c-3.8 0-6.9-3.1-6.9-6.9S6.2 3.1 10 3.1s6.9 3.1 6.9 6.9s-3.1 6.9-6.9 6.9'/%3E%3C/svg%3E");
+
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  background-color: currentcolor;
+  mask-image: var(--svg);
+  mask-image: var(--svg);
+  mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 </style>
