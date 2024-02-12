@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { ContentWrap } from '@/components/ContentWrap'
-</script>
-
 <template>
   <ContentWrap>
     <div>
@@ -20,11 +16,11 @@ import { ContentWrap } from '@/components/ContentWrap'
               <div>CLICK TO COPY</div>
             </button>
           </div>
-          <div>0x32314</div>
+          <div>{{ transactionId }}</div>
         </div>
         <div class="column-container">
           <div class="container-title">TIMESTAMP</div>
-          <div class="center">THU 341312</div>
+          <div class="center">{{ timestamp }}</div>
         </div>
       </div>
       <div class="block-container">
@@ -88,7 +84,12 @@ import { ContentWrap } from '@/components/ContentWrap'
               <div>VALUE :</div>
             </div>
           </td>
-          <td>0 ETH($0.00)</td>
+          <td>
+            <div class="alligncenter">
+              <span class="ri--eth-fill"></span>
+              <div>0 ETH($0.00) </div>
+            </div>
+          </td>
         </tr>
         <tr>
           <td>
@@ -147,7 +148,72 @@ import { ContentWrap } from '@/components/ContentWrap'
     </div>
   </ContentWrap>
 </template>
+
+<script setup lang="ts">
+import { ContentWrap } from '@/components/ContentWrap'
+import { ref, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
+const transactionId = ref('')
+const route = useRoute()
+const getCurrentTimestamp = () => {
+  const date = new Date()
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
+  const formattedDate = `${days[date.getUTCDay()]}, ${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()}`
+  const formattedTime = `${('0' + date.getUTCHours()).slice(-2)}:${('0' + date.getUTCMinutes()).slice(-2)}:${('0' + date.getUTCSeconds()).slice(-2)} GMT`
+
+  return `${formattedDate} ${formattedTime}`
+}
+const timestamp = getCurrentTimestamp()
+
+onMounted(() => {
+  transactionId.value = route.params.id as string
+})
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    transactionId.value = newId as string
+  }
+)
+</script>
+
 <style scoped lang="css">
+.alligncenter {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.ri--eth-fill {
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 0L4.63 12.22L12 16.574l7.37-4.354zm0 24L4.63 13.617L12 18l7.37-4.383z'/%3E%3C/svg%3E");
+
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background-color: currentcolor;
+  mask-image: var(--svg);
+  mask-image: var(--svg);
+  mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
 .tablesubtitle {
   display: flex;
   padding-left: 1.5rem;
@@ -188,10 +254,7 @@ import { ContentWrap } from '@/components/ContentWrap'
   background-color: currentcolor;
   transform: rotate(180deg);
   mask-image: var(--svg);
-  mask-image: var(--svg);
   mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
 
@@ -203,10 +266,7 @@ import { ContentWrap } from '@/components/ContentWrap'
   height: 1.5rem;
   background-color: currentcolor;
   mask-image: var(--svg);
-  mask-image: var(--svg);
   mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
 
@@ -218,10 +278,7 @@ import { ContentWrap } from '@/components/ContentWrap'
   height: 1.5rem;
   background-color: currentcolor;
   mask-image: var(--svg);
-  mask-image: var(--svg);
   mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
 
@@ -233,10 +290,7 @@ import { ContentWrap } from '@/components/ContentWrap'
   height: 1rem;
   background-color: currentcolor;
   mask-image: var(--svg);
-  mask-image: var(--svg);
   mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
   mask-size: 100% 100%;
 }
 
