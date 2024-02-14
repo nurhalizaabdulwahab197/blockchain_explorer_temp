@@ -111,6 +111,8 @@ import { ContentWrap } from '@/components/ContentWrap'
 </template>
 
 <style scoped>
+
+
 /* Media query for mobile styles */
 @media (width <= 768px) {
   .title {
@@ -286,7 +288,7 @@ td {
 }
 
 .text1 {
-  min-width: 1200px;
+  min-width: 100px;
   padding-left: 20px;
 }
 
