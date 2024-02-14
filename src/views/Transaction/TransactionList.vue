@@ -9,8 +9,8 @@
             alt="Coin logo"
             class="logo"
             src="@/assets/imgs/Coinlogo.png"
-            width="49"
-            height="50"
+            width="50"
+            height="51"
           />
           <h1>TRANSACTIONS</h1>
         </div>
