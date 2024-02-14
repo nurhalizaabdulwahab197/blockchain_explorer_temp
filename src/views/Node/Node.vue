@@ -111,7 +111,122 @@ import { ContentWrap } from '@/components/ContentWrap'
 </template>
 
 <style scoped>
+/* Base styles for desktop devices */
+@media (width >= 769px) {
+  .title {
+    display: flex;
+    margin: 0 10px 10px; /* Adjust margin for desktop devices */
+    font-size: 20px;
+    justify-content: space-between;
+  }
 
+  .container1 {
+    display: flex;
+    flex-direction: row; /* Stack boxes vertically for desktop devices */
+  }
+
+  .container2 {
+    overflow-x: auto; /* Horizontal scrolling for desktop devices */
+  }
+
+  .box1 {
+    display: flex;
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .box2,
+  .box3 {
+    display: flex;
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .box4 {
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+  }
+
+  .text {
+    padding-top: 10px;
+    color: black;
+    text-align: center;
+  }
+
+  .table {
+    width: 100%;
+    margin: 20px 10px 10px;
+    border-collapse: collapse;
+  }
+
+  td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #4a4a4a;
+  }
+
+  .text1 {
+    min-width: 100px;
+    padding-left: 20px;
+  }
+
+  .text1 {
+    max-width: 200px; /* Adjust the maximum width as per your requirement */
+    padding-left: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .insidetext {
+    position: absolute;
+    font-size: 40px;
+    color: black;
+  }
+
+  .insidenum {
+    position: absolute;
+    font-size: 60px;
+    color: black;
+  }
+
+  .content {
+    display: flex;
+    flex: 0 0 18%;
+    gap: 0.2rem;
+  }
+
+  .detail {
+    flex: 1;
+  }
+
+  .extra-detail {
+    display: flex;
+  }
+}
 
 /* Media query for mobile styles */
 @media (width <= 768px) {
@@ -125,6 +240,10 @@ import { ContentWrap } from '@/components/ContentWrap'
   .container1 {
     display: flex;
     flex-direction: column; /* Stack boxes vertically for mobile devices */
+  }
+
+  .container2 {
+    overflow-x: auto; /* Horizontal scrolling for desktop devices */
   }
 
   .box1 {
@@ -218,120 +337,4 @@ import { ContentWrap } from '@/components/ContentWrap'
     display: flex;
   }
 }
-
-.title {
-  display: flex;
-  margin: 0 10px 10px; /* Adjust margin for desktop devices */
-  font-size: 20px;
-  justify-content: space-between;
-}
-
-.container1 {
-  display: flex;
-  flex-direction: row; /* Stack boxes vertically for desktop devices */
-}
-
-.container2 {
-  overflow-x: auto; /* Horizontal scrolling for desktop devices */
-}
-
-.box1 {
-  display: flex;
-  padding-bottom: 10px;
-  margin: 10px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-}
-
-.box2,
-.box3 {
-  display: flex;
-  padding-bottom: 10px;
-  margin: 10px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-}
-
-.box4 {
-  padding-bottom: 10px;
-  margin: 10px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-}
-
-.text {
-  padding-top: 10px;
-  color: black;
-  text-align: center;
-}
-
-.table {
-  width: 100%;
-  margin: 20px 10px 10px;
-  border-collapse: collapse;
-}
-
-td {
-  padding: 8px;
-  text-align: left;
-  border: 1px solid #4a4a4a;
-}
-
-.text1 {
-  min-width: 100px;
-  padding-left: 20px;
-}
-
-.text1 {
-  max-width: 200px; /* Adjust the maximum width as per your requirement */
-  padding-left: 20px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.icon-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.insidetext {
-  position: absolute;
-  font-size: 40px;
-  color: black;
-}
-
-.insidenum {
-  position: absolute;
-  font-size: 60px;
-  color: black;
-}
-
-.content {
-  display: flex;
-  flex: 0 0 18%;
-  gap: 0.2rem;
-}
-
-.detail {
-  flex: 1;
-}
-
-.extra-detail {
-  display: flex;
-}
-
-/* Base styles for desktop devices */
 </style>
