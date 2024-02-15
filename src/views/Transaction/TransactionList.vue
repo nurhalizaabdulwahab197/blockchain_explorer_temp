@@ -1,130 +1,121 @@
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <ContentWrap title="TransactionList">
-    <div class="transactions-page">
-      <!-- Body Content -->
-      <main>
-        <div class="logo-section">
-          <img
-            alt="Coin logo"
-            class="logo"
-            src="@/assets/imgs/Coinlogo.png"
-            width="50"
-            height="51"
-          />
-          <h1>TRANSACTIONS</h1>
-        </div>
+  <div class="transactions-page">
+    <!-- Body Content -->
+    <main>
+      <div class="logo-section">
+        <img alt="Coin logo" class="logo" src="@/assets/imgs/Coinlogo.png" width="50" height="51" />
+        <h1>TRANSACTIONS</h1>
+      </div>
 
-        <div class="table-section" style="overflow-x: auto">
-          <table>
-            <thead>
-              <tr class="rounded-header">
-                <th>Txn Hash</th>
-                <th>Block</th>
-                <th>Time</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Amount</th>
-                <th>Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Display a fixed number of data rows (e.g., 10 rows) -->
-              <tr v-for="(item, index) in slicedDummyData" :key="index">
-                <td
-                  style="
-                    max-width: 180px;
-                    overflow: hidden;
-                    color: #1688f2;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.TxnHash }}</td
-                >
-                <td
-                  style="
-                    max-width: 100px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.block }}</td
-                >
-                <td
-                  style="
-                    max-width: 170px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.time }}
-                </td>
-                <td
-                  style="
-                    max-width: 140px;
-                    overflow: hidden;
-                    color: #1688f2;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.from }}</td
-                >
-                <td
-                  style="
-                    max-width: 140px;
-                    overflow: hidden;
-                    color: #1688f2;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.to }}</td
-                >
-                <td
-                  style="
-                    max-width: 100px;
-                    overflow: hidden;
-                    color: #6afd36;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.amount }} ETH</td
-                >
-                <td
-                  style="
-                    max-width: 80px;
-                    overflow: hidden;
-                    color: #9c9c9c;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                  "
-                  >{{ item.age }} secs ago</td
-                >
-              </tr>
+      <div class="table-section" style="overflow-x: auto">
+        <table>
+          <thead>
+            <tr class="rounded-header">
+              <th>Txn Hash</th>
+              <th>Block</th>
+              <th>Time</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Amount</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Display a fixed number of data rows (e.g., 10 rows) -->
+            <tr v-for="(item, index) in slicedDummyData" :key="index">
+              <td
+                style="
+                  max-width: 180px;
+                  overflow: hidden;
+                  color: #1688f2;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.TxnHash }}</td
+              >
+              <td
+                style="
+                  max-width: 100px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.block }}</td
+              >
+              <td
+                style="
+                  max-width: 170px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.time }}
+              </td>
+              <td
+                style="
+                  max-width: 140px;
+                  overflow: hidden;
+                  color: #1688f2;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.from }}</td
+              >
+              <td
+                style="
+                  max-width: 140px;
+                  overflow: hidden;
+                  color: #1688f2;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.to }}</td
+              >
+              <td
+                style="
+                  max-width: 100px;
+                  overflow: hidden;
+                  color: #6afd36;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.amount }} ETH</td
+              >
+              <td
+                style="
+                  max-width: 80px;
+                  overflow: hidden;
+                  color: #9c9c9c;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ item.age }} secs ago</td
+              >
+            </tr>
 
-              <tr>
-                <td colspan="7" class="pagination-buttons">
-                  <div class="pagination-container">
-                    <div class="centered-content">
-                      <button class="first-page-button" @click="goToFirstPage">First Page</button>
-                      <button class="previous-page-button" @click="goToPreviousPage">&lt;</button>
-                      <span class="page-number"> {{ currentPage }}</span>
-                      <button class="next-page-button" @click="goToNextPage">&gt;</button>
-                      <button class="last-page-button" @click="goToLastPage">Last Page</button>
-                    </div>
+            <tr>
+              <td colspan="7" class="pagination-buttons">
+                <div class="pagination-container">
+                  <div class="centered-content">
+                    <button class="first-page-button" @click="goToFirstPage">First Page</button>
+                    <button class="previous-page-button" @click="goToPreviousPage">&lt;</button>
+                    <span class="page-number"> {{ currentPage }}</span>
+                    <button class="next-page-button" @click="goToNextPage">&gt;</button>
+                    <button class="last-page-button" @click="goToLastPage">Last Page</button>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </main>
-    </div>
-  </ContentWrap>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ContentWrap } from '@/components/ContentWrap'
 
 interface Transaction {
   TxnHash: string
