@@ -1,14 +1,21 @@
 <template>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <ContentWrap title="TransactionList">
     <div class="transactions-page">
       <!-- Body Content -->
       <main>
         <div class="logo-section">
-          <span class="dashicons--money-alt"></span>
+          <img
+            alt="Coin logo"
+            class="logo"
+            src="@/assets/imgs/Coinlogo.png"
+            width="50"
+            height="51"
+          />
           <h1>TRANSACTIONS</h1>
         </div>
 
-        <div class="table-section">
+        <div class="table-section" style="overflow-x: auto">
           <table>
             <thead>
               <tr class="rounded-header">
@@ -315,21 +322,26 @@ main {
 
 h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .table-section table {
   width: 80%;
+  max-width: 80%;
   margin: auto;
+  overflow-x: auto;
   border-collapse: collapse;
 }
 
 th {
   padding: 15px;
-  font-size: 18px;
+  overflow: hidden;
+  font-size: 16px;
   font-weight: bold;
   color: #000;
   text-align: left; /* Add top border for header */
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Allow content to overflow and not wrap */
   background-color: #d9d9d9;
   border-bottom: 1px solid #4a4a4a; /* Only show horizontal lines */
 }
@@ -346,8 +358,12 @@ th:last-child {
 
 td {
   padding: 20px;
+  overflow: hidden;
+  font-size: 15px;
   color: white;
   text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Allow content to overflow and not wrap */
   background-color: #282b2e;
   border-bottom: 1px solid #4a4a4a; /* Only show horizontal lines */
 }
@@ -393,6 +409,7 @@ tr:last-child td:last-child {
 .last-page-button {
   padding: 8px 16px;
   font-weight: bold;
+  color: black;
   cursor: pointer;
   background-color: #909182;
   border-radius: 20px;
@@ -418,18 +435,17 @@ tr:last-child td:last-child {
   border-radius: 5px;
 }
 
-.dashicons--money-alt {
-  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23000' d='M10.6 9c-.4-.1-.8-.3-1.1-.6c-.3-.1-.4-.4-.4-.6c0-.2.1-.5.3-.6c.3-.2.6-.4.9-.3c.6 0 1.1.3 1.4.7l.9-1.2c-.3-.3-.6-.5-.9-.7c-.3-.2-.7-.3-1.1-.3V4H9.4v1.4c-.5.1-1 .4-1.4.8c-.4.5-.7 1.1-.6 1.7c0 .6.2 1.2.6 1.6c.5.5 1.2.8 1.8 1.1c.3.1.7.3 1 .5c.2.2.3.5.3.8c0 .3-.1.6-.3.9c-.3.3-.7.4-1 .4c-.4 0-.9-.1-1.2-.4c-.3-.2-.6-.5-.8-.8l-1 1.1c.3.4.6.7 1 1c.5.3 1.1.6 1.7.6V16h1.1v-1.5c.6-.1 1.1-.4 1.5-.8c.5-.5.8-1.3.8-2c0-.6-.2-1.3-.7-1.7c-.5-.5-1-.8-1.6-1M10 2c-4.4 0-8 3.6-8 8s3.6 8 8 8s8-3.6 8-8s-3.6-8-8-8m0 14.9c-3.8 0-6.9-3.1-6.9-6.9S6.2 3.1 10 3.1s6.9 3.1 6.9 6.9s-3.1 6.9-6.9 6.9'/%3E%3C/svg%3E");
+@media (width <= 767px) {
+  .logo-section {
+    margin-left: 0;
+  }
 
-  display: inline-block;
-  width: 3rem;
-  height: 3rem;
-  background-color: currentcolor;
-  mask-image: var(--svg);
-  mask-image: var(--svg);
-  mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%;
-  mask-size: 100% 100%;
+  .logo-section img {
+    margin-right: 5px;
+  }
+
+  .logo-section h1 {
+    margin-left: 10px;
+  }
 }
 </style>
