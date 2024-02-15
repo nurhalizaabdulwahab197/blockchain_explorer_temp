@@ -23,157 +23,155 @@ const temp = ref([
         <Icon icon="dashicons:money-alt" class="bigMoneyIcon" /><h2>Block Overview</h2>
       </div>
 
-      <div class="block">
-        <Icon icon="bxs:left-arrow" class="blockarrow" />
-        <div class="rectangle-container">
-          <div class="rectangle"
-            ><div style="height: 40px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 63px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+      <div class="scrollable-container">
+        <div class="blockContainer">
+          <div class="block">
+            <Icon icon="bxs:left-arrow" class="blockarrow" />
+            <div class="rectangle-container">
+              <div class="rectangle"
+                ><div style="height: 40px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374445</p>
+              </div>
+            </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 63px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374444</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 60px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 60px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374443</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 55px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 55px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374442</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 40px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 40px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374441</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 38px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 38px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374440</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 45px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 45px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374439</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 38px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 38px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374438</p>
+              </div>
+            </div>
 
-        <Icon icon="bi:link" class="link" />
-        <div class="rectangle-container">
-          <div class="drectangle"
-            ><div style="height: 33px" class="overlapping-rectangle"></div
-          ></div>
-        </div>
+            <Icon icon="bi:link" class="link" />
+            <div class="rectangle-container">
+              <div class="drectangle"
+                ><div style="height: 33px" class="overlapping-rectangle"></div
+              ></div>
+              <div class="blockno">
+                <p>#18374437</p>
+              </div>
+            </div>
 
-        <Icon icon="bxs:right-arrow" class="blockarrow" />
-      </div>
-
-      <div class="blockNumbers">
-        <div class="blockno">
-          <p>#18374445</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374444</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374443</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374442</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374441</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374440</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374439</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374438</p>
-        </div>
-
-        <div class="blockno">
-          <p>#18374437</p>
-        </div>
-      </div>
-
-      <div class="Seccontainer">
-        <div class="tableContainer">
-          <div class="header">
-            <div class="headerTitle">Block</div>
-            <div class="headerTitle1">Hash</div>
-            <div class="headerTitle2">Time</div>
-            <div class="headerTitle3">Txs</div>
-            <div class="headerTitle4">Txs Summary</div>
-            <div class="headerTitle5">Age</div>
+            <Icon icon="bxs:right-arrow" class="blockarrow" />
           </div>
+        </div>
+      </div>
 
-          <div class="list">
-            <div class="item" v-for="v in temp" :key="v.id">
-              <div style="display: flex; align-items: center">
-                <p>18374438</p>
-              </div>
-              <div>
-                <span>0x0d4dde84447bdd54....</span>
-              </div>
-              <div>
-                <p>2023-10-18 21:52:59</p>
-              </div>
-              <div>
-                <p>35</p>
-              </div>
-              <div class="txs">
-                <div class="txs-item">Transfers 26</div>
-                <div class="txs-item"> App calls 6</div>
-                <div class="txs-item">set config 4</div>
-              </div>
+      <div class="scrollable-table">
+        <div class="Seccontainer">
+          <div class="tableContainer">
+            <div class="header">
+              <div class="headerTitle">Block</div>
+              <div class="headerTitle1">Hash</div>
+              <div class="headerTitle2">Time</div>
+              <div class="headerTitle3">Txs</div>
+              <div class="headerTitle4">Txs Summary</div>
+              <div class="headerTitle5">Age</div>
+            </div>
 
-              <div class="time"> 11 secs ago </div>
+            <div class="list">
+              <div class="item" v-for="v in temp" :key="v.id">
+                <div style="display: flex; align-items: center">
+                  <p>18374438</p>
+                </div>
+                <div>
+                  <span>0x0d4dde84447bdd54....</span>
+                </div>
+                <div>
+                  <p>2023-10-18 21:52:59</p>
+                </div>
+                <div>
+                  <p>35</p>
+                </div>
+                <div class="txs">
+                  <div class="txs-item">Transfers 26</div>
+                  <div class="txs-item"> App calls 6</div>
+                  <div class="txs-item">set config 4</div>
+                </div>
+
+                <div class="time"> 11 secs ago </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="pagination">
-        <button class="pagination-item">First Page</button>
-        <Icon icon="iconamoon:arrow-left-2" class="arrow" />
-        <p class="number">1</p>
-        <Icon icon="iconamoon:arrow-right-2-bold" class="arrow" />
-        <button class="pagination-item">Last Page</button>
+      <div class="pagination-container">
+        <div class="pagination">
+          <button class="pagination-item">First Page</button>
+          <Icon icon="iconamoon:arrow-left-2" class="arrow" />
+          <p class="number">1</p>
+          <Icon icon="iconamoon:arrow-right-2-bold" class="arrow" />
+          <button class="pagination-item">Last Page</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
 <style scoped>
 .body {
   display: flex;
@@ -184,6 +182,7 @@ const temp = ref([
 .container {
   width: 90%;
   height: auto;
+  overflow-x: auto; /* Add this property */
 }
 
 .title {
@@ -247,22 +246,9 @@ const temp = ref([
   font-size: 25px;
 }
 
-.blockNumbers {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 0;
-}
-
 .blockno p {
-  position: relative;
-  display: flex;
-  width: 100px; /* Set the width to match the rectangle */
   margin: 0 14px;
   text-align: center; /* Center text */
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
 }
 
 .header {
@@ -270,6 +256,7 @@ const temp = ref([
   padding: 10px 15px;
   background-color: #d9d9d9;
   border-radius: 10px 10px 0 0;
+  justify-content: space-between;
   align-items: flex-end;
 }
 
@@ -277,34 +264,35 @@ const temp = ref([
   padding-left: 2px;
   font-weight: 600;
   color: black;
-  flex-basis: 180px;
+  flex-basis: 50px;
 }
 
 .headerTitle1 {
   font-weight: 600;
   color: black;
-  flex-basis: 268px;
+  flex-basis: 140px;
 }
 
 .headerTitle2 {
   font-weight: 600;
   color: black;
-  flex-basis: 237px;
+  flex-basis: 110px;
 }
 
 .headerTitle3 {
   font-weight: 600;
   color: black;
-  flex-basis: 129px;
+  flex-basis: 50px;
 }
 
 .headerTitle4 {
   font-weight: 600;
   color: black;
-  flex-basis: 368px;
+  flex-basis: 190px;
 }
 
 .headerTitle5 {
+  padding-right: 58px;
   font-weight: 600;
   color: black;
 }
@@ -315,11 +303,35 @@ const temp = ref([
   min-width: 880px;
 }
 
+.scrollable-container {
+  max-width: 100%;
+  overflow-x: auto;
+  justify-content: center;
+}
+
+.blockContainer {
+  display: flex;
+  justify-content: space-between; /* Distribute space evenly between items */
+  align-items: center; /* Center items vertically */
+  max-width: 100%; /* Allow the container to take up the full width */
+}
+
 .tableContainer {
   margin-top: 40px;
+  overflow: auto;
   background-color: #282b2e;
   border-radius: 10px;
   flex: 1;
+}
+
+.scrollable-table {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.list {
+  min-width: 800px; /* Set a minimum width for the table content */
+  padding-right: 20px;
 }
 
 .item {
