@@ -51,7 +51,7 @@ import { ContentWrap } from '@/components/ContentWrap'
       </div>
     </div>
 
-    <div class="container1">
+    <div class="container2">
       <table class="table">
         <tbody>
           <tr>
@@ -111,115 +111,230 @@ import { ContentWrap } from '@/components/ContentWrap'
 </template>
 
 <style scoped>
-.title {
-  display: flex;
-  margin: 0 10px 30px;
-  font-size: 30px;
-  justify-content: space-between;
+/* Base styles for desktop devices */
+@media (width >= 769px) {
+  .title {
+    display: flex;
+    margin: 0 10px 10px; /* Adjust margin for desktop devices */
+    font-size: 20px;
+    justify-content: space-between;
+  }
+
+  .container1 {
+    display: flex;
+    flex-direction: row; /* Stack boxes vertically for desktop devices */
+  }
+
+  .container2 {
+    overflow-x: auto; /* Horizontal scrolling for desktop devices */
+  }
+
+  .box1 {
+    display: flex;
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .box2,
+  .box3 {
+    display: flex;
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .box4 {
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+  }
+
+  .text {
+    padding-top: 10px;
+    color: black;
+    text-align: center;
+  }
+
+  .table {
+    width: 100%;
+    margin: 20px 10px 10px;
+    border-collapse: collapse;
+  }
+
+  td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #4a4a4a;
+  }
+
+  .text1 {
+    min-width: 100px;
+    padding-left: 20px;
+  }
+
+  .text1 {
+    max-width: 200px; /* Adjust the maximum width as per your requirement */
+    padding-left: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .insidetext {
+    position: absolute;
+    font-size: 40px;
+    color: black;
+  }
+
+  .insidenum {
+    position: absolute;
+    font-size: 60px;
+    color: black;
+  }
+
+  .content {
+    display: flex;
+    flex: 0 0 18%;
+    gap: 0.2rem;
+  }
+
+  .detail {
+    flex: 1;
+  }
+
+  .extra-detail {
+    display: flex;
+  }
 }
 
-.container1 {
-  display: flex;
-}
+/* Media query for mobile styles */
+@media (width <= 768px) {
+  .title {
+    display: flex;
+    margin: 0 10px 30px;
+    font-size: 20px;
+    justify-content: space-between;
+  }
 
-.box1 {
-  display: flex;
-  padding-bottom: 10px;
-  margin: 10px 40px 10px 10px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-}
+  .container1 {
+    display: flex;
+    flex-direction: column; /* Stack boxes vertically for mobile devices */
+  }
 
-.box2 {
-  display: flex;
-  padding-bottom: 10px;
-  margin: 10px 40px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-}
+  .container2 {
+    overflow-x: auto; /* Horizontal scrolling for desktop devices */
+  }
 
-.box3 {
-  display: flex;
-  padding-bottom: 10px;
-  margin: 10px 40px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-}
+  .box1 {
+    display: flex;
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
 
-.box4 {
-  padding-bottom: 10px;
-  margin: 10px 10px 10px 40px;
-  background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  flex: 1;
-}
+  .box2,
+  .box3 {
+    display: flex;
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
 
-.text {
-  padding-top: 10px;
-  color: black;
-  text-align: center;
-}
+  .box4 {
+    padding-bottom: 10px;
+    margin: 10px;
+    background-color: #d9d9d9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    flex: 1;
+  }
 
-.table {
-  width: 100%;
-  margin: 20px 10px 10px;
-  background-color: #282b2e;
-  border-collapse: collapse;
-}
+  .text {
+    padding-top: 7px;
+    color: black;
+    text-align: center;
+  }
 
-td {
-  padding: 8px;
-  text-align: left;
-  border: 1px solid #4a4a4a;
-}
+  .table {
+    width: 100%;
+    margin: 10px;
+    border-collapse: collapse;
+  }
 
-.text1 {
-  padding-left: 20px;
-}
+  td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #4a4a4a;
+  }
 
-.icon-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .text1 {
+    min-width: 1200px;
+    padding-left: 20px;
+    font-size: 12px;
+  }
 
-.insidetext {
-  position: absolute;
-  font-size: 40px;
-  color: black;
-}
+  .icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.insidenum {
-  position: absolute;
-  font-size: 60px;
-  color: black;
-}
+  .insidetext {
+    position: absolute;
+    font-size: 30px;
+    color: black;
+  }
 
-.content {
-  display: flex;
-  flex: 0 0 18%;
-  gap: 0.2rem;
-}
+  .insidenum {
+    position: absolute;
+    font-size: 45px;
+    color: black;
+  }
 
-.detail {
-  flex: 1;
-}
+  .content {
+    display: flex;
+    flex: 0 0 18%;
+    gap: 0.2rem;
+  }
 
-.extra-detail {
-  display: flex;
+  .detail {
+    flex: 1;
+  }
+
+  .extra-detail {
+    display: flex;
+  }
 }
 </style>
