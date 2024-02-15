@@ -108,8 +108,8 @@ export default {
           <div class="blockheightcopy"
             ><h3>Block Height</h3
             ><button class="copy" style="margin-top: 3px" @click="copyBlockHeight"
-              ><Icon icon="ion:copy" class="copyicon" /> CLICK TO COPY</button
-            ></div
+              ><Icon icon="ion:copy" class="copyicon" /><div class="visiblecopy">CLICK TO COPY</div>
+            </button></div
           >
 
           <p>{{ blockHeight }}</p>
@@ -127,14 +127,16 @@ export default {
           /></svg
         ><h2>Block Details</h2>
       </div>
-      <div>
+      <div style="overflow-x: auto">
         <table>
           <tr>
             <td class="c1"> Miner /Validator : </td>
             <td class="c2"> {{ miner }} </td>
             <td class="c3">
               <button @click="copyMiner" class="copy"
-                ><Icon icon="ion:copy" class="copyicon" /> CLICK TO COPY</button
+                ><Icon icon="ion:copy" class="copyicon" /><div class="visiblecopy">
+                  CLICK TO COPY</div
+                ></button
               >
             </td>
           </tr>
@@ -163,7 +165,11 @@ export default {
             <td class="c2"> {{ hash }} </td>
             <td class="c3"
               ><button class="copy"
-                ><Icon icon="ion:copy" @click="copyHash" class="copyicon" /> CLICK TO COPY</button
+                ><Icon icon="ion:copy" @click="copyHash" class="copyicon" /><div
+                  class="visiblecopy"
+                >
+                  CLICK TO COPY</div
+                ></button
               ></td
             >
           </tr>
@@ -205,6 +211,12 @@ export default {
   background-color: rgb(10 10 10);
 }
 
+.visiblecopy {
+  padding: 0;
+  margin: 0;
+  font-size: 9px;
+}
+
 .blockinfo h3 {
   margin: 10px 0 0 15px;
   font-family: Inter, sans-serif;
@@ -235,13 +247,13 @@ export default {
 .totaltransaction,
 .blockheight,
 .timestamp {
+  width: 30%;
   height: 80px;
   margin: 0 20px;
   color: black;
   background: #d9d9d9;
   border-radius: 10px;
   box-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
-  flex: 1;
 }
 
 .bigMoneyIcon {
@@ -401,5 +413,95 @@ table td {
 
 tr:last-child td {
   border-bottom: none !important;
+}
+
+@media screen and (width <= 700px) {
+  body {
+    font-size: 70%;
+  }
+
+  .blockinfo h3 {
+    font-size: 12.8px;
+  }
+
+  .blockinfo p {
+    font-size: 11.2px;
+  }
+
+  .totaltransaction h3,
+  .blockheight h3,
+  .timestamp h3,
+  .copymessage {
+    font-size: 12.8px;
+  }
+
+  .totaltransaction p,
+  .blockheight p,
+  .timestamp p {
+    font-size: 11.2px;
+  }
+
+  .copy {
+    font-size: 9.6px;
+  }
+
+  .blockarrow {
+    font-size: 16px;
+  }
+
+  .blockdetailtitle h2,
+  .title h2 {
+    font-size: 20px;
+  }
+
+  .alertbox {
+    position: absolute;
+    right: 10px;
+    z-index: 10000;
+    display: flex;
+    width: 80%;
+    font-family: Inter, sans-serif;
+    flex-direction: row;
+  }
+
+  .copymessage {
+    display: flex;
+    width: 100%;
+    padding-left: 25px;
+    margin-right: 8px;
+    background-color: #363737;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .copymessagetitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .visiblecopy {
+    display: none;
+  }
+
+  td {
+    font-size: 12px;
+  }
+
+  .copy {
+    display: flex;
+    padding: 5px 10px;
+    font-family: Inter, sans-serif;
+    font-size: 4px;
+    color: #9c9c9c;
+    background-color: transparent;
+    border: 1px groove #7f7f7f;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+  }
 }
 </style>
