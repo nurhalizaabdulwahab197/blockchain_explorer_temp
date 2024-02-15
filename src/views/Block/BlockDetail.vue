@@ -415,6 +415,12 @@ tr:last-child td {
   border-bottom: none !important;
 }
 
+@media screen and (width <= 1050px) {
+  .visiblecopy {
+    display: none;
+  }
+}
+
 @media screen and (width <= 700px) {
   body {
     font-size: 70%;
