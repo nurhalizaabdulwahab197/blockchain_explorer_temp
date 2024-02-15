@@ -87,8 +87,6 @@
 </template>
 
 <style scoped>
-
-
 /* Media query for mobile styles */
 @media (width <=768px) {
   .text1 {
