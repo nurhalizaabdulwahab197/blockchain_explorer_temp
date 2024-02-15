@@ -1,50 +1,150 @@
-<script setup lang="ts">
+<script setup>
+import { ref, computed } from 'vue'
 import { Icon } from '@iconify/vue'
 
-import { ref, onMounted } from 'vue'
-
-const thisPage = ref(1)
-const limit = 10
-const list = ref<HTMLElement[]>([])
-
-function loadItem() {
-  const beginGet = limit * (thisPage.value - 1)
-  const endGet = limit * thisPage.value - 1
-
-  list.value.forEach((item, key) => {
-    if (key >= beginGet && key <= endGet) {
-      item.style.display = 'flex'
-    } else {
-      item.style.display = 'none'
-    }
-  })
-}
-
-const totalPages = ref(1)
-
-onMounted(() => {
-  list.value = Array.from(document.querySelectorAll('.row')) as HTMLElement[]
-  calculateTotalPages()
-  loadItem()
-})
-
-function calculateTotalPages() {
-  totalPages.value = Math.ceil(list.value.length / limit)
-}
-
-function goToPage(targetPage: string | number) {
-  if (targetPage === 'first') {
-    thisPage.value = 1
-  } else if (targetPage === 'next' && thisPage.value < totalPages.value) {
-    thisPage.value += 1
-  } else if (typeof targetPage === 'number' && targetPage > 0 && targetPage <= totalPages.value) {
-    thisPage.value = targetPage
+var dataset = ref([
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
+  },
+  {
+    TxnHash: '0x3916d1d5a3e98e5ae9....',
+    Block: '18374438',
+    Time: '2023-10-18 21:52:59',
+    From: '0x77a879bc1868c....',
+    To: '08se67182189024....',
+    Amount: '0.034 ETH',
+    Age: '6 secs ago'
   }
+])
 
-  console.log(thisPage)
+const itemsPerPage = 10
+const currentPage = ref(1)
+const paginatedData = ref([])
 
-  loadItem()
+const totalPages = computed(() => Math.ceil(dataset.value.length / itemsPerPage))
+
+function toNextPage() {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    updatePaginateData()
+  }
 }
+
+function toPrevPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    updatePaginateData()
+  }
+}
+
+function jumpToFirst() {
+  currentPage.value = 1
+  updatePaginateData()
+}
+
+function jumpToLast() {
+  currentPage.value = totalPages.value
+  updatePaginateData()
+}
+
+function updatePaginateData() {
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  console.log(startIndex)
+  console.log(endIndex)
+  paginatedData.value = dataset.value.slice(startIndex, endIndex)
+}
+
+updatePaginateData()
+
+// Watch for changes in dataset and update current page if needed
 </script>
 
 <template>
@@ -58,10 +158,12 @@ function goToPage(targetPage: string | number) {
           <div class="add-sub-cont">
             <h3>ADDRESS</h3>
             <button class="btn"
-              ><Icon icon="icon-park-twotone:copy" class="copyIcon" />&nbsp;CLICK TO COPY</button
+              ><Icon icon="icon-park-twotone:copy" class="copyIcon" /><span
+                >CLICK TO COPY</span
+              ></button
             >
           </div>
-          <div class="add-sub-cont">
+          <div class="add-sub-cont-2">
             <p>2JLNXF725EKFJD6SG3KK3MVJZKFZMGVVWQZNWTM4YOUH6XVUUHEAWL4ZV4</p>
           </div>
         </div>
@@ -77,36 +179,61 @@ function goToPage(targetPage: string | number) {
       <div class="transaction-cont">
         <div class="trans-title"><h2>TRANSACTIONS</h2></div>
         <div class="trans-table">
-          <div class="theader">
-            <div class="th th1">Txn Hash</div>
-            <div class="th th2">Block</div>
-            <div class="th th3">Time</div>
-            <div class="th th4">From</div>
-            <div class="th th5">To</div>
-            <div class="th th6">Amount</div>
-            <div class="th th7">Age</div>
-          </div>
-          <div v-for="index in 20" :key="index" class="row">
-            <div class="td td1">0x3916d1d5a3e98e5ae9....</div>
-            <div class="td td2">18374438</div>
-            <div class="td td3">2023-10-18 21:52:59</div>
-            <div class="td td4">0x77a879bc1868c....</div>
-            <div class="td td5">08se67182189024....</div>
-            <div class="td td6">0.034 ETH</div>
-            <div class="td td7">6 secs ago</div>
-          </div>
-          <div class="paginate">
-            <div class="prev" @click="goToPage('first')">First Page</div>
-            <div
-              class="page"
-              v-for="pageNumber in totalPages"
-              :key="pageNumber"
-              @click="goToPage(pageNumber)"
-            >
-              {{ pageNumber }}
-            </div>
-            <div class="next" @click="goToPage('next')">Next Page</div>
-          </div>
+          <table>
+            <thead>
+              <tr class="theader">
+                <th class="th1">Txn Hash</th>
+                <th class="th2">Block</th>
+                <th class="th3">Time</th>
+                <th class="th4">From</th>
+                <th class="th5">To</th>
+                <th class="th6">Amount</th>
+                <th class="th7">Age</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in paginatedData" :key="index" class="row">
+                <td class="td1">{{ item.TxnHash }}</td>
+                <td class="td2">{{ item.Block }}</td>
+                <td class="td3">{{ item.Time }}</td>
+                <td class="td4">{{ item.From }}</td>
+                <td class="td5">{{ item.To }}</td>
+                <td class="td6">{{ item.Amount }}</td>
+                <td class="td7">{{ item.Age }}</td>
+              </tr>
+              <tr class="paginatecont">
+                <td colspan="7" class="paginatesubcont">
+                  <div class="paginate">
+                    <div class="fpage" @click="jumpToFirst()">First Page</div>
+                    <div class="prev" @click="toPrevPage()">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        viewBox="0 0 24 24"
+                      >
+                        <path fill="white" d="m14 18l-6-6l6-6l1.4 1.4l-4.6 4.6l4.6 4.6z" />
+                      </svg>
+                    </div>
+                    <div class="page">
+                      {{ currentPage }}
+                    </div>
+                    <div class="next" @click="toNextPage()">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        viewBox="0 0 24 24"
+                      >
+                        <path fill="white" d="M12.6 12L8 7.4L9.4 6l6 6l-6 6L8 16.6z" />
+                      </svg>
+                    </div>
+                    <div class="lpage" @click="jumpToLast()">Last Page</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -115,19 +242,22 @@ function goToPage(targetPage: string | number) {
 
 <style scoped>
 .body {
+  display: flex;
   width: 100%;
   height: auto;
+  justify-content: flex;
+  align-items: flex;
 }
 
 .main {
   width: 95%;
-  height: 100vh;
+  height: auto;
   margin: auto;
 }
 
 .header {
   display: flex;
-  margin-left: 20px;
+  margin: 8px 0;
 }
 
 .accountIcon {
@@ -142,21 +272,24 @@ h1 {
 
 .info-cont {
   display: flex;
-  width: 80%;
-  height: 20%;
-  margin: 35px auto;
+  width: 90%;
+  height: auto;
+  margin: 35px auto 25px;
+  flex: 1;
   justify-content: space-between;
 }
 
 .address,
 .balance {
-  height: 100%;
-  padding: 0 18px;
+  display: flex;
+  height: auto;
+  margin-bottom: 15px;
   background-color: #d9d9d9;
+  flex-direction: column;
 }
 
 .address {
-  width: 60%;
+  width: 58%;
   border-radius: 8px;
 }
 
@@ -165,24 +298,27 @@ h1 {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin: 0;
+  flex-wrap: wrap;
 }
 
-.balance {
-  width: 31%;
-  border-radius: 8px;
+.add-sub-cont-2 {
+  display: flex;
+  justify-content: center;
+  margin: 5px 15px 15px;
+  flex-wrap: wrap;
 }
 
-h3 {
-  padding: 0;
-  font-size: 20px;
-  color: black;
+.add-sub-cont h3,
+.add-sub-cont button {
+  padding: 5px 15px;
 }
 
 .btn {
   width: 150px;
-  height: 25px;
-  padding: 0;
-  margin: 0;
+  height: auto;
+  padding: 5px 15px;
+  margin: 0 15px 0 0;
   color: #9c9c9c;
   background-color: #d9d9d9;
   border: 1px solid #7f7f7f;
@@ -196,34 +332,61 @@ h3 {
 
 .address p {
   width: 100%;
+  margin: 0;
   font-size: 18px;
   color: #158fff;
   word-wrap: break-word;
 }
 
+.balance {
+  width: 40%;
+  border-radius: 8px;
+}
+
+.balance h3 {
+  padding: 5px 15px;
+}
+
+.balance h2 {
+  width: 100%;
+  padding: 5px 8px;
+}
+
+h3 {
+  padding: 0;
+  font-size: 20px;
+  color: black;
+}
+
 .bal-sub-cont {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
+  flex: 1;
+}
+
+.bal-sub-cont h3 {
+  width: 100%;
+  word-wrap: normal;
 }
 
 .eth {
-  margin-right: 8px;
+  padding: 0 0 0 15px;
   font-size: 30px;
   color: #676767;
 }
 
 .balance h2 {
-  width: 100%;
+  width: 70%;
   color: #676767;
   word-wrap: break-word;
+  flex-wrap: wrap;
 }
 
 .transaction-cont {
-  width: 80%;
+  width: 90%;
   height: auto;
-  margin: 20px auto;
+  margin: 5px auto 20px;
 }
 
 .trans-title h2 {
@@ -233,39 +396,53 @@ h3 {
 }
 
 .trans-table {
-  display: flex;
-  width: 100%;
-  margin-top: 20px;
-  flex-direction: column;
+  height: auto;
+  overflow-x: auto;
 }
 
-.theader {
-  display: flex;
+table {
   width: 100%;
-  height: 35px;
-  margin: 0;
-  background-color: #d9d9d9;
-  border-radius: 10px 10px 0 0;
+  margin: 25px auto 0;
+  border-collapse: collapse;
 }
 
-.th {
-  padding: 5px 10px;
-  font-size: 18px;
-  font-weight: 400;
+th {
+  padding: 10px 15px;
   color: black;
+  text-align: left;
+  background-color: #d9d9d9;
 }
 
-.row {
-  display: flex;
-  width: 100%;
+th:first-child {
+  border-top-left-radius: 10px;
+}
+
+th:last-child {
+  border-top-right-radius: 10px;
+}
+
+td {
+  padding: 12px 15px;
+  white-space: nowrap;
+
+  /* border-bottom: 2px solid #4a4a4a; */
   background-color: #282b2e;
-  border-bottom: 2px solid #4a4a4a;
-  align-items: center;
 }
 
-.td {
-  height: 25px;
-  padding: 5px 10px;
+tr {
+  border-bottom: 2px solid #4a4a4a;
+}
+
+tr:last-child {
+  border-bottom: 0;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }
 
 .td1,
@@ -282,50 +459,33 @@ h3 {
   color: #9c9c9c;
 }
 
-.td1,
-.th1 {
-  width: 205px;
+.paginatecont {
+  width: 100%;
 }
 
-.th4,
-.th5,
-.td4,
-.td5 {
-  width: 170px;
-}
-
-.th2,
-.td2 {
-  width: 100px;
-}
-
-.th3,
-.td3 {
-  width: 160px;
-}
-
-.th6,
-.td6 {
-  width: 95px;
-}
-
-.th7,
-.td7 {
-  width: 90px;
+.paginatesubcont {
+  width: 100%;
+  padding-right: 25px;
 }
 
 .paginate {
   display: flex;
   width: 100%;
-  height: 35px;
   background-color: #282b2e;
   border-radius: 0 0 10px 10px;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .prev,
-.page,
 .next {
+  padding-top: 6px;
+  font-size: 25px;
+}
+
+.fpage,
+.page,
+.lpage {
   display: flex;
   height: 20px;
   padding: 2px 5px;
@@ -334,5 +494,54 @@ h3 {
   background-color: #fff;
   border-radius: 5px;
   opacity: 0.6;
+}
+
+@media screen and (width <= 600px) {
+  .info-cont {
+    flex-direction: column;
+  }
+
+  .address,
+  .balance {
+    width: 100%;
+  }
+
+  .add-sub-cont,
+  .add-sub-cont-2 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn {
+    margin: 10px 0;
+  }
+
+  .balance h2 {
+    width: 100%;
+  }
+
+  .transaction-cont {
+    width: 90%;
+    height: auto;
+    overflow-x: auto;
+  }
+
+  .paginate {
+    justify-content: center;
+  }
+}
+
+@media screen and (height <= 717px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .main {
+    height: auto;
+  }
+
+  .footer {
+    margin-top: auto;
+  }
 }
 </style>
