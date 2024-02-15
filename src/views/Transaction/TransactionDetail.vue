@@ -1,176 +1,173 @@
 <template>
-  <ContentWrap>
-    <div>
-      <div class="title-container">
-        <span class="dashicons--money-alt"></span>
-        <div class="title">TRANSACTION OVERVIEW</div>
-        <div class="iconbackbutton"><span class="material-symbols--navigate-back"></span></div>
-        <div class="iconnextbutton"><span class="material-symbols--navigate-next"></span></div>
+  <div class="bodycontent">
+    <div class="title-container">
+      <span class="dashicons--money-alt"></span>
+      <div class="title">TRANSACTION OVERVIEW</div>
+      <div class="iconbackbutton"><span class="material-symbols--navigate-back"></span></div>
+      <div class="iconnextbutton"><span class="material-symbols--navigate-next"></span></div>
+    </div>
+    <div class="firstrow-container">
+      <div class="column-container">
+        <div class="container-title">
+          <div class="firstrowtitle">TRANSACTION ID</div>
+          <button class="rowCopybutton">
+            <span class="iconamoon--copy-bold"></span>
+            <div class="none">CLICK TO COPY</div>
+          </button>
+        </div>
+        <div>{{ transactionId }}</div>
       </div>
-      <div class="firstrow-container">
-        <div class="column-container">
-          <div class="container-title">
-            <div class="firstrowtitle">TRANSACTION ID</div>
-            <button class="rowCopybutton">
+      <div class="column-container">
+        <div class="container-title firstrowtitle">TIMESTAMP</div>
+        <div class="center">{{ timestamp }}</div>
+      </div>
+    </div>
+    <div class="block-container">
+      <div class="container-title">BLOCK</div>
+      <div class="center">
+        <div class="block">1837445</div>
+      </div>
+    </div>
+    <div style="overflow-x: auto">
+      <table>
+        <tr class="tabletitle-container">
+          <th colspan="2">
+            <div class="tabletitle">
+              <span class="dashicons--money-alt"></span>
+              <div>TRANSACTION DETAILS</div>
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <div class="tablesubtitle">
+              <div class="center">
+                <span class="dashicons--money-alt2"></span>
+              </div>
+              <div>SENDER : </div>
+            </div>
+          </td>
+          <td class="tablerow">
+            <a href="" class="tablecontent">0x3Css</a>
+            <button class="tableCopybutton">
               <span class="iconamoon--copy-bold"></span>
               <div class="none">CLICK TO COPY</div>
             </button>
-          </div>
-          <div>{{ transactionId }}</div>
-        </div>
-        <div class="column-container">
-          <div class="container-title firstrowtitle">TIMESTAMP</div>
-          <div class="center">{{ timestamp }}</div>
-        </div>
-      </div>
-      <div class="block-container">
-        <div class="container-title">BLOCK</div>
-        <div class="center">
-          <div class="block">1837445</div>
-        </div>
-      </div>
-      <div style="overflow-x: auto">
-        <table>
-          <tr class="tabletitle-container">
-            <th colspan="2">
-              <div class="tabletitle">
-                <span class="dashicons--money-alt"></span>
-                <div>TRANSACTION DETAILS</div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="tablesubtitle">
+              <div class="center">
+                <span class="dashicons--money-alt2"></span>
               </div>
-            </th>
-          </tr>
-          <tr>
-            <td>
-              <div class="tablesubtitle">
-                <div class="center">
-                  <span class="dashicons--money-alt2"></span>
-                </div>
-                <div>SENDER : </div>
-              </div>
-            </td>
-            <td class="tablerow">
-              <a href="" class="tablecontent">0x3Css</a>
-              <button class="tableCopybutton">
-                <span class="iconamoon--copy-bold"></span>
-                <div class="none">CLICK TO COPY</div>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tablesubtitle">
-                <div class="center">
-                  <span class="dashicons--money-alt2"></span>
-                </div>
-                <div>AMOUNT :</div>
-              </div>
-            </td>
-            <td colspan="2" class="amount tablecontent">0.035 ETH</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tablesubtitle">
-                <div class="center">
-                  <span class="dashicons--money-alt2"></span>
-                </div>
-                <div>RECERIVER :</div>
-              </div>
-            </td>
-            <td class="tablerow">
-              <a href="" class="tablecontent">0x3Css</a>
-              <button class="tableCopybutton">
-                <span class="iconamoon--copy-bold"></span>
-                <div class="none">CLICK TO COPY</div>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tablesubtitle">
-                <div class="center">
-                  <span class="dashicons--money-alt2"></span>
-                </div>
-                <div>VALUE :</div>
-              </div>
-            </td>
-            <td>
-              <div class="alligncenter">
-                <span class="ri--eth-fill"></span>
-                <div class="tablecontent">0 ETH($0.00) </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tablesubtitle">
-                <div class="center">
-                  <span class="dashicons--money-alt2"></span>
-                </div>
-                <div>GAS PRICE :</div>
-              </div>
-            </td>
-            <td>
-              <div class="tablecontent"> 0.023123123 ETH ($0.63) </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="feetitle">
-              <div class="tablesubtitle">
-                <div class="center">
-                  <span class="dashicons--money-alt2"></span>
-                </div>
-                <div>TRANSACTION FEE :</div>
-              </div>
-            </td>
-            <td>
-              <div class="transactionfee-content">
-                <div class="tablecontent">6.023123123 Gwei (0.000012321 ETH)</div>
-                <div class="transactionfee-container">
-                  <div class="column2-container">
-                    <div class="container-title">NOTE</div>
-                    <div class="center">This sender has created a contract</div>
-                  </div>
-                  <div class="column2-container">
-                    <div class="container-title">ONCOMPLETE</div>
-                    <div class="center">Create</div>
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div>
-        <div class="subTitle">
-          <span class="dashicons--money-alt"></span>
-          <div class="title">MORE DETAILS</div>
-          <div></div>
-        </div>
-        <div class="moredetail-container">
-          <div class="left-container">
-            <div class="center">
-              <span class="dashicons--money-alt2"></span>
+              <div>AMOUNT :</div>
             </div>
-            <div>Gas Limit & Usage by Txn:</div>
-          </div>
-          <div class="right-container">65,00 | 43221 (98%)</div>
-        </div>
-        <div class="moredetail-container">
-          <div class="left-container">
-            <div class="center">
-              <span class="dashicons--money-alt2"></span>
+          </td>
+          <td colspan="2" class="amount tablecontent">0.035 ETH</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="tablesubtitle">
+              <div class="center">
+                <span class="dashicons--money-alt2"></span>
+              </div>
+              <div>RECERIVER :</div>
             </div>
-            <div>Gas Fees:</div>
+          </td>
+          <td class="tablerow">
+            <a href="" class="tablecontent">0x3Css</a>
+            <button class="tableCopybutton">
+              <span class="iconamoon--copy-bold"></span>
+              <div class="none">CLICK TO COPY</div>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="tablesubtitle">
+              <div class="center">
+                <span class="dashicons--money-alt2"></span>
+              </div>
+              <div>VALUE :</div>
+            </div>
+          </td>
+          <td>
+            <div class="alligncenter">
+              <span class="ri--eth-fill"></span>
+              <div class="tablecontent">0 ETH($0.00) </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="tablesubtitle">
+              <div class="center">
+                <span class="dashicons--money-alt2"></span>
+              </div>
+              <div>GAS PRICE :</div>
+            </div>
+          </td>
+          <td>
+            <div class="tablecontent"> 0.023123123 ETH ($0.63) </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="feetitle">
+            <div class="tablesubtitle">
+              <div class="center">
+                <span class="dashicons--money-alt2"></span>
+              </div>
+              <div>TRANSACTION FEE :</div>
+            </div>
+          </td>
+          <td>
+            <div class="transactionfee-content">
+              <div class="tablecontent">6.023123123 Gwei (0.000012321 ETH)</div>
+              <div class="transactionfee-container">
+                <div class="column2-container">
+                  <div class="container-title">NOTE</div>
+                  <div class="center">This sender has created a contract</div>
+                </div>
+                <div class="column2-container">
+                  <div class="container-title">ONCOMPLETE</div>
+                  <div class="center">Create</div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <div class="subTitle">
+        <span class="dashicons--money-alt"></span>
+        <div class="title">MORE DETAILS</div>
+        <div></div>
+      </div>
+      <div class="moredetail-container">
+        <div class="left-container">
+          <div class="center">
+            <span class="dashicons--money-alt2"></span>
           </div>
-          <div class="right-container">65,00 | 43221 (98%)</div>
+          <div>Gas Limit & Usage by Txn:</div>
         </div>
+        <div class="right-container">65,00 | 43221 (98%)</div>
+      </div>
+      <div class="moredetail-container">
+        <div class="left-container">
+          <div class="center">
+            <span class="dashicons--money-alt2"></span>
+          </div>
+          <div>Gas Fees:</div>
+        </div>
+        <div class="right-container">65,00 | 43221 (98%)</div>
       </div>
     </div>
-  </ContentWrap>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ContentWrap } from '@/components/ContentWrap'
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -213,6 +210,10 @@ watch(
 </script>
 
 <style scoped lang="css">
+.bodycontent {
+  margin: 1.5rem 3.5rem;
+}
+
 .alligncenter {
   display: flex;
   align-items: center;
@@ -623,6 +624,10 @@ td {
 
   td:first-child {
     width: 11rem;
+  }
+
+  .bodycontent {
+    margin: 0 1rem;
   }
 }
 </style>
