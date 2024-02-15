@@ -72,7 +72,7 @@ watch(
         ]"
       >
         <!-- {{ title }} -->
-        Blockchain Explorer
+        <span v-if="layout == 'top'" class="text-white">Blockchain Explorer</span>
       </div>
     </router-link>
   </div>

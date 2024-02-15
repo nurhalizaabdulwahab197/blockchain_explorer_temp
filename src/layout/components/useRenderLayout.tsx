@@ -101,7 +101,6 @@ export const useRenderLayout = () => {
             >
               <ToolHeader
                 class={[
-                  'bg-[var(--top-header-bg-color)]',
                   {
                     'layout-border__bottom': !tagsView.value
                   }

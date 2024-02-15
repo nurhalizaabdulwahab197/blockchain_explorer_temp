@@ -10,6 +10,7 @@ import { useDesign } from '@/hooks/web/useDesign'
 // import { ThemeSwitch } from '@/components/ThemeSwitch'
 // import { getCssVar } from '@/utils'
 import { TotalTransaction } from '@/components/TotalTransaction'
+import { Search } from '@/components/Search'
 
 const { getPrefixCls, variables } = useDesign()
 
@@ -82,6 +83,7 @@ export default defineComponent({
             ></LocaleDropdown>
           ) : undefined}
           <ThemeSwitch onChange={themeChange} />*/}
+          <Search></Search>
           <TotalTransaction></TotalTransaction>
         </div>
       </div>

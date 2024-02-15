@@ -226,9 +226,14 @@ main {
   text-decoration: underline;
 }
 
+.list {
+  overflow-x: auto;
+}
+
 .item {
   display: flex;
   height: 40px;
+  min-width: 380px;
   padding: 5px 20px;
   font-size: 14px;
   color: white;
