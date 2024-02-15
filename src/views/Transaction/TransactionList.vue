@@ -4,7 +4,7 @@
     <!-- Body Content -->
     <main>
       <div class="logo-section">
-        <img alt="Coin logo" class="logo" src="@/assets/imgs/Coinlogo.png" width="50" height="51" />
+        <Icon icon="dashicons:money-alt" class="logo" />
         <h1>TRANSACTIONS</h1>
       </div>
 
@@ -116,7 +116,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-
+import { Icon } from '@iconify/vue'
 interface Transaction {
   TxnHash: string
   block: number
@@ -288,14 +288,16 @@ body {
 
 .transactions-page {
   display: flex;
+  width: 90%;
   min-height: 100%;
-  font-family: Arial, sans-serif;
+  margin: auto;
+
+  /* font-family: Arial, sans-serif; */
   flex-direction: column;
 }
 
 main {
   flex: 1;
-  padding: 20px;
 }
 
 .logo-section {
@@ -303,12 +305,12 @@ main {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 20px;
-  margin-left: 70px;
 }
 
 .logo {
   margin-right: 10px;
-  color: #ffc107; /* FontAwesome's default "gold" color */
+  font-size: 38px;
+  color: #fff;
 }
 
 h1 {
@@ -317,8 +319,8 @@ h1 {
 }
 
 .table-section table {
-  width: 80%;
-  max-width: 80%;
+  width: 90%;
+  max-width: 90%;
   margin: auto;
   overflow-x: auto;
   border-collapse: collapse;

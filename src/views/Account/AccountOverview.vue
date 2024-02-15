@@ -250,7 +250,7 @@ updatePaginateData()
 }
 
 .main {
-  width: 95%;
+  width: 90%;
   height: auto;
   margin: auto;
 }

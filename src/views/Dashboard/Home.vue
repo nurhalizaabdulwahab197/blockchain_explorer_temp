@@ -76,7 +76,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="container">
+    <div class="listContainer">
       <div class="latestBlockContainer">
         <div class="header withBtn">
           <div class="headerTitle">Latest Blocks</div>
@@ -196,7 +196,7 @@ main {
   color: white;
 }
 
-.container {
+.listContainer {
   display: flex;
   gap: 20px;
 }
@@ -284,7 +284,7 @@ main {
     flex-wrap: wrap;
   }
 
-  .container {
+  .listContainer {
     display: flex;
     flex-direction: column;
   }

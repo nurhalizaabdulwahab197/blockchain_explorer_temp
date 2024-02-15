@@ -18,28 +18,28 @@ const temp = ref([
 
 <template>
   <div class="body">
-    <div class="container">
+    <div class="blockListPageContainer">
       <div class="title">
-        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" /><h2>Block Overview</h2>
+        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" />
+        <h2>Block Overview</h2>
       </div>
-
-      <div class="scrollable-container">
-        <div class="blockContainer">
+      <div class="blockContainer">
+        <Icon icon="bxs:left-arrow" class="blockarrow" />
+        <div class="block-scroll">
           <div class="block">
-            <Icon icon="bxs:left-arrow" class="blockarrow" />
             <div class="rectangle-container">
-              <div class="rectangle"
-                ><div style="height: 40px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="rectangle">
+                <div style="height: 40px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374445</p>
               </div>
             </div>
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 63px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 63px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374444</p>
               </div>
@@ -47,9 +47,9 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 60px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 60px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374443</p>
               </div>
@@ -57,9 +57,9 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 55px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 55px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374442</p>
               </div>
@@ -67,9 +67,9 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 40px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 40px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374441</p>
               </div>
@@ -77,9 +77,9 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 38px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 38px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374440</p>
               </div>
@@ -87,9 +87,9 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 45px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 45px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374439</p>
               </div>
@@ -97,9 +97,9 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 38px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 38px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374438</p>
               </div>
@@ -107,17 +107,17 @@ const temp = ref([
 
             <Icon icon="bi:link" class="link" />
             <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 33px" class="overlapping-rectangle"></div
-              ></div>
+              <div class="drectangle">
+                <div style="height: 33px" class="overlapping-rectangle"></div>
+              </div>
               <div class="blockno">
                 <p>#18374437</p>
               </div>
             </div>
-
-            <Icon icon="bxs:right-arrow" class="blockarrow" />
           </div>
         </div>
+
+        <Icon icon="bxs:right-arrow" class="blockarrow" />
       </div>
 
       <div class="scrollable-table">
@@ -173,16 +173,11 @@ const temp = ref([
 </template>
 
 <style scoped>
-.body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container {
+.blockListPageContainer {
   width: 90%;
   height: auto;
-  overflow-x: auto; /* Add this property */
+  margin: auto;
+  overflow-x: auto;
 }
 
 .title {
@@ -204,6 +199,7 @@ const temp = ref([
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  min-width: fit-content;
 }
 
 .overlapping-rectangle {
@@ -248,7 +244,9 @@ const temp = ref([
 
 .blockno p {
   margin: 0 14px;
-  text-align: center; /* Center text */
+  text-align: center;
+
+  /* Center text */
 }
 
 .header {
@@ -303,17 +301,14 @@ const temp = ref([
   min-width: 880px;
 }
 
-.scrollable-container {
-  max-width: 100%;
-  overflow-x: auto;
-  justify-content: center;
-}
-
 .blockContainer {
   display: flex;
-  justify-content: space-between; /* Distribute space evenly between items */
-  align-items: center; /* Center items vertically */
-  max-width: 100%; /* Allow the container to take up the full width */
+  align-items: center;
+}
+
+.block-scroll {
+  flex: 1;
+  overflow-x: auto;
 }
 
 .tableContainer {
@@ -330,7 +325,9 @@ const temp = ref([
 }
 
 .list {
-  min-width: 800px; /* Set a minimum width for the table content */
+  min-width: 800px;
+
+  /* Set a minimum width for the table content */
   padding-right: 20px;
 }
 
@@ -364,7 +361,7 @@ const temp = ref([
 }
 
 .txs-item {
-  margin-right: 10px; /* Add margin between items if needed */
+  margin-right: 10px;
 }
 
 .pagination {
