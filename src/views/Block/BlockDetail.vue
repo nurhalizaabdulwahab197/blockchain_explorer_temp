@@ -218,7 +218,7 @@ export default {
 }
 
 .blockinfo h3 {
-  margin: 10px 0 0 15px;
+  margin: 10px 15px 0;
   font-family: Inter, sans-serif;
   font-size: 16px;
   font-style: normal;
@@ -242,14 +242,14 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+  gap: 20px;
 }
 
 .totaltransaction,
 .blockheight,
 .timestamp {
-  width: 30%;
   height: 80px;
-  margin: 0 20px;
+  flex: 1;
   color: black;
   background: #d9d9d9;
   border-radius: 10px;
