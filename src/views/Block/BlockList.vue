@@ -25,98 +25,100 @@ const temp = ref([
 
       <div class="scrollable-container">
         <div class="blockContainer">
-          <div class="block">
-            <Icon icon="bxs:left-arrow" class="blockarrow" />
-            <div class="rectangle-container">
-              <div class="rectangle"
-                ><div style="height: 40px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374445</p>
+          <Icon icon="bxs:left-arrow" class="blockarrow left-arrow" />
+          <div class="block-scroll">
+            <div class="block">
+              <div class="rectangle-container">
+                <div class="rectangle"
+                  ><div style="height: 40px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374445</p>
+                </div>
               </div>
-            </div>
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 63px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374444</p>
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 63px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374444</p>
+                </div>
               </div>
-            </div>
 
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 60px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374443</p>
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 60px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374443</p>
+                </div>
+              </div>
+
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 55px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374442</p>
+                </div>
+              </div>
+
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 40px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374441</p>
+                </div>
+              </div>
+
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 38px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374440</p>
+                </div>
+              </div>
+
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 45px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374439</p>
+                </div>
+              </div>
+
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 38px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374438</p>
+                </div>
+              </div>
+
+              <Icon icon="bi:link" class="link" />
+              <div class="rectangle-container">
+                <div class="drectangle"
+                  ><div style="height: 33px" class="overlapping-rectangle"></div
+                ></div>
+                <div class="blockno">
+                  <p>#18374437</p>
+                </div>
               </div>
             </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 55px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374442</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 40px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374441</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 38px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374440</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 45px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374439</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 38px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374438</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
-              <div class="drectangle"
-                ><div style="height: 33px" class="overlapping-rectangle"></div
-              ></div>
-              <div class="blockno">
-                <p>#18374437</p>
-              </div>
-            </div>
-
-            <Icon icon="bxs:right-arrow" class="blockarrow" />
           </div>
+
+          <Icon icon="bxs:right-arrow" class="blockarrow right-arrow" />
         </div>
       </div>
 
@@ -204,6 +206,23 @@ const temp = ref([
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  min-width: fit-content;
+}
+
+.left-arrow {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 1000;
+  transform: translateY(-50%);
+}
+
+.right-arrow {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 1000;
+  transform: translateY(-50%);
 }
 
 .overlapping-rectangle {
@@ -310,10 +329,19 @@ const temp = ref([
 }
 
 .blockContainer {
+  position: relative;
   display: flex;
-  justify-content: space-between; /* Distribute space evenly between items */
-  align-items: center; /* Center items vertically */
-  max-width: 100%; /* Allow the container to take up the full width */
+  min-width: 100%; /* Ensure the container takes up the full width */
+  padding-right: 5%; /* Adjust padding for smaller screens */
+  padding-left: 5%; /* Adjust padding for smaller screens */
+  overflow-x: auto;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.block-scroll {
+  flex: 1;
+  overflow-x: auto;
 }
 
 .tableContainer {
@@ -364,7 +392,7 @@ const temp = ref([
 }
 
 .txs-item {
-  margin-right: 10px; /* Add margin between items if needed */
+  margin-right: 10px;
 }
 
 .pagination {
