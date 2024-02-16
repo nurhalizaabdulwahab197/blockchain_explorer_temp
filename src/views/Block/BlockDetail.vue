@@ -1,94 +1,82 @@
-<script>
+<script setup>
 import { Icon } from '@iconify/vue'
-export default {
-  data() {
-    return {
-      rectangleHeight: 50,
-      blockHeight: '#18374444',
-      hash: '0000eaa199dd8ac0f65d203aec421c7734a7771399159d1f8b404d2084e98238bf',
-      miner: '0x0d4dde84447bdd54861a88261f0a17e761be717d9faabfef1e01775df3e61d5d',
-      showToast: false
-    }
-  },
-  methods: {
-    copyBlockHeight() {
-      const heightValue = document.createElement('input')
-      heightValue.value = this.blockHeight
-      document.body.appendChild(heightValue)
-      heightValue.select()
-      heightValue.setSelectionRange(0, 99999) // For mobile devices
-      document.execCommand('copy')
-      document.body.removeChild(heightValue)
-      this.showToast = true
-      setTimeout(() => {
-        this.showToast = false
-      }, 6000)
-      this.copyMessageTitle = 'Block Height copied'
-      this.copyMessage = 'The block height was copied to the clipboard'
-    },
-    copyHash() {
-      const hashinput = document.createElement('input')
-      hashinput.value = this.hash
-      document.body.appendChild(hashinput)
-      hashinput.select()
-      hashinput.setSelectionRange(0, 99999) // For mobile devices
-      document.execCommand('copy')
-      document.body.removeChild(hashinput)
-      this.showToast = true
-      setTimeout(() => {
-        this.showToast = false
-      }, 6000)
-      this.copyMessageTitle = 'Hash copied'
-      this.copyMessage = 'The address was copied to the clipboard'
-    },
-    copyMiner() {
-      const miner = document.createElement('input')
-      miner.value = this.miner
-      document.body.appendChild(miner)
-      miner.select()
-      miner.setSelectionRange(0, 99999) // For mobile devices
-      document.execCommand('copy')
-      document.body.removeChild(miner)
-      this.showToast = true
-      setTimeout(() => {
-        this.showToast = false
-      }, 6000)
-      this.copyMessageTitle = 'Miner Message copied'
-      this.copyMessage = 'The address was copied to the clipboard'
-    }
-  }
+import { ref } from 'vue'
+
+const rectangleHeight = ref(50)
+const blockHeight = ref('#18374444')
+const hash = ref('0000eaa199dd8ac0f65d203aec421c7734a7771399159d1f8b404d2084e98238bf')
+const miner = ref('0x0d4dde84447bdd54861a88261f0a17e761be717d9faabfef1e01775df3e61d5d')
+const showToast = ref(false)
+const copyMessageTitle = ref('')
+const copyMessage = ref('')
+
+function copyBlockHeight() {
+  const heightValue = document.createElement('input')
+  heightValue.value = blockHeight.value
+  document.body.appendChild(heightValue)
+  heightValue.select()
+  heightValue.setSelectionRange(0, 99999) // For mobile devices
+  document.execCommand('copy')
+  document.body.removeChild(heightValue)
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 6000)
+  copyMessageTitle.value = 'Block Height copied'
+  copyMessage.value = 'The block height was copied to the clipboard'
+}
+
+function copyHash() {
+  const hashinput = document.createElement('input')
+  hashinput.value = hash.value
+  document.body.appendChild(hashinput)
+  hashinput.select()
+  hashinput.setSelectionRange(0, 99999) // For mobile devices
+  document.execCommand('copy')
+  document.body.removeChild(hashinput)
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 6000)
+  copyMessageTitle.value = 'Hash copied'
+  copyMessage.value = 'The address was copied to the clipboard'
+}
+
+function copyMiner() {
+  const minerInput = document.createElement('input')
+  minerInput.value = miner.value
+  document.body.appendChild(minerInput)
+  minerInput.select()
+  minerInput.setSelectionRange(0, 99999) // For mobile devices
+  document.execCommand('copy')
+  document.body.removeChild(minerInput)
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 6000)
+  copyMessageTitle.value = 'Miner Message copied'
+  copyMessage.value = 'The address was copied to the clipboard'
 }
 </script>
 
 <template>
   <div class="body">
-    <div class="container">
+    <div class="blockDetailContainer">
       <div v-if="showToast" class="alertbox">
         <div class="bardesign"></div
         ><div class="copymessage"
           ><div class="copymessagetitle"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="1.2em"
-              height="1.2em"
-              viewBox="0 0 24 24"
-              style="margin-right: 6px"
-            >
-              <path
-                fill="#1f51ff"
-                d="M.41 13.41L6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17L7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42l-6.35 6.35l1.42 1.41z"
-              /></svg
-            >{{ copyMessageTitle }} </div
+            ><Icon
+              icon="charm:tick-double"
+              style=" margin-right: 5px;font-size: 1.5rem; color: blue"
+            />
+            {{ copyMessageTitle }} </div
           >{{ copyMessage }}</div
         >
       </div>
       <div class="title">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 56 56">
-          <path
-            fill="currentColor"
-            d="M28 4c13.255 0 24 10.745 24 24S41.255 52 28 52S4 41.255 4 28S14.745 4 28 4m0 4C16.954 8 8 16.954 8 28s8.954 20 20 20s20-8.954 20-20S39.046 8 28 8m.573 6.286v2.687c3.976.319 6.855 2.704 6.982 6.314h-3.308c-.207-2.004-1.638-3.165-3.674-3.419V26.5l.764.19c4.183.971 6.473 2.689 6.473 6.076c0 3.897-3.181 6.107-7.237 6.394v2.671h-1.797V39.16c-4.04-.303-7.236-2.577-7.347-6.394h3.292c.286 1.861 1.495 3.229 4.055 3.5V29.33l-.652-.16c-4.04-.937-6.218-2.75-6.218-5.979c0-3.563 2.862-5.916 6.87-6.219v-2.687zm0 15.458v6.537c2.72-.207 3.865-1.495 3.865-3.197c0-1.638-.89-2.608-3.865-3.34m-1.797-9.876c-2.29.286-3.499 1.606-3.499 3.054c0 1.447.955 2.512 3.5 3.149z"
-          /></svg
-        ><h2>Block 18374445</h2>
+        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" />
+        <h2>Block 18374445</h2>
       </div>
       <div class="block">
         <Icon icon="bxs:left-arrow" class="blockarrow" />
@@ -120,12 +108,8 @@ export default {
         </div>
       </div>
       <div class="blockdetailtitle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 56 56">
-          <path
-            fill="currentColor"
-            d="M28 4c13.255 0 24 10.745 24 24S41.255 52 28 52S4 41.255 4 28S14.745 4 28 4m0 4C16.954 8 8 16.954 8 28s8.954 20 20 20s20-8.954 20-20S39.046 8 28 8m.573 6.286v2.687c3.976.319 6.855 2.704 6.982 6.314h-3.308c-.207-2.004-1.638-3.165-3.674-3.419V26.5l.764.19c4.183.971 6.473 2.689 6.473 6.076c0 3.897-3.181 6.107-7.237 6.394v2.671h-1.797V39.16c-4.04-.303-7.236-2.577-7.347-6.394h3.292c.286 1.861 1.495 3.229 4.055 3.5V29.33l-.652-.16c-4.04-.937-6.218-2.75-6.218-5.979c0-3.563 2.862-5.916 6.87-6.219v-2.687zm0 15.458v6.537c2.72-.207 3.865-1.495 3.865-3.197c0-1.638-.89-2.608-3.865-3.34m-1.797-9.876c-2.29.286-3.499 1.606-3.499 3.054c0 1.447.955 2.512 3.5 3.149z"
-          /></svg
-        ><h2>Block Details</h2>
+        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" />
+        <h2>Block Details</h2>
       </div>
       <div style="overflow-x: auto">
         <table>
@@ -196,7 +180,6 @@ export default {
 .copy {
   display: flex;
   padding: 5px 15px;
-  font-family: Inter, sans-serif;
   font-size: 9px;
   color: #9c9c9c;
   background-color: transparent;
@@ -219,7 +202,6 @@ export default {
 
 .blockinfo h3 {
   margin: 10px 15px 0;
-  font-family: Inter, sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -228,7 +210,6 @@ export default {
 }
 
 .blockinfo p {
-  font-family: Inter, sans-serif;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -257,23 +238,15 @@ export default {
 }
 
 .bigMoneyIcon {
-  font-size: 30px !important;
+  font-size: 38px !important;
   color: #fff;
 }
 
-.title h2 {
-  margin: 0 0 0 25px;
-  font-family: Nunito, sans-serif;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  color: #fff;
-}
-
+.title h2,
 .blockdetailtitle h2 {
-  margin: 0 0 0 25px;
-  font-family: Nunito, sans-serif;
+  margin: 0 0 0 10px;
+
+  /* font-family: Nunito, sans-serif; */
   font-size: 25px;
   font-style: normal;
   font-weight: 500;
@@ -281,27 +254,22 @@ export default {
   color: #fff;
 }
 
-.body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container {
+.blockDetailContainer {
   display: relative;
   width: 90%;
+  margin: auto;
 }
 
 .title {
   display: flex;
-  flex-direction: row;
+  align-items: center;
 }
 
 .blockdetailtitle {
   display: flex;
   margin-top: 30px;
   margin-bottom: 20px;
-  flex-direction: row;
+  align-items: center;
 }
 
 .rectangle {
@@ -360,7 +328,6 @@ export default {
   z-index: 10000;
   display: flex;
   width: 450px;
-  font-family: Inter, sans-serif;
   flex-direction: row;
 }
 
@@ -394,17 +361,14 @@ table {
 
 .c1 {
   width: 20%;
-  font-family: Inter, sans-serif;
 }
 
 .c2 {
   width: 65%;
-  font-family: Inter, sans-serif;
 }
 
 .c3 {
   width: 15%;
-  font-family: Inter, sans-serif;
 }
 
 table td {
@@ -466,7 +430,6 @@ tr:last-child td {
     z-index: 10000;
     display: flex;
     width: 80%;
-    font-family: Inter, sans-serif;
     flex-direction: row;
   }
 
@@ -500,7 +463,6 @@ tr:last-child td {
   .copy {
     display: flex;
     padding: 5px 10px;
-    font-family: Inter, sans-serif;
     font-size: 4px;
     color: #9c9c9c;
     background-color: transparent;

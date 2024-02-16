@@ -332,7 +332,7 @@ updateSlicedDummyData()
 }
 
 .title h2 {
-  margin: 4px 0 0 5px;
+  margin: 4px 0 0 10px;
   font-size: 25px;
   font-style: normal;
   font-weight: 500;

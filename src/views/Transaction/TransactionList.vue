@@ -5,7 +5,7 @@
     <main>
       <div class="logo-section">
         <Icon icon="dashicons:money-alt" class="logo" />
-        <h1>TRANSACTIONS</h1>
+        <h1>Transactions</h1>
       </div>
 
       <div class="table-section" style="overflow-x: auto">
@@ -308,14 +308,14 @@ main {
 }
 
 .logo {
-  margin-right: 10px;
   font-size: 38px;
   color: #fff;
 }
 
 h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 25px;
+  font-weight: 500;
 }
 
 .table-section table {
