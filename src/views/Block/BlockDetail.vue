@@ -68,7 +68,7 @@ function copyMiner() {
           ><div class="copymessagetitle"
             ><Icon
               icon="charm:tick-double"
-              style=" margin-right: 5px;font-size: 1.5rem; color: blue"
+              style="margin-right: 5px; font-size: 1.5rem; color: blue"
             />
             {{ copyMessageTitle }} </div
           >{{ copyMessage }}</div
