@@ -187,7 +187,7 @@ import { ContentWrap } from '@/components/ContentWrap'
   }
 
   .text1 {
-    max-width: 200px; /* Adjust the maximum width as per your requirement */
+    min-width: 1200px;
     padding-left: 20px;
     overflow: hidden;
     text-overflow: ellipsis;
