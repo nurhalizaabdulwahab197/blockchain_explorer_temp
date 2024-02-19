@@ -184,7 +184,8 @@ export const useRenderLayout = () => {
             'flex items-center gap-20px justify-between relative px-20px',
             {
               'layout-border__bottom': !tagsView.value
-            }
+            },
+            'bg-gradient-to-b from-black from-70% to-slate-700 to-100%'
           ]}
         >
           {logo.value ? <Logo class="custom-hover flex-1"></Logo> : undefined}
