@@ -75,7 +75,7 @@ function copyMiner() {
         >
       </div>
       <div class="title">
-        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" />
+        <Icon icon="cib:ethereum" class="bigMoneyIcon" />
         <h2>Block 18374445</h2>
       </div>
       <div class="block">
@@ -108,7 +108,7 @@ function copyMiner() {
         </div>
       </div>
       <div class="blockdetailtitle">
-        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" />
+        <Icon icon="cib:ethereum" class="bigMoneyIcon" />
         <h2>Block Details</h2>
       </div>
       <div style="overflow-x: auto">
@@ -238,7 +238,7 @@ function copyMiner() {
 }
 
 .bigMoneyIcon {
-  font-size: 38px !important;
+  font-size: 30px !important;
   color: #fff;
 }
 

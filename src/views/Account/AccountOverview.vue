@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Icon } from '@iconify/vue'
-
+import router from '@/router'
 var dataset = ref([
   {
     TxnHash: '0x3916d1d5a3e98e5ae9....',
@@ -144,6 +144,14 @@ function updatePaginateData() {
 
 updatePaginateData()
 
+const goToDetail = (TxnHash) => {
+  router.push(`/blockchain/transactionList/transactionDetail/id=${TxnHash}`)
+}
+
+const goToAccount = (account) => {
+  router.push(`/Account/accountOverview/id=${account}`)
+}
+
 // Watch for changes in dataset and update current page if needed
 </script>
 
@@ -193,11 +201,11 @@ updatePaginateData()
             </thead>
             <tbody>
               <tr v-for="(item, index) in paginatedData" :key="index" class="row">
-                <td class="td1">{{ item.TxnHash }}</td>
+                <td class="td1 clickable" @click="goToDetail(item.TxnHash)">{{ item.TxnHash }}</td>
                 <td class="td2">{{ item.Block }}</td>
                 <td class="td3">{{ item.Time }}</td>
-                <td class="td4">{{ item.From }}</td>
-                <td class="td5">{{ item.To }}</td>
+                <td class="td4 clickable" @click="goToAccount(item.from)">{{ item.From }}</td>
+                <td class="td5 clickable" @click="goToAccount(item.to)">{{ item.To }}</td>
                 <td class="td6">{{ item.Amount }}</td>
                 <td class="td7">{{ item.Age }}</td>
               </tr>
@@ -449,6 +457,11 @@ tr:last-child td:last-child {
 .td4,
 .td5 {
   color: #1688f2;
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
 }
 
 .td6 {

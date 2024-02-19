@@ -1,7 +1,7 @@
 <template>
   <div class="bodycontent">
     <div class="title-container">
-      <Icon icon="dashicons:money-alt" class="moneyicon" />
+      <Icon icon="cib:ethereum" class="moneyicon" />
       <div class="title">Transaction Overview</div>
       <div class="iconbackbutton"><Icon icon="ion:chevron-back" /></div>
       <div class="iconnextbutton"><Icon icon="ion:chevron-forward" /></div>
@@ -33,7 +33,7 @@
         <tr class="tabletitle-container">
           <th colspan="2">
             <div class="tabletitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>TRANSACTION DETAILS</div>
             </div>
           </th>
@@ -41,12 +41,12 @@
         <tr>
           <td>
             <div class="tablesubtitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>SENDER : </div>
             </div>
           </td>
           <td class="tablerow">
-            <a href="" class="tablecontent">0x3Css</a>
+            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">0x3Css</a>
             <button class="tableCopybutton">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -56,7 +56,7 @@
         <tr>
           <td>
             <div class="tablesubtitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>AMOUNT :</div>
             </div>
           </td>
@@ -65,12 +65,12 @@
         <tr>
           <td>
             <div class="tablesubtitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>RECERIVER :</div>
             </div>
           </td>
           <td class="tablerow">
-            <a href="" class="tablecontent">0x3Css</a>
+            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">0x3Css</a>
             <button class="tableCopybutton">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -80,7 +80,7 @@
         <tr>
           <td>
             <div class="tablesubtitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>VALUE :</div>
             </div>
           </td>
@@ -94,7 +94,7 @@
         <tr>
           <td>
             <div class="tablesubtitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>GAS PRICE :</div>
             </div>
           </td>
@@ -105,7 +105,7 @@
         <tr>
           <td class="feetitle">
             <div class="tablesubtitle">
-              <Icon icon="dashicons:money-alt" />
+              <Icon icon="cib:ethereum" />
               <div>TRANSACTION FEE :</div>
             </div>
           </td>
@@ -129,20 +129,20 @@
     </div>
     <div>
       <div class="subTitle">
-        <Icon icon="dashicons:money-alt" />
+        <Icon icon="cib:ethereum" />
         <div class="title">MORE DETAILS</div>
         <div></div>
       </div>
       <div class="moredetail-container">
         <div class="left-container">
-          <Icon icon="dashicons:money-alt" />
+          <Icon icon="cib:ethereum" />
           <div>Gas Limit & Usage by Txn:</div>
         </div>
         <div class="right-container">65,00 | 43221 (98%)</div>
       </div>
       <div class="moredetail-container">
         <div class="left-container">
-          <Icon icon="dashicons:money-alt" />
+          <Icon icon="cib:ethereum" />
           <div>Gas Fees:</div>
         </div>
         <div class="right-container">65,00 | 43221 (98%)</div>
@@ -216,7 +216,7 @@ watch(
 }
 
 .moneyicon {
-  font-size: 38px;
+  font-size: 30px;
 }
 
 .iconnextbutton,

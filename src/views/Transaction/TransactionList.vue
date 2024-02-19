@@ -4,7 +4,7 @@
     <!-- Body Content -->
     <main>
       <div class="logo-section">
-        <Icon icon="dashicons:money-alt" class="logo" />
+        <Icon icon="cib:ethereum" class="logo" />
         <h1>Transactions</h1>
       </div>
 
@@ -25,6 +25,7 @@
             <!-- Display a fixed number of data rows (e.g., 10 rows) -->
             <tr v-for="(item, index) in slicedDummyData" :key="index">
               <td
+                class="clickable"
                 style="
                   max-width: 180px;
                   overflow: hidden;
@@ -32,6 +33,7 @@
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 "
+                @click="goToDetail(item.TxnHash)"
                 >{{ item.TxnHash }}</td
               >
               <td
@@ -53,6 +55,7 @@
                 >{{ item.time }}
               </td>
               <td
+                class="clickable"
                 style="
                   max-width: 140px;
                   overflow: hidden;
@@ -60,9 +63,11 @@
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 "
+                @click="goToAccount(item.from)"
                 >{{ item.from }}</td
               >
               <td
+                class="clickable"
                 style="
                   max-width: 140px;
                   overflow: hidden;
@@ -70,6 +75,7 @@
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 "
+                @click="goToAccount(item.to)"
                 >{{ item.to }}</td
               >
               <td
@@ -117,6 +123,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
+import router from '@/router'
 interface Transaction {
   TxnHash: string
   block: number
@@ -125,6 +132,14 @@ interface Transaction {
   to: string
   amount: number
   age: number
+}
+
+const goToDetail = (TxnHash) => {
+  router.push(`/blockchain/transactionList/transactionDetail/id=${TxnHash}`)
+}
+
+const goToAccount = (account) => {
+  router.push(`/account/accountOverview/id=${account}`)
 }
 
 const dummyData = ref<Transaction[]>([
@@ -308,7 +323,7 @@ main {
 }
 
 .logo {
-  font-size: 38px;
+  font-size: 30px;
   color: #fff;
 }
 
@@ -377,6 +392,14 @@ tr:last-child td:first-child {
 tr:last-child td:last-child {
   border-color: #000;
   border-bottom-right-radius: 10px; /* Adjust the radius as needed */
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
 }
 
 .pagination-buttons {

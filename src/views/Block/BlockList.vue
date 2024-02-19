@@ -4,7 +4,7 @@
     <!-- Body Content -->
     <main>
       <div class="title">
-        <Icon icon="dashicons:money-alt" class="bigMoneyIcon" />
+        <Icon icon="cib:ethereum" class="bigMoneyIcon" />
         <h2>Block Overview</h2>
       </div>
 
@@ -13,7 +13,7 @@
         <Icon icon="bxs:left-arrow" class="blockarrow" />
         <div class="block-scroll">
           <div class="block">
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(1)">
               <div class="rectangle">
                 <div style="height: 40px" class="overlapping-rectangle"></div>
               </div>
@@ -22,7 +22,7 @@
               </div>
             </div>
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(2)">
               <div class="drectangle">
                 <div style="height: 63px" class="overlapping-rectangle"></div>
               </div>
@@ -32,7 +32,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(3)">
               <div class="drectangle">
                 <div style="height: 60px" class="overlapping-rectangle"></div>
               </div>
@@ -42,7 +42,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(4)">
               <div class="drectangle">
                 <div style="height: 55px" class="overlapping-rectangle"></div>
               </div>
@@ -52,7 +52,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(5)">
               <div class="drectangle">
                 <div style="height: 40px" class="overlapping-rectangle"></div>
               </div>
@@ -62,7 +62,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(6)">
               <div class="drectangle">
                 <div style="height: 38px" class="overlapping-rectangle"></div>
               </div>
@@ -72,7 +72,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(7)">
               <div class="drectangle">
                 <div style="height: 45px" class="overlapping-rectangle"></div>
               </div>
@@ -82,7 +82,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(8)">
               <div class="drectangle">
                 <div style="height: 38px" class="overlapping-rectangle"></div>
               </div>
@@ -92,7 +92,7 @@
             </div>
 
             <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container">
+            <div class="rectangle-container" @click="goToBlock(9)">
               <div class="drectangle">
                 <div style="height: 33px" class="overlapping-rectangle"></div>
               </div>
@@ -132,6 +132,8 @@
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 "
+                class="clickable"
+                @click="goToBlock(item.hash)"
                 >{{ item.hash }}</td
               >
               <td
@@ -180,6 +182,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
+import router from '@/router'
 interface Block {
   block: number
   hash: string
@@ -323,6 +326,9 @@ const updateSlicedDummyData = () => {
 }
 
 updateSlicedDummyData()
+const goToBlock = (block) => {
+  router.push(`/blockchain/blockList/blockdetail/block=${block}`)
+}
 </script>
 
 <style scoped>
@@ -341,7 +347,7 @@ updateSlicedDummyData()
 }
 
 .bigMoneyIcon {
-  font-size: 38px;
+  font-size: 30px;
   color: #fff;
 }
 
@@ -524,5 +530,9 @@ tr:last-child td:last-child {
   color: #000;
   background-color: rgb(255 255 255 / 60%);
   border-radius: 5px;
+}
+
+.clickable:hover {
+  text-decoration: underline;
 }
 </style>

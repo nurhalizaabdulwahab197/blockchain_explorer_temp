@@ -3,24 +3,19 @@ import { ref, onMounted, watch } from 'vue'
 import ApexCharts from 'apexcharts'
 import { options } from './apexChartOpt'
 import { Icon } from '@iconify/vue'
+import router from '@/router'
 
 const temp = ref([
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' },
-  { a: 'a' }
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+  { id: 5 },
+  { id: 6 },
+  { id: 7 },
+  { id: 8 },
+  { id: 9 },
+  { id: 10 }
 ])
 const chart = ref(null)
 const chartHeight = ref(350)
@@ -32,6 +27,17 @@ onMounted(() => {
   chart.value = new ApexCharts(document.querySelector('#chart'), chartOptions)
   chart.value.render()
 })
+
+const goToAccount = (account) => {
+  router.push(`/account/accountOverview/id=${account}`)
+}
+
+const goToBlock = (block) => {
+  router.push(`/blockchain/blockList/blockdetail/block=${block}`)
+}
+const goToTransaction = (TxnHash) => {
+  router.push(`/blockchain/transactionList/transactionDetail/id=${TxnHash}`)
+}
 </script>
 
 <template>
@@ -88,9 +94,12 @@ onMounted(() => {
           <div class="item" v-for="v in temp" :key="v.id">
             <div style="display: flex; align-items: center">
               <Icon icon="clarity:block-line" />
-              <span>18374438</span>
+              <span class="clickable" @click="goToBlock(v.id)">18374438</span>
             </div>
-            <div> Hash: <span style="color: #1688f2">0xe3....7fbf</span> </div>
+            <div>
+              Hash:
+              <span class="clickable" @click="goToBlock(v.id)">0xe3....7fbf</span>
+            </div>
             <div> Txs: 12 </div>
             <div class="time"> 11 secs ago </div>
           </div>
@@ -107,11 +116,13 @@ onMounted(() => {
           <div class="item" v-for="v in temp" :key="v.id">
             <div style="display: flex; align-items: center">
               <Icon icon="cib:ethereum" />
-              <span>Hash: <span>0xb2....4dea</span></span>
+              Hash: <span class="clickable" @click="goToTransaction(v.id)"> 0xb2....4dea</span>
             </div>
             <div>
-              <div>Form: <span>08f3....y5bf</span></div>
-              <div>To: <span>07r3....7uFe</span></div>
+              <div
+                >Form: <span class="clickable" @click="goToAccount(v.id)">08f3....y5bf</span></div
+              >
+              <div>To: <span class="clickable" @click="goToAccount(v.id)">07r3....7uFe</span></div>
             </div>
             <div>
               <div>
@@ -251,8 +262,14 @@ main {
   color: #9c9c9c;
 }
 
-.item span {
+.clickable {
+  margin-left: 3px;
   color: #1688f2;
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
 }
 
 @media screen and (width <= 880px) {
