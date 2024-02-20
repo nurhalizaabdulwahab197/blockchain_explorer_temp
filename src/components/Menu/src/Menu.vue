@@ -73,7 +73,11 @@ export default defineComponent({
       if (unref(layout) === 'top') {
         return renderMenu()
       } else {
-        return <ElScrollbar>{renderMenu()}</ElScrollbar>
+        return (
+          <ElScrollbar style={{ backgroundColor: 'var(--left-menu-bg-color)' }}>
+            {renderMenu()}
+          </ElScrollbar>
+        )
       }
     }
 

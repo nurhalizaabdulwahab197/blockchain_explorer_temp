@@ -54,11 +54,11 @@ watch(
       :class="[
         prefixCls,
         layout !== 'classic' ? `${prefixCls}__Top` : '',
-        'flex !h-[var(--logo-height)] items-center cursor-pointer pl-8px relative decoration-none overflow-hidden'
+        'flex items-center cursor-pointer pl-8px relative decoration-none overflow-hidden'
       ]"
       to="/"
     >
-      <img src="@/assets/imgs/logo.png" class="h-[calc(var(--logo-height)-10px)]" />
+      <img src="@/assets/imgs/logo.png" class="h-[var(--logo-height)]" />
       <div
         v-if="show"
         :class="[
@@ -72,7 +72,7 @@ watch(
         ]"
       >
         <!-- {{ title }} -->
-        <span v-if="layout == 'top'" class="text-white">Blockchain Explorer</span>
+        <span class="text-white">Blockchain<br />Explorer</span>
       </div>
     </router-link>
   </div>
