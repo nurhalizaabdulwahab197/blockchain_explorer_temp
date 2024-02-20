@@ -1,5 +1,5 @@
 import { FormSchema, FormSetProps } from '../Form'
-import Search from './src/Search.vue'
+import Search from './src/SearchBar.vue'
 
 export type { SearchProps } from './src/types'
 
