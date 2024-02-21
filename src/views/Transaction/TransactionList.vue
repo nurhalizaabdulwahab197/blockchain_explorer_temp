@@ -38,7 +38,9 @@
                     color: #1688f2;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    cursor: pointer;
                   "
+                  @click="index === 0 ? navigateToDetailPage(item.TxnHash) : null"
                   >{{ item.TxnHash }}</td
                 >
                 <td
@@ -124,8 +126,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { ContentWrap } from '@/components/ContentWrap'
+const router = useRouter()
 
+const navigateToDetailPage = (id: string) => {
+  router.push({ name: 'TransactionDetail', params: { id } })
+}
 interface Transaction {
   TxnHash: string
   block: number
