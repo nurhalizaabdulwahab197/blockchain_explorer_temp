@@ -11,7 +11,7 @@ const appStore = useAppStore()
 
 const show = ref(true)
 
-const title = computed(() => appStore.getTitle)
+// const title = computed(() => appStore.getTitle)
 
 const layout = computed(() => appStore.getLayout)
 
@@ -54,26 +54,25 @@ watch(
       :class="[
         prefixCls,
         layout !== 'classic' ? `${prefixCls}__Top` : '',
-        'flex !h-[var(--logo-height)] items-center cursor-pointer pl-8px relative decoration-none overflow-hidden'
+        'flex items-center cursor-pointer pl-8px relative decoration-none overflow-hidden'
       ]"
       to="/"
     >
-      <img
-        src="@/assets/imgs/logo.png"
-        class="w-[calc(var(--logo-height)-10px)] h-[calc(var(--logo-height)-10px)]"
-      />
+      <img src="@/assets/imgs/logo.png" class="h-[var(--logo-height)]" />
       <div
         v-if="show"
         :class="[
           'ml-10px text-16px font-700',
           {
             'text-[var(--logo-title-text-color)]': layout === 'classic',
+            'text-25px': layout === 'top',
             'text-[var(--top-header-text-color)]':
               layout === 'topLeft' || layout === 'top' || layout === 'cutMenu'
           }
         ]"
       >
-        {{ title }}
+        <!-- {{ title }} -->
+        <span class="text-white">Blockchain<br />Explorer</span>
       </div>
     </router-link>
   </div>
