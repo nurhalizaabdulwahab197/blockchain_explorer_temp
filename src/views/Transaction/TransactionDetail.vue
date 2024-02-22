@@ -46,7 +46,7 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">0x3Css</a>
+            <a href="#/account/accountOverview/0x3Css" class="tablecontent">0x3Css</a>
             <button class="tableCopybutton">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -70,7 +70,7 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">0x3Css</a>
+            <a href="#/account/accountOverview/0x3Css" class="tablecontent">0x3Css</a>
             <button class="tableCopybutton">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>

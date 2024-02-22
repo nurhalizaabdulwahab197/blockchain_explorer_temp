@@ -145,11 +145,11 @@ function updatePaginateData() {
 updatePaginateData()
 
 const goToDetail = (TxnHash) => {
-  router.push(`/blockchain/transactionList/transactionDetail/id=${TxnHash}`)
+  router.push(`/blockchain/transactionList/transactionDetail/${TxnHash}`)
 }
 
 const goToAccount = (account) => {
-  router.push(`/Account/accountOverview/id=${account}`)
+  router.push(`/Account/accountOverview/${account}`)
 }
 
 // Watch for changes in dataset and update current page if needed
@@ -204,8 +204,8 @@ const goToAccount = (account) => {
                 <td class="td1 clickable" @click="goToDetail(item.TxnHash)">{{ item.TxnHash }}</td>
                 <td class="td2">{{ item.Block }}</td>
                 <td class="td3">{{ item.Time }}</td>
-                <td class="td4 clickable" @click="goToAccount(item.from)">{{ item.From }}</td>
-                <td class="td5 clickable" @click="goToAccount(item.to)">{{ item.To }}</td>
+                <td class="td4 clickable" @click="goToAccount(item.From)">{{ item.From }}</td>
+                <td class="td5 clickable" @click="goToAccount(item.To)">{{ item.To }}</td>
                 <td class="td6">{{ item.Amount }}</td>
                 <td class="td7">{{ item.Age }}</td>
               </tr>

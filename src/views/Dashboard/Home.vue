@@ -29,14 +29,14 @@ onMounted(() => {
 })
 
 const goToAccount = (account) => {
-  router.push(`/account/accountOverview/id=${account}`)
+  router.push(`/account/accountOverview/${account}`)
 }
 
 const goToBlock = (block) => {
-  router.push(`/blockchain/blockList/blockdetail/block=${block}`)
+  router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
 const goToTransaction = (TxnHash) => {
-  router.push(`/blockchain/transactionList/transactionDetail/id=${TxnHash}`)
+  router.push(`/blockchain/transactionList/transactionDetail/${TxnHash}`)
 }
 </script>
 
