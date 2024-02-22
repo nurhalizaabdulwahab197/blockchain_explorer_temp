@@ -135,11 +135,11 @@ interface Transaction {
 }
 
 const goToDetail = (TxnHash) => {
-  router.push(`/blockchain/transactionList/transactionDetail/id=${TxnHash}`)
+  router.push(`/blockchain/transactionList/transactionDetail/${TxnHash}`)
 }
 
 const goToAccount = (account) => {
-  router.push(`/account/accountOverview/id=${account}`)
+  router.push(`/account/accountOverview/${account}`)
 }
 
 const dummyData = ref<Transaction[]>([
