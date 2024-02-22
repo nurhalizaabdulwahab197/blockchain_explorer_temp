@@ -305,7 +305,7 @@ const updateSlicedDummyData = () => {
 
 updateSlicedDummyData()
 // const goToBlock = (block) => {
-//   router.push(`/blockchain/blockList/blockdetail/block=${block}`)
+//   router.push(`/blockchain/blockList/blockdetail/${block}`)
 // }
 </script>
 
