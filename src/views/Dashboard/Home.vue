@@ -19,6 +19,7 @@ const temp = ref([
 ])
 const chart = ref(null)
 const chartHeight = ref(350)
+const blocks = ref([])
 
 onMounted(() => {
   const chartOptions = { ...options, chart: { ...options.chart, id: 'chart' } }
@@ -27,6 +28,47 @@ onMounted(() => {
   chart.value = new ApexCharts(document.querySelector('#chart'), chartOptions)
   chart.value.render()
 })
+
+const fetchData = () => {
+  fetch('http://localhost:8080/api/block/latestBlockList')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      blocks.value = data.output
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+onMounted(fetchData)
+setInterval(fetchData, 5000) //fetch block every 10 seconds
+
+const formatHexString = (hexString) => {
+  const prefixLength = 5 // Length of the "0x" prefix
+  const suffixLength = 5 // Number of characters to display at the end
+
+  // Extract the first and last few characters
+  const prefix = hexString.slice(0, prefixLength)
+  const suffix = hexString.slice(-suffixLength)
+
+  // Create the formatted string with 'X' placeholders in the middle
+  const formattedString = prefix + '...' + suffix
+
+  return formattedString
+}
+
+const calcTimeDiff = (timestamp) => {
+  const blockTimestamp = new Date(timestamp)
+  const currentDate = new Date()
+  const timeDifferenceInMilliseconds = currentDate - blockTimestamp
+  const timeDifferenceInSeconds = Math.floor(timeDifferenceInMilliseconds / 1000)
+  return timeDifferenceInSeconds
+}
 
 const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
@@ -62,7 +104,7 @@ const goToTransaction = (TxnHash) => {
             <Icon icon="clarity:blocks-group-line" class="detailIcon" />
             <div>
               <p class="detailTitle">BLOCKS</p>
-              <p class="detailVal">18,375,205</p>
+              <p class="detailVal">{{ blocks && blocks.length > 0 ? blocks[0].number : 'N/A' }}</p>
             </div>
           </div>
           <div class="detailBlock">
@@ -91,17 +133,19 @@ const goToTransaction = (TxnHash) => {
           </a>
         </div>
         <div class="list">
-          <div class="item" v-for="v in temp" :key="v.id">
+          <div class="item" v-for="block in blocks" :key="block.id">
             <div style="display: flex; align-items: center">
               <Icon icon="clarity:block-line" />
-              <span class="clickable" @click="goToBlock(v.id)">18374438</span>
+              <span class="clickable" @click="goToBlock(block.number)">{{ block.number }}</span>
             </div>
             <div>
               Hash:
-              <span class="clickable" @click="goToBlock(v.id)">0xe3....7fbf</span>
+              <span class="clickable" @click="goToBlock(block.hash)">
+                {{ formatHexString(block.hash) }}
+              </span>
             </div>
-            <div> Txs: 12 </div>
-            <div class="time"> 11 secs ago </div>
+            <div> Txs: {{ block.transactions.length }}</div>
+            <div class="time"> {{ calcTimeDiff(block.timestamp) }} secs ago </div>
           </div>
         </div>
       </div>
