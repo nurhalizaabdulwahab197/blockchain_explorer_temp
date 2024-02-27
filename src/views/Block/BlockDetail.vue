@@ -1,11 +1,19 @@
 <script setup>
 import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
+import router from '@/router'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 const rectangleHeight = ref(50)
-const blockHeight = ref('#18374444')
-const hash = ref('0000eaa199dd8ac0f65d203aec421c7734a7771399159d1f8b404d2084e98238bf')
-const miner = ref('0x0d4dde84447bdd54861a88261f0a17e761be717d9faabfef1e01775df3e61d5d')
+const blockHeight = ref('')
+const hash = ref('')
+const miner = ref('')
+const size = ref('')
+const timestamp = ref('')
+const transactionNumber = ref(0)
+const transactionFee = ref(0)
+const blockReward = ref(0)
+const internalTransaction = ref(0)
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
@@ -57,6 +65,90 @@ function copyMiner() {
   copyMessageTitle.value = 'Miner Message copied'
   copyMessage.value = 'The address was copied to the clipboard'
 }
+
+function startsWith0x(str) {
+  return str.startsWith('0x')
+}
+function isNumeric(str) {
+  return !isNaN(Number(str))
+}
+
+onMounted(() => {
+  const block = route.params.block
+  if (startsWith0x(block)) {
+    hash.value = block
+    fetchDataHash()
+  } else if (isNumeric(block)) {
+    blockHeight.value = block
+    fetchDataNumber()
+  } else {
+    console.log('Error')
+  }
+})
+
+const fetchDataHash = () => {
+  fetch(`http://localhost:8080/api/block/hash/${hash.value}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      const fetchedBlock = data.output
+
+      if (fetchedBlock) {
+        blockHeight.value = fetchedBlock.number
+        hash.value = fetchedBlock.hash
+        miner.value = fetchedBlock.miner
+        size.value = fetchedBlock.size
+        timestamp.value = fetchedBlock.timestamp
+        transactionNumber.value = fetchedBlock.transactionNumber
+        blockReward.value = fetchedBlock.blockReward
+        transactionFee.value = fetchedBlock.transactionNumber
+        rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
+        internalTransaction.value = fetchedBlock.internalTransaction
+      } else {
+        console.error('Fetched block is null')
+      }
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+const fetchDataNumber = () => {
+  fetch(`http://localhost:8080/api//block/number/${blockHeight.value}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      const fetchedBlock = data.output
+
+      if (fetchedBlock) {
+        hash.value = fetchedBlock.hash
+        hash.value = fetchedBlock.hash
+        miner.value = fetchedBlock.miner
+        size.value = fetchedBlock.size
+        timestamp.value = fetchedBlock.timestamp
+        transactionNumber.value = fetchedBlock.transactionNumber
+        blockReward.value = fetchedBlock.blockReward
+        transactionFee.value = fetchedBlock.transactionNumber
+        rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
+        internalTransaction.value = fetchedBlock.internalTransaction
+      } else {
+        console.error('Fetched block is null')
+      }
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
 </script>
 
 <template>
@@ -76,7 +168,7 @@ function copyMiner() {
       </div>
       <div class="title">
         <Icon icon="cib:ethereum" class="bigMoneyIcon" />
-        <h2>Block 18374445</h2>
+        <h2>Block {{ blockHeight }}</h2>
       </div>
       <div class="block">
         <Icon icon="bxs:left-arrow" class="blockarrow" />
@@ -90,7 +182,7 @@ function copyMiner() {
       <div class="blockinfo">
         <div class="totaltransaction">
           <h3>Total Transaction</h3>
-          <p>20</p></div
+          <p>{{ transactionNumber }}</p></div
         >
         <div class="blockheight">
           <div class="blockheightcopy"
@@ -104,7 +196,7 @@ function copyMiner() {
         </div>
         <div class="timestamp">
           <h3>Timestamp</h3>
-          <p>tdu, 19-10-2023 8:34:45 GMT</p>
+          <p>{{ timestamp }}</p>
         </div>
       </div>
       <div class="blockdetailtitle">
@@ -126,22 +218,25 @@ function copyMiner() {
           </tr>
           <tr>
             <td class="c1"> Transactions : </td>
-            <td class="c2"> 20 transactions and 15 contract internal transactions </td>
+            <td class="c2">
+              {{ transactionNumber }} transactions and {{ internalTransaction }} contract internal
+              transactions
+            </td>
             <td class="c3"></td>
           </tr>
           <tr>
             <td class="c1"> Size : </td>
-            <td class="c2"> 41,246 bytes </td>
+            <td class="c2"> {{ size }} bytes </td>
             <td class="c3"></td>
           </tr>
           <tr>
             <td class="c1"> Block Reward : </td>
-            <td class="c2"> 0.3452678 ETH </td>
+            <td class="c2"> {{ blockReward }} ETH</td>
             <td class="c3"></td>
           </tr>
           <tr>
             <td class="c1"> Transaction Fee : </td>
-            <td class="c2"> 0.1243524 ETH </td>
+            <td class="c2"> {{ transactionFee }} ETH</td>
             <td class="c3"></td>
           </tr>
           <tr>
