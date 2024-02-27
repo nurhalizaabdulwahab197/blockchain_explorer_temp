@@ -1,9 +1,5 @@
-<!-- <script setup lang="ts">
-
-</script> -->
-
 <template>
-  <div class="nodePageContainer">
+  <div class="nodePageContainer" v-if="nodeDetails">
     <div class="title">
       Node
       <select>
@@ -16,7 +12,7 @@
       <div class="box1">
         <div class="text">STATUS</div>
         <div class="icon-container">
-          <div class="insidetext">RUNNING</div>
+          <div class="insidetext">{{ nodeDetails.status || 'N/A' }}</div>
           <div style="opacity: 0.2">
             <Icon icon="ic:outline-not-started" :size="200" color="black" />
           </div>
@@ -25,7 +21,7 @@
       <div class="box2">
         <div class="text">PEERS</div>
         <div class="icon-container">
-          <div class="insidenum">3</div>
+          <div class="insidenum">{{ nodeDetails.peers || 'N/A' }}</div>
           <div style="opacity: 0.2">
             <Icon icon="heroicons:user-group-16-solid" :size="200" color="black" />
           </div>
@@ -34,7 +30,7 @@
       <div class="box3">
         <div class="text">BLOCKS</div>
         <div class="icon-container">
-          <div class="insidenum">9</div>
+          <div class="insidenum">{{ nodeDetails.blocks || 'N/A' }}</div>
           <div style="opacity: 0.2">
             <Icon icon="clarity:block-line" :size="200" color="black" />
           </div>
@@ -43,7 +39,7 @@
       <div class="box4">
         <div class="text">QUEUED</div>
         <div class="icon-container">
-          <div class="insidenum">0</div>
+          <div class="insidenum">{{ nodeDetails.queued || 0 }}</div>
           <div style="opacity: 0.2">
             <Icon icon="mdi:human-queue" :size="200" color="black" />
           </div>
@@ -51,40 +47,81 @@
       </div>
     </div>
 
-    <div class="container2">
+    <div class="container2" v-if="nodeDetails">
       <table class="table">
         <tbody>
           <tr>
             <td> CLIENT : </td>
-            <td class="detail"> GETH </td>
+            <td class="detail">{{ nodeDetails.client || 'N/A' }}</td>
           </tr>
           <tr>
             <td> NODE ID : </td>
-            <td class="detail"> 0x2a7eb7a22d8d0a53f08e1828b5a299dd8132b996 </td>
+            <td class="detail">{{ nodeDetails.node_id || 'N/A' }}</td>
           </tr>
           <tr>
             <td>NODE NAME :</td>
-            <td class="detail"> GETHv21.5.1-RC1/window-x64_32openjdk-java-11 </td>
+            <td class="detail">{{ nodeDetails.node_name || 'N/A' }}</td>
           </tr>
           <tr>
             <td>ENODE :</td>
-            <td class="detail">
-              4e48b2d3487b0673b3aae3c3f7e480b5744ac66a24c48aa41e17cf20e86c31c6f3d5a4899dfdbb394e312be4513ae4aa81c55a22969945cf9bd544a775647b25
-            </td>
+            <td class="detail">{{ nodeDetails.enode || 'N/A' }}</td>
           </tr>
           <tr>
             <td>RPC :</td>
-            <td class="detail"> https://geth-node-1-0-geth-node-1.cluster.local:2456 </td>
+            <td class="detail">{{ nodeDetails.rpc_url || 'N/A' }}</td>
           </tr>
           <tr>
             <td>LOCAL HOST :</td>
-            <td class="detail"> 192.168.1.242 </td>
+            <td class="detail">{{ nodeDetails.local_host || 'N/A' }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+    <div v-else> Loading node details... </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import axios from 'axios'
+import { ref, onMounted, Ref } from 'vue'
+
+interface NodeDetails {
+  status: string
+  peers: Number
+  blocks: number
+  queued: Number
+  client: string
+  node_id: string
+  node_name: string
+  enode: string
+  rpc_url: string
+  local_host: string
+}
+
+const nodeDetails: Ref<NodeDetails | null> = ref(null)
+
+// Fetch node details from the backend API
+const fetchNodeDetails = async (id) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/nodes/${id}`)
+    console.log('API Response:', response.data)
+    nodeDetails.value = response.data
+
+    console.log('Fetched node details:', nodeDetails.value)
+  } catch (error) {
+    console.error('Error fetching node details:', error)
+    // Handle error here
+  }
+}
+
+// Fetch node details when component is mounted
+onMounted(() => {
+  console.log('Component is mounted')
+
+  // Replace '12345' with the actual node ID you want to fetch
+  fetchNodeDetails('12345')
+})
+</script>
 
 <style scoped>
 /* Media query for mobile styles */
