@@ -10,7 +10,7 @@
       <div class="column-container">
         <div class="container-title">
           <div class="firstrowtitle">TRANSACTION ID</div>
-          <button class="rowCopybutton">
+          <button class="rowCopybutton" @click="copyToClipboard(transactionId)">
             <Icon icon="iconamoon:copy-bold" />
             <div class="none">CLICK TO COPY</div>
           </button>
@@ -19,13 +19,13 @@
       </div>
       <div class="column-container">
         <div class="container-title firstrowtitle">TIMESTAMP</div>
-        <div class="center">{{ timestamp }}</div>
+        <div class="center">{{ formatTimestamp(timestamp) }}</div>
       </div>
     </div>
     <div class="block-container">
       <div class="container-title">BLOCK</div>
       <div class="center">
-        <div class="block">1837445</div>
+        <div class="block">{{ block }}</div>
       </div>
     </div>
     <div style="overflow-x: auto">
@@ -46,8 +46,10 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">0x3Css</a>
-            <button class="tableCopybutton">
+            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">{{
+              senderAddress
+            }}</a>
+            <button class="tableCopybutton" @click="copySenderToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
             </button>
@@ -60,7 +62,7 @@
               <div>AMOUNT :</div>
             </div>
           </td>
-          <td colspan="2" class="amount tablecontent">0.035 ETH</td>
+          <td colspan="2" class="amount tablecontent">{{ amount }}</td>
         </tr>
         <tr>
           <td>
@@ -70,8 +72,10 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">0x3Css</a>
-            <button class="tableCopybutton">
+            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">{{
+              receiverAddress
+            }}</a>
+            <button class="tableCopybutton" @click="copyReceiverToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
             </button>
@@ -87,7 +91,9 @@
           <td>
             <div class="alligncenter">
               <Icon icon="ri:eth-fill" />
-              <div class="tablecontent">0 ETH($0.00) </div>
+              <div class="tablecontent">{{
+                parseFloat(value) > 0 ? `${value} ` : '0 ETH ($0.00)'
+              }}</div>
             </div>
           </td>
         </tr>
@@ -99,7 +105,10 @@
             </div>
           </td>
           <td>
-            <div class="tablecontent"> 0.023123123 ETH ($0.63) </div>
+            <!--{# 1 ETH = 3,257.249999 USD #}-->
+            <div class="tablecontent"
+              >{{ gasPrice }} ETH (${{ (parseFloat(gasPrice) * 3257.249999).toFixed(2) }})</div
+            >
           </td>
         </tr>
         <tr>
@@ -111,7 +120,13 @@
           </td>
           <td>
             <div class="transactionfee-content">
-              <div class="tablecontent">6.023123123 Gwei (0.000012321 ETH)</div>
+              <!--{#A gwei is one-billionth of one ETH.#}-->
+              <div class="tablecontent"
+                >{{ transactionFee }} Gwei ({{
+                  (parseFloat(transactionFee) / 1e9).toFixed(9)
+                }}
+                ETH)</div
+              >
               <div class="transactionfee-container">
                 <div class="column2-container">
                   <div class="container-title">NOTE</div>
@@ -136,54 +151,116 @@
       <div class="moredetail-container">
         <div class="left-container">
           <Icon icon="cib:ethereum" />
-          <div>Gas Limit & Usage by Txn:</div>
+          <div>Gas Limit & Usage by Txn:{{ gasUsed }}</div>
         </div>
-        <div class="right-container">65,00 | 43221 (98%)</div>
+        <div class="right-container">{{
+          `${parseFloat(gasLimit)} | ${parseFloat(gasUsed)} (${((parseFloat(gasUsed) / parseFloat(gasLimit)) * 100).toFixed(2)}%)`
+        }}</div>
       </div>
       <div class="moredetail-container">
         <div class="left-container">
           <Icon icon="cib:ethereum" />
           <div>Gas Fees:</div>
         </div>
-        <div class="right-container">65,00 | 43221 (98%)</div>
+        <div class="right-container"
+          >Base: {{ baseFeePerGas }} Gwei |Max: {{ maxFeePerGas }} Gwei |Max Priority:
+          {{ maxPriorityFeePerGas }} Gwei
+        </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
+import axios from 'axios'
 
 const transactionId = ref('')
-const route = useRoute()
-const getCurrentTimestamp = () => {
-  const date = new Date()
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ]
-  const formattedDate = `${days[date.getUTCDay()]}, ${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()}`
-  const formattedTime = `${('0' + date.getUTCHours()).slice(-2)}:${('0' + date.getUTCMinutes()).slice(-2)}:${('0' + date.getUTCSeconds()).slice(-2)} GMT`
+const block = ref('')
+const senderAddress = ref('')
+const amount = ref('')
+const receiverAddress = ref('')
+const value = ref('')
+const gasPrice = ref('')
+const transactionFee = ref('')
+const gasLimit = ref('')
+const gasUsed = ref('')
+const gasFees = ref('')
+const timestamp = ref('')
+const maxFeePerGas = ref('')
+const maxPriorityFeePerGas = ref('')
+const baseFeePerGas = ref('')
 
-  return `${formattedDate} ${formattedTime}`
+const route = useRoute()
+
+const copySenderToClipboard = () => {
+  copyToClipboard(senderAddress.value)
 }
-const timestamp = getCurrentTimestamp()
+
+const copyReceiverToClipboard = () => {
+  copyToClipboard(receiverAddress.value)
+}
+
+const copyToClipboard = (text) => {
+  const el = document.createElement('textarea')
+  el.value = text
+  document.body.appendChild(el)
+  el.select()
+  document.execCommand('copy')
+  document.body.removeChild(el)
+  // You can also show a notification or perform any other action after copying
+  // For example, you can use a library like 'vue-toastification' for notifications
+}
+
+const fetchData = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/transaction/${route.params.id}`)
+    const transactionData = response.data.output
+
+    // Assign data to variables
+    transactionId.value = transactionData.hash
+    block.value = transactionData.block
+    senderAddress.value = transactionData.senderAddress
+    amount.value = transactionData.amount
+    receiverAddress.value = transactionData.receiverAddress
+    value.value = transactionData.value
+    gasPrice.value = transactionData.gasPrice
+    transactionFee.value = transactionData.transactionFee
+    gasLimit.value = transactionData.gasLimit
+    gasUsed.value = transactionData.gasUsed
+    gasFees.value = transactionData.gasFees
+    timestamp.value = transactionData.timestamp
+    maxFeePerGas.value = transactionData.maxFeePerGas
+    maxPriorityFeePerGas.value = transactionData.maxPriorityFeePerGas
+    baseFeePerGas.value = transactionData.baseFeePerGas
+  } catch (error) {
+    console.error('Error fetching transaction:', error)
+  }
+}
+
+const formatTimestamp = (timestamp: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short',
+    timeZone: 'GMT'
+  }
+
+  return new Date(timestamp).toLocaleString('en-US', options)
+}
 
 onMounted(() => {
-  transactionId.value = route.params.id as string
+  // Fetch data initially
+  fetchData()
+
+  // Fetch data every 10 seconds
+  setInterval(fetchData, 10000)
 })
 
 watch(
