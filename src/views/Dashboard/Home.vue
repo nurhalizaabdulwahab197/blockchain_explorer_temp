@@ -46,7 +46,7 @@ const fetchData = () => {
     })
 }
 onMounted(fetchData)
-setInterval(fetchData, 5000) //fetch block every 10 seconds
+setInterval(fetchData, 20000) //fetch block every 20 seconds
 
 const formatHexString = (hexString) => {
   const prefixLength = 5 // Length of the "0x" prefix

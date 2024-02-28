@@ -166,6 +166,23 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: '/error',
+    component: Layout,
+    name: 'Error',
+    meta: {},
+    children: [
+      {
+        path: 'searchNotFound',
+        component: () => import('@/views/Error/SearchNotFound.vue'),
+        name: 'Error',
+        meta: {
+          title: t('error'),
+          icon: 'cib:telegram-plane'
+        }
+      }
+    ]
   }
 ]
 

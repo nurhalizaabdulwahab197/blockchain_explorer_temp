@@ -9,7 +9,7 @@
     </div>
     <div>
       Gas:
-      <span style="color: #158fff">7 Gwei</span>
+      <span style="color: #158fff">1 Gwei</span>
     </div>
     <div> </div>
   </div>
