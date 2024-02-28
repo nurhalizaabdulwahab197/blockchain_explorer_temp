@@ -1,22 +1,18 @@
-<!-- <script setup lang="ts">
-
-</script> -->
-
 <template>
-  <div class="nodePageContainer">
+  <div class="nodePageContainer" v-if="nodeDetails">
     <div class="title">
       Node
-      <select>
-        <option value="option1">Node 1</option>
-        <option value="option2">Node 2</option>
-        <option value="option3">Node 3</option>
+      <select v-model="selectedIndex" @change="fetchNodeDetails">
+        <option v-for="(node, index) in nodeDetails.output" :value="index" :key="node.node_id">
+          Node {{ index + 1 }}
+        </option>
       </select>
     </div>
     <div class="container1">
       <div class="box1">
         <div class="text">STATUS</div>
         <div class="icon-container">
-          <div class="insidetext">RUNNING</div>
+          <div class="insidetext">{{ getNodeProperty('status') || 'N/A' }}</div>
           <div style="opacity: 0.2">
             <Icon icon="ic:outline-not-started" :size="200" color="black" />
           </div>
@@ -25,7 +21,7 @@
       <div class="box2">
         <div class="text">PEERS</div>
         <div class="icon-container">
-          <div class="insidenum">3</div>
+          <div class="insidenum">{{ getNodeProperty('peers') || 'N/A' }}</div>
           <div style="opacity: 0.2">
             <Icon icon="heroicons:user-group-16-solid" :size="200" color="black" />
           </div>
@@ -34,7 +30,7 @@
       <div class="box3">
         <div class="text">BLOCKS</div>
         <div class="icon-container">
-          <div class="insidenum">9</div>
+          <div class="insidenum">{{ getNodeProperty('blocks') || 'N/A' }}</div>
           <div style="opacity: 0.2">
             <Icon icon="clarity:block-line" :size="200" color="black" />
           </div>
@@ -43,7 +39,7 @@
       <div class="box4">
         <div class="text">QUEUED</div>
         <div class="icon-container">
-          <div class="insidenum">0</div>
+          <div class="insidenum">{{ getNodeProperty('queued') || 0 }}</div>
           <div style="opacity: 0.2">
             <Icon icon="mdi:human-queue" :size="200" color="black" />
           </div>
@@ -51,40 +47,135 @@
       </div>
     </div>
 
-    <div class="container2">
+    <div class="container2" v-if="nodeDetails">
       <table class="table">
         <tbody>
           <tr>
             <td> CLIENT : </td>
-            <td class="detail"> GETH </td>
+            <td class="detail">{{ getNodeProperty('client') || 'N/A' }}</td>
           </tr>
           <tr>
             <td> NODE ID : </td>
-            <td class="detail"> 0x2a7eb7a22d8d0a53f08e1828b5a299dd8132b996 </td>
+            <td class="detail">{{ getNodeProperty('node_id') || 'N/A' }}</td>
           </tr>
           <tr>
             <td>NODE NAME :</td>
-            <td class="detail"> GETHv21.5.1-RC1/window-x64_32openjdk-java-11 </td>
+            <td class="detail">{{ getNodeProperty('node_name') || 'N/A' }}</td>
           </tr>
           <tr>
             <td>ENODE :</td>
-            <td class="detail">
-              4e48b2d3487b0673b3aae3c3f7e480b5744ac66a24c48aa41e17cf20e86c31c6f3d5a4899dfdbb394e312be4513ae4aa81c55a22969945cf9bd544a775647b25
-            </td>
+            <td class="detail">{{ getNodeProperty('enode') || 'N/A' }}</td>
           </tr>
           <tr>
             <td>RPC :</td>
-            <td class="detail"> https://geth-node-1-0-geth-node-1.cluster.local:2456 </td>
+            <td class="detail">{{ getNodeProperty('rpc_url') || 'N/A' }}</td>
           </tr>
           <tr>
             <td>LOCAL HOST :</td>
-            <td class="detail"> 192.168.1.242 </td>
+            <td class="detail">{{ getNodeProperty('local_host') || 'N/A' }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+    <div v-else> Loading node details... </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import axios from 'axios'
+import { ref, onMounted, Ref } from 'vue'
+
+interface NodeDetails {
+  message: string
+  output: {
+    status: string
+    peers: number
+    blocks: number
+    queued: number
+    client: string
+    node_id: string
+    node_name: string
+    enode: string
+    rpc_url: string
+    local_host: string
+  }[]
+}
+
+//const nodeDetails: Ref<NodeDetails | null> = ref(null)
+
+// Fetch node details from the backend API
+// const fetchNodeDetails = async (node_id) => {
+//   try {
+//     const response = await axios.get(`http://localhost:8080/api/nodes/${node_id}`)
+//     console.log('API Response:', response.data)
+//     nodeDetails.value = response.data.output
+
+//     console.log('Fetched node details:', nodeDetails.value)
+//   } catch (error) {
+//     console.error('Error fetching node details:', error)
+//     // Handle error here
+//   }
+// }
+
+// // Fetch node details when component is mounted
+// onMounted(() => {
+//   console.log('Component is mounted')
+
+//   // Replace '12345' with the actual node ID you want to fetch
+//   fetchNodeDetails('5434e8b0e535a556cefc02499d1f2948adddeb7567c1cdd21319dda845f0c126')
+// })
+
+// Fetch list of nodes from the backend API
+const nodeDetails: Ref<NodeDetails | null> = ref(null)
+const selectedNodeId: Ref<string | null> = ref(null)
+const selectedIndex: Ref<number | null> = ref(0)
+
+const fetchNodeDetails = async () => {
+  console.log('Fetching details for node:', selectedNodeId.value)
+  if (!selectedNodeId.value || selectedIndex.value === null) {
+    console.warn('Selected node ID or index is null')
+    return
+  }
+
+  try {
+    const response = await axios.get(`http://localhost:8080/api/nodes/${selectedNodeId.value}`)
+    console.log('Node details response:', response.data)
+    nodeDetails.value = response.data
+    console.log('Updated node details:', nodeDetails.value)
+  } catch (error) {
+    console.error('Error fetching node details:', error)
+    // Handle error here
+  }
+}
+
+const fetchNodeIds = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/nodes')
+
+    // Handle different response structures
+    if (response.data.output && Array.isArray(response.data.output)) {
+      nodeDetails.value = response.data
+      selectedNodeId.value = null // Set selectedNodeId to null initially
+    } else {
+      console.error('Unexpected response structure:', response.data)
+    }
+  } catch (error) {
+    console.error('Error fetching node IDs:', error)
+    // Handle error here
+  }
+}
+const getNodeProperty = (property: string) => {
+  if (!nodeDetails.value || selectedIndex.value === null) {
+    return null
+  }
+  const selectedNode = nodeDetails.value.output[selectedIndex.value]
+  return selectedNode ? selectedNode[property] : null
+}
+
+onMounted(() => {
+  fetchNodeIds()
+})
+</script>
 
 <style scoped>
 /* Media query for mobile styles */
