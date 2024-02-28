@@ -1,3 +1,131 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { Icon } from '@iconify/vue'
+import router from '@/router'
+
+const blocks = ref([])
+const currentPageBlocks = ref([])
+const skipCount = ref(0)
+const currentPage = ref(1)
+const maxPageSize = ref(1)
+const lastestBlock = ref(0)
+
+const fetchLastBlock = async () => {
+  fetch('http://localhost:8080/api/block/getLastSyncBlock')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      lastestBlock.value = data.output
+      maxPageSize.value = Math.ceil(lastestBlock.value / 10)
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+const fetchData = async () => {
+  fetch(`http://localhost:8080/api/block/blockListWithSkip/${skipCount.value}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      blocks.value = data.output
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+const scrollBlocks = (direction) => {
+  console.log(skipCount.value)
+  if (direction === -1 && skipCount.value > 0) {
+    skipCount.value--
+  } else if (direction === 1 && skipCount.value < lastestBlock.value) {
+    skipCount.value++
+  }
+  fetchData()
+}
+
+onMounted(() => {
+  fetchData()
+  fetchLastBlock()
+  // setInterval(fetchData, 10000) // Fetch block every 10 seconds
+})
+
+const formatHexString = (hexString) => {
+  const prefixLength = 18
+  const prefix = hexString.slice(0, prefixLength)
+  return prefix + '...'
+}
+
+const calcTimeDiff = (timestamp) => {
+  const blockTimestamp = new Date(timestamp)
+  const currentDate = new Date()
+  const timeDifferenceInSeconds = Math.floor((currentDate - blockTimestamp) / 1000)
+  return timeDifferenceInSeconds
+}
+
+const goToBlock = (block) => {
+  router.push(`/blockchain/blockList/blockdetail/${block}`)
+}
+
+const fetchDataBlockList = (pageNumber) => {
+  fetch(`http://localhost:8080/api/block/blockList/${pageNumber}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch block list for page ${pageNumber}')
+      }
+      return response.json()
+    })
+    .then((responseData) => {
+      currentPageBlocks.value = responseData.output
+      console.log(currentPageBlocks.value)
+    })
+    .catch((error) => {
+      console.error('Error fetching block list:', error)
+    })
+}
+
+const goToFirstPage = () => {
+  currentPage.value = 1
+  fetchDataBlockList(currentPage.value)
+}
+
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchDataBlockList(currentPage.value)
+  }
+}
+
+const goToNextPage = () => {
+  if (currentPage.value < maxPageSize.value) {
+    currentPage.value++
+    fetchDataBlockList(currentPage.value)
+  }
+}
+
+const goToLastPage = () => {
+  currentPage.value = maxPageSize.value
+  fetchDataBlockList(currentPage.value)
+}
+
+// Fetch initial data for the first page
+onMounted(() => {
+  fetchLastBlock()
+  fetchDataBlockList(currentPage.value)
+})
+</script>
+
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <div class="block-page">
@@ -10,100 +138,40 @@
 
       <!--Block Container-->
       <div class="blockContainer">
-        <Icon icon="bxs:left-arrow" class="blockarrow" />
+        <Icon
+          icon="bxs:left-arrow"
+          class="blockarrow"
+          @click="scrollBlocks(-1)"
+          :class="{ disabled: skipCount.value <= 0 }"
+        />
         <div class="block-scroll">
           <div class="block">
-            <div class="rectangle-container" @click="goToBlock(1)">
+            <div
+              class="rectangle-container"
+              v-for="(block, index) in blocks"
+              :key="block.id"
+              @click="goToBlock(block.number)"
+            >
               <div class="rectangle">
-                <div style="height: 40px" class="overlapping-rectangle"></div>
+                <div
+                  class="overlapping-rectangle"
+                  :style="{
+                    height: Math.round((block.gasUsed / block.gasLimit) * 100) + 'px',
+                    borderRadius: '0 0 30px 30px'
+                  }"
+                ></div>
               </div>
               <div class="blockno">
-                <p>#18374445</p>
-              </div>
-            </div>
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(2)">
-              <div class="drectangle">
-                <div style="height: 63px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374444</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(3)">
-              <div class="drectangle">
-                <div style="height: 60px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374443</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(4)">
-              <div class="drectangle">
-                <div style="height: 55px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374442</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(5)">
-              <div class="drectangle">
-                <div style="height: 40px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374441</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(6)">
-              <div class="drectangle">
-                <div style="height: 38px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374440</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(7)">
-              <div class="drectangle">
-                <div style="height: 45px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374439</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(8)">
-              <div class="drectangle">
-                <div style="height: 38px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374438</p>
-              </div>
-            </div>
-
-            <Icon icon="bi:link" class="link" />
-            <div class="rectangle-container" @click="goToBlock(9)">
-              <div class="drectangle">
-                <div style="height: 33px" class="overlapping-rectangle"></div>
-              </div>
-              <div class="blockno">
-                <p>#18374437</p>
+                <p>#{{ block.number }}</p>
+                <template v-if="index != 0">
+                  <Icon icon="bi:link" class="link" />
+                </template>
               </div>
             </div>
           </div>
         </div>
 
-        <Icon icon="bxs:right-arrow" class="blockarrow" />
+        <Icon icon="bxs:right-arrow" class="blockarrow" @click="scrollBlocks(1)" />
       </div>
 
       <div class="table-section" style="overflow-x: auto">
@@ -120,34 +188,40 @@
           </thead>
           <tbody>
             <!-- Display a fixed number of data rows (e.g., 10 rows) -->
-            <tr v-for="(item, index) in slicedDummyData" :key="index">
+            <tr v-for="block in currentPageBlocks" :key="block.id">
               <td
                 style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-                >{{ item.block }}</td
               >
+                {{ block.number }}
+              </td>
               <td
                 style="
+                  padding: 20px 1px;
                   overflow: hidden;
                   color: #1688f2;
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 "
                 class="clickable"
-                @click="goToBlock(item.hash)"
-                >{{ item.hash }}</td
+                @click="goToBlock(block.hash)"
               >
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-                >{{ item.time }}
+                {{ formatHexString(block.hash) }}
               </td>
               <td
                 style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-                >{{ item.txs }}
+              >
+                {{ block.timestamp }}
               </td>
               <td
                 style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-                >{{ item.txssummary }}</td
               >
+                {{ block.transactions.length }}
+              </td>
+              <td
+                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
+              >
+                {{ block.txssummary }}
+              </td>
               <td
                 style="
                   overflow: hidden;
@@ -155,19 +229,45 @@
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 "
-                >{{ item.age }} secs ago</td
               >
+                {{ calcTimeDiff(block.timestamp) }} secs ago
+              </td>
             </tr>
 
             <tr>
               <td colspan="7" class="pagination-buttons">
                 <div class="pagination-container">
                   <div class="centered-content">
-                    <button class="first-page-button" @click="goToFirstPage">First Page</button>
-                    <button class="previous-page-button" @click="goToPreviousPage">&lt;</button>
+                    <button
+                      class="first-page-button"
+                      @click="goToFirstPage"
+                      :class="{ disabled: currentPage === 1 }"
+                    >
+                      First Page
+                    </button>
+                    <button
+                      class="previous-page-button"
+                      @click="goToPreviousPage"
+                      :class="{ disabled: currentPage === 1 }"
+                    >
+                      &lt;
+                    </button>
                     <span class="page-number"> {{ currentPage }}</span>
-                    <button class="next-page-button" @click="goToNextPage">&gt;</button>
-                    <button class="last-page-button" @click="goToLastPage">Last Page</button>
+                    <button
+                      class="next-page-button"
+                      @click="goToNextPage"
+                      :class="{ disabled: currentPage === maxPageSize }"
+                    >
+                      &gt;
+                    </button>
+
+                    <button
+                      class="last-page-button"
+                      @click="goToLastPage"
+                      :class="{ disabled: currentPage === maxPageSize }"
+                    >
+                      Last Page
+                    </button>
                   </div>
                 </div>
               </td>
@@ -178,158 +278,6 @@
     </main>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Icon } from '@iconify/vue'
-import router from '@/router'
-interface Block {
-  block: number
-  hash: string
-  time: string
-  txs: number
-  txssummary: string
-  age: number
-}
-
-const dummyData = ref<Block[]>([
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  },
-  {
-    block: 18374438,
-    hash: '0x0d4dde84447bdd54....',
-    time: '2023-10-18 21:52:59',
-    txs: 35,
-    txssummary: 'Transfers 26 \u00A0\u00A0\u00A0 App calls 6 \u00A0\u00A0\u00A0 set config 4',
-    age: 11
-  }
-])
-
-const currentPage = ref(1)
-
-const slicedDummyData = ref<Block[]>([])
-
-const goToFirstPage = () => {
-  currentPage.value = 1
-  updateSlicedDummyData()
-}
-
-const goToPreviousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    updateSlicedDummyData()
-  }
-}
-
-const goToNextPage = () => {
-  if (currentPage.value < 10) {
-    currentPage.value++
-    updateSlicedDummyData()
-  }
-}
-
-const goToLastPage = () => {
-  currentPage.value = Math.ceil(dummyData.value.length / 10)
-  updateSlicedDummyData()
-}
-
-const updateSlicedDummyData = () => {
-  const startIndex = (currentPage.value - 1) * 10
-  const endIndex = startIndex + 10
-  slicedDummyData.value = dummyData.value.slice(startIndex, endIndex)
-}
-
-updateSlicedDummyData()
-const goToBlock = (block) => {
-  router.push(`/blockchain/blockList/blockdetail/${block}`)
-}
-</script>
 
 <style scoped>
 .title {
@@ -360,6 +308,13 @@ const goToBlock = (block) => {
 .blockarrow {
   margin: 25px 15px 0;
   font-size: 25px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.disable {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .block-scroll {
@@ -375,6 +330,11 @@ const goToBlock = (block) => {
   min-width: fit-content;
 }
 
+.rectangle-container {
+  position: relative; /* Set position relative to contain the absolute positioning of the link */
+  margin: 0 5px;
+}
+
 .overlapping-rectangle {
   position: absolute;
   bottom: 0;
@@ -388,8 +348,14 @@ const goToBlock = (block) => {
   width: 100px;
   height: 100px;
   margin: 30px 6px 10px;
+  overflow: hidden;
+  cursor: pointer;
   background-color: #d3d3d3;
   border-radius: 30px;
+}
+
+.rectangle:active {
+  opacity: 0.8;
 }
 
 .drectangle {
@@ -402,7 +368,15 @@ const goToBlock = (block) => {
 }
 
 .link {
-  margin-top: 30px;
+  position: absolute;
+  top: 51%;
+  left: auto;
+  max-width: calc(100% - 12px); /* Ensure the link fits within its container */
+  padding-right: 12px;
+  overflow: hidden;
+  font-size: medium;
+  text-overflow: ellipsis;
+  transform: translate(-50%, -50%);
 }
 
 .blockno p {
@@ -530,6 +504,10 @@ tr:last-child td:last-child {
   color: #000;
   background-color: rgb(255 255 255 / 60%);
   border-radius: 5px;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .clickable:hover {

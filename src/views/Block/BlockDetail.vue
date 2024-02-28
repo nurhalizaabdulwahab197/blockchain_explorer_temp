@@ -113,6 +113,10 @@ const fetchDataHash = () => {
 const fetchDataNumber = () => {
   fetchData(`/block/number/${blockHeight.value}`)
 }
+
+const goToBlock = (block) => {
+  router.push(`/blockchain/blockList/blockdetail/${block}`)
+}
 </script>
 
 <template>
@@ -135,13 +139,13 @@ const fetchDataNumber = () => {
         <h2>Block {{ blockHeight }}</h2>
       </div>
       <div class="block">
-        <Icon icon="bxs:left-arrow" class="blockarrow" />
+        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToBlock(blockHeight - 1)" />
         <div class="rectangle-container">
           <div class="rectangle"
             ><div :style="{ height: rectangleHeight + 'px' }" class="overlapping-rectangle"></div
           ></div>
         </div>
-        <Icon icon="bxs:right-arrow" class="blockarrow" />
+        <Icon icon="bxs:right-arrow" class="blockarrow" @click="goToBlock(blockHeight + 1)" />
       </div>
       <div class="blockinfo">
         <div class="totaltransaction">
@@ -401,6 +405,7 @@ const fetchDataNumber = () => {
 
 .blockarrow {
   font-size: 20px;
+  cursor: pointer;
 }
 
 td {
