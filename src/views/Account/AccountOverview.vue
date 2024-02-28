@@ -1,108 +1,45 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import router from '@/router'
+import { useRoute } from 'vue-router'
 
-var dataset = ref([
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  }
-])
+const route = useRoute()
+const dataset = ref([])
+const balance = ref('')
+const accAddress = ref('')
+const isButtonClicked = ref(false)
+const showToast = ref(false)
+const copyMessageTitle = ref('')
+const copyMessage = ref('')
+
+const fetchData = async () => {
+  const addressFromUrl = route.params.address
+  accAddress.value = addressFromUrl
+  const temp = `http://localhost:8080/api/account/accountOverview/${addressFromUrl}`
+  console.log(temp)
+  fetch(temp)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      dataset.value = data.data
+      balance.value = data.balance
+      updatePaginateData()
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+// Call fetchData when the component is mounted
+onMounted(() => {
+  fetchData()
+})
 
 const itemsPerPage = 10
 const currentPage = ref(1)
@@ -139,17 +76,61 @@ function updatePaginateData() {
   const endIndex = startIndex + itemsPerPage
   console.log(startIndex)
   console.log(endIndex)
+  console.log(dataset.value.slice(startIndex, endIndex))
   paginatedData.value = dataset.value.slice(startIndex, endIndex)
+  console.log(paginatedData.value)
 }
 
 updatePaginateData()
 
-// Watch for changes in dataset and update current page if needed
+const goToDetail = (TxnHash) => {
+  router.push('/blockchain/transactionList/transactionDetail/' + TxnHash)
+}
+
+const goToAccount = (account) => {
+  router.push('/account/accountOverview/' + account)
+}
+
+const calcTimeDiff = (timestamp) => {
+  const blockTimestamp = new Date(timestamp)
+  const currentDate = new Date()
+  const timeDifferenceInMilliseconds = currentDate - blockTimestamp
+  const timeDifferenceInSeconds = Math.floor(timeDifferenceInMilliseconds / 1000)
+  return timeDifferenceInSeconds
+}
+
+function copyToClipboard() {
+  const addValue = document.createElement('input')
+  addValue.value = accAddress.value
+  document.body.appendChild(addValue)
+  addValue.select()
+  addValue.setSelectionRange(0, 99999) // For mobile devices
+  document.execCommand('copy')
+  document.body.removeChild(addValue)
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 6000)
+  copyMessageTitle.value = 'Address copied'
+  copyMessage.value = 'The address was copied to the clipboard'
+}
 </script>
 
 <template>
   <div class="body">
     <div class="main">
+      <div v-if="showToast" class="alertbox">
+        <div class="bardesign"></div
+        ><div class="copymessage"
+          ><div class="copymessagetitle"
+            ><Icon
+              icon="charm:tick-double"
+              style="margin-right: 5px; font-size: 1.5rem; color: blue"
+            />
+            {{ copyMessageTitle }} </div
+          >{{ copyMessage }}</div
+        >
+      </div>
       <div class="header">
         <Icon icon="codicon:account" class="accountIcon" /><h1>Account Overview</h1>
       </div>
@@ -157,14 +138,14 @@ updatePaginateData()
         <div class="address">
           <div class="add-sub-cont">
             <h3>ADDRESS</h3>
-            <button class="btn"
+            <button class="btn" @click="copyToClipboard()" :class="{ clicked: isButtonClicked }"
               ><Icon icon="icon-park-twotone:copy" class="copyIcon" /><span
                 >CLICK TO COPY</span
               ></button
             >
           </div>
           <div class="add-sub-cont-2">
-            <p>2JLNXF725EKFJD6SG3KK3MVJZKFZMGVVWQZNWTM4YOUH6XVUUHEAWL4ZV4</p>
+            <p id="copyAdd">{{ accAddress }}</p>
           </div>
         </div>
         <div class="balance">
@@ -172,7 +153,7 @@ updatePaginateData()
             <h3>ETH BALANCE</h3>
           </div>
           <div class="bal-sub-cont">
-            <Icon icon="ri:eth-line" class="eth" /><h2>2,984,943,425,066</h2>
+            <Icon icon="ri:eth-line" class="eth" /><h2>{{ balance }}</h2>
           </div>
         </div>
       </div>
@@ -193,13 +174,19 @@ updatePaginateData()
             </thead>
             <tbody>
               <tr v-for="(item, index) in paginatedData" :key="index" class="row">
-                <td class="td1">{{ item.TxnHash }}</td>
-                <td class="td2">{{ item.Block }}</td>
-                <td class="td3">{{ item.Time }}</td>
-                <td class="td4">{{ item.From }}</td>
-                <td class="td5">{{ item.To }}</td>
-                <td class="td6">{{ item.Amount }}</td>
-                <td class="td7">{{ item.Age }}</td>
+                <td class="td1 clickable" @click="goToDetail(item.hash)"
+                  ><span>{{ item.hash }}</span></td
+                >
+                <td class="td2">{{ item.block }}</td>
+                <td class="td3">{{ item.timestamp }}</td>
+                <td class="td4 clickable" @click="goToAccount(item.senderAddress)">{{
+                  item.senderAddress
+                }}</td>
+                <td class="td5 clickable" @click="goToAccount(item.receiverAddress)">{{
+                  item.receiverAddress
+                }}</td>
+                <td class="td6">{{ item.amount }} ETH</td>
+                <td class="td7">{{ calcTimeDiff(item.timestamp) }} secs ago</td>
               </tr>
               <tr class="paginatecont">
                 <td colspan="7" class="paginatesubcont">
@@ -250,7 +237,7 @@ updatePaginateData()
 }
 
 .main {
-  width: 95%;
+  width: 90%;
   height: auto;
   margin: auto;
 }
@@ -266,7 +253,7 @@ updatePaginateData()
 
 h1 {
   margin: auto 12px;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 500;
 }
 
@@ -304,8 +291,9 @@ h1 {
 
 .add-sub-cont-2 {
   display: flex;
-  justify-content: center;
+  padding-top: 15px;
   margin: 5px 15px 15px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -325,6 +313,12 @@ h1 {
   border-radius: 20px;
 }
 
+.btn:active,
+.clicked {
+  color: #fff;
+  background-color: #000;
+}
+
 .copyIcon {
   padding: 0;
   margin: 0;
@@ -333,7 +327,7 @@ h1 {
 .address p {
   width: 100%;
   margin: 0;
-  font-size: 18px;
+  font-size: 22px;
   color: #158fff;
   word-wrap: break-word;
 }
@@ -354,7 +348,7 @@ h1 {
 
 h3 {
   padding: 0;
-  font-size: 20px;
+  font-size: 18px;
   color: black;
 }
 
@@ -391,7 +385,7 @@ h3 {
 
 .trans-title h2 {
   margin: 5px 0;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 400;
 }
 
@@ -423,6 +417,7 @@ th:last-child {
 
 td {
   padding: 12px 15px;
+  font-size: 14px;
   white-space: nowrap;
 
   /* border-bottom: 2px solid #4a4a4a; */
@@ -448,15 +443,30 @@ tr:last-child td:last-child {
 .td1,
 .td4,
 .td5 {
+  max-width: 200px;
+  overflow: hidden;
   color: #1688f2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
+.td2 {
+  text-align: center;
 }
 
 .td6 {
   color: #6afd36;
+  text-align: center;
 }
 
 .td7 {
   color: #9c9c9c;
+  text-align: center;
 }
 
 .paginatecont {
@@ -529,6 +539,54 @@ tr:last-child td:last-child {
   .paginate {
     justify-content: center;
   }
+
+  .copy {
+    font-size: 9.6px;
+  }
+
+  .alertbox {
+    position: absolute;
+    right: 10px;
+    z-index: 10000;
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+  }
+
+  .copymessage {
+    display: flex;
+    width: 100%;
+    padding-left: 25px;
+    margin-right: 8px;
+    background-color: #363737;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .copymessagetitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .visiblecopy {
+    display: none;
+  }
+
+  .copy {
+    display: flex;
+    padding: 5px 10px;
+    font-size: 4px;
+    color: #9c9c9c;
+    background-color: transparent;
+    border: 1px groove #7f7f7f;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @media screen and (height <= 717px) {
@@ -543,5 +601,51 @@ tr:last-child td:last-child {
   .footer {
     margin-top: auto;
   }
+}
+
+@media screen and (width <= 1050px) {
+  .visiblecopy {
+    display: none;
+  }
+}
+
+.bardesign {
+  width: 10px;
+  height: 100px;
+  background-color: #1f51ff;
+  border-radius: 10px;
+}
+
+.copymessagetitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.tickicon {
+  margin-right: 5px;
+  color: #1f51ff;
+}
+
+.alertbox {
+  position: absolute;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  width: 450px;
+  flex-direction: row;
+}
+
+.copymessage {
+  display: flex;
+  width: 100%;
+  padding-left: 30px;
+  margin-right: 10px;
+  background-color: #363737;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 </style>
