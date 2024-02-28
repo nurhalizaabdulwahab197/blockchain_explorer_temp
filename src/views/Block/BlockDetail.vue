@@ -18,52 +18,40 @@ const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
 
-function copyBlockHeight() {
-  const heightValue = document.createElement('input')
-  heightValue.value = blockHeight.value
-  document.body.appendChild(heightValue)
-  heightValue.select()
-  heightValue.setSelectionRange(0, 99999) // For mobile devices
+function copyToClipboard(value, messageTitle, message) {
+  const el = document.createElement('input')
+  el.value = value
+  document.body.appendChild(el)
+  el.select()
+  el.setSelectionRange(0, 99999) // For mobile devices
   document.execCommand('copy')
-  document.body.removeChild(heightValue)
+  document.body.removeChild(el)
   showToast.value = true
   setTimeout(() => {
     showToast.value = false
   }, 6000)
-  copyMessageTitle.value = 'Block Height copied'
-  copyMessage.value = 'The block height was copied to the clipboard'
+  copyMessageTitle.value = messageTitle
+  copyMessage.value = message
+}
+
+function copyBlockHeight() {
+  copyToClipboard(
+    blockHeight.value,
+    'Block Height copied',
+    'The block height was copied to the clipboard'
+  )
 }
 
 function copyHash() {
-  const hashinput = document.createElement('input')
-  hashinput.value = hash.value
-  document.body.appendChild(hashinput)
-  hashinput.select()
-  hashinput.setSelectionRange(0, 99999) // For mobile devices
-  document.execCommand('copy')
-  document.body.removeChild(hashinput)
-  showToast.value = true
-  setTimeout(() => {
-    showToast.value = false
-  }, 6000)
-  copyMessageTitle.value = 'Hash copied'
-  copyMessage.value = 'The address was copied to the clipboard'
+  copyToClipboard(hash.value, 'Hash copied', 'The hash was copied to the clipboard')
 }
 
 function copyMiner() {
-  const minerInput = document.createElement('input')
-  minerInput.value = miner.value
-  document.body.appendChild(minerInput)
-  minerInput.select()
-  minerInput.setSelectionRange(0, 99999) // For mobile devices
-  document.execCommand('copy')
-  document.body.removeChild(minerInput)
-  showToast.value = true
-  setTimeout(() => {
-    showToast.value = false
-  }, 6000)
-  copyMessageTitle.value = 'Miner Message copied'
-  copyMessage.value = 'The address was copied to the clipboard'
+  copyToClipboard(
+    miner.value,
+    'Miner Message copied',
+    'The miner address was copied to the clipboard'
+  )
 }
 
 function startsWith0x(str) {
@@ -86,8 +74,8 @@ onMounted(() => {
   }
 })
 
-const fetchDataHash = () => {
-  fetch(`http://localhost:8080/api/block/hash/${hash.value}`)
+const fetchData = (endpoint) => {
+  fetch(`http://localhost:8080/api${endpoint}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -104,7 +92,7 @@ const fetchDataHash = () => {
         miner.value = fetchedBlock.miner
         size.value = fetchedBlock.size
         timestamp.value = fetchedBlock.timestamp
-        transactionNumber.value = fetchedBlock.transactionNumber
+        transactionNumber.value = fetchedBlock.transactions.length
         blockReward.value = fetchedBlock.blockReward
         transactionFee.value = fetchedBlock.transactionNumber
         rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
@@ -118,36 +106,12 @@ const fetchDataHash = () => {
     })
 }
 
-const fetchDataNumber = () => {
-  fetch(`http://localhost:8080/api//block/number/${blockHeight.value}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      const fetchedBlock = data.output
+const fetchDataHash = () => {
+  fetchData(`/block/hash/${hash.value}`)
+}
 
-      if (fetchedBlock) {
-        hash.value = fetchedBlock.hash
-        hash.value = fetchedBlock.hash
-        miner.value = fetchedBlock.miner
-        size.value = fetchedBlock.size
-        timestamp.value = fetchedBlock.timestamp
-        transactionNumber.value = fetchedBlock.transactionNumber
-        blockReward.value = fetchedBlock.blockReward
-        transactionFee.value = fetchedBlock.transactionNumber
-        rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
-        internalTransaction.value = fetchedBlock.internalTransaction
-      } else {
-        console.error('Fetched block is null')
-      }
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+const fetchDataNumber = () => {
+  fetchData(`/block/number/${blockHeight.value}`)
 }
 </script>
 
@@ -174,7 +138,7 @@ const fetchDataNumber = () => {
         <Icon icon="bxs:left-arrow" class="blockarrow" />
         <div class="rectangle-container">
           <div class="rectangle"
-            ><div :style="{ height: rectangleHeight + '%' }" class="overlapping-rectangle"></div
+            ><div :style="{ height: rectangleHeight + 'px' }" class="overlapping-rectangle"></div
           ></div>
         </div>
         <Icon icon="bxs:right-arrow" class="blockarrow" />
@@ -243,10 +207,8 @@ const fetchDataNumber = () => {
             <td class="c1"> Hash : </td>
             <td class="c2"> {{ hash }} </td>
             <td class="c3"
-              ><button class="copy"
-                ><Icon icon="ion:copy" @click="copyHash" class="copyicon" /><div
-                  class="visiblecopy"
-                >
+              ><button class="copy" @click="copyHash"
+                ><Icon icon="ion:copy" class="copyicon" /><div class="visiblecopy">
                   CLICK TO COPY</div
                 ></button
               ></td

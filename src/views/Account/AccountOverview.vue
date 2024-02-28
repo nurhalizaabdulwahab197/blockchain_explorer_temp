@@ -1,112 +1,39 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import Web3 from 'web3'
-const route = useRoute()
 
-var dataset = ref([
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  },
-  {
-    TxnHash: '0x3916d1d5a3e98e5ae9....',
-    Block: '18374438',
-    Time: '2023-10-18 21:52:59',
-    From: '0x77a879bc1868c....',
-    To: '08se67182189024....',
-    Amount: '0.034 ETH',
-    Age: '6 secs ago'
-  }
-])
+const route = useRoute()
+const dataset = ref([])
+const accountAddress = ref('')
+const balance = ref('')
+
+const fetchData = async () => {
+  const address = route.params.id
+  fetch(`http://localhost:8080/api/account/accountOverview/${address}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      dataset.value = data.data
+      balance.value = data.balance
+      accountAddress.value = route.params.id
+      updatePaginateData()
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+// Call fetchData when the component is mounted
+onMounted(() => {
+  fetchData()
+})
 
 const itemsPerPage = 10
 const currentPage = ref(1)
@@ -144,6 +71,7 @@ function updatePaginateData() {
   console.log(startIndex)
   console.log(endIndex)
   paginatedData.value = dataset.value.slice(startIndex, endIndex)
+  console.log(paginatedData.value)
 }
 
 updatePaginateData()
@@ -153,34 +81,15 @@ const goToDetail = (TxnHash) => {
 }
 
 const goToAccount = (account) => {
-  router.push(`/Account/accountOverview/${account}`)
+  router.push(`/account/accountOverview/${account}`)
 }
 
-const accountAddress = ref('')
-const accountBalance = ref(null) // Initialize balance as null or any appropriate initial value
-
-onMounted(() => {
-  // Execute this code when the component is mounted
-  accountAddress.value = route.params.id // Set the initial value of accountAddress
-  fetchBalance() // Fetch the balance
-})
-
-// Connect to an Ethereum node
-const web3 = new Web3('http://172.188.99.169:8545', { mode: 'no-cors' })
-
-async function fetchBalance() {
-  try {
-    if (!accountAddress.value) return // Skip if address is empty
-    // Get the balance of the address
-    const balance = await web3.eth.getBalance(accountAddress.value)
-    // Convert the balance from wei to ether
-    accountBalance.value = web3.utils.fromWei(balance, 'ether')
-    console.log(accountBalance)
-  } catch (error) {
-    console.error('Error fetching balance:', error)
-    // Handle error gracefully, e.g., set accountBalance to a default value or show an error message
-    accountBalance.value = 0
-  }
+const calcTimeDiff = (timestamp) => {
+  const blockTimestamp = new Date(timestamp)
+  const currentDate = new Date()
+  const timeDifferenceInMilliseconds = currentDate - blockTimestamp
+  const timeDifferenceInSeconds = Math.floor(timeDifferenceInMilliseconds / 1000)
+  return timeDifferenceInSeconds
 }
 </script>
 
@@ -209,7 +118,7 @@ async function fetchBalance() {
             <h3>ETH BALANCE</h3>
           </div>
           <div class="bal-sub-cont">
-            <Icon icon="ri:eth-line" class="eth" /><h2>{{ accountBalance }}</h2>
+            <Icon icon="ri:eth-line" class="eth" /><h2>{{ balance }}</h2>
           </div>
         </div>
       </div>
@@ -230,13 +139,17 @@ async function fetchBalance() {
             </thead>
             <tbody>
               <tr v-for="(item, index) in paginatedData" :key="index" class="row">
-                <td class="td1 clickable" @click="goToDetail(item.TxnHash)">{{ item.TxnHash }}</td>
-                <td class="td2">{{ item.Block }}</td>
-                <td class="td3">{{ item.Time }}</td>
-                <td class="td4 clickable" @click="goToAccount(item.From)">{{ item.From }}</td>
-                <td class="td5 clickable" @click="goToAccount(item.To)">{{ item.To }}</td>
-                <td class="td6">{{ item.Amount }}</td>
-                <td class="td7">{{ item.Age }}</td>
+                <td class="td1 clickable" @click="goToDetail(item.hash)">{{ item.hash }}</td>
+                <td class="td2">{{ item.block }}</td>
+                <td class="td3">{{ item.timestamp }}</td>
+                <td class="td4 clickable" @click="goToAccount(item.senderAddress)">{{
+                  item.senderAddress
+                }}</td>
+                <td class="td5 clickable" @click="goToAccount(item.receiverAddress)">{{
+                  item.receiverAddress
+                }}</td>
+                <td class="td6">{{ item.amount }}</td>
+                <td class="td7">{{ calcTimeDiff(item.timestamp) }} secs ago</td>
               </tr>
               <tr class="paginatecont">
                 <td colspan="7" class="paginatesubcont">

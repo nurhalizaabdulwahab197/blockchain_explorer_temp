@@ -171,7 +171,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     path: '/error',
     component: Layout,
     name: 'Error',
-    meta: {},
+    meta: { hidden: true },
     children: [
       {
         path: 'searchNotFound',
