@@ -1,7 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import { useRoute } from 'vue-router'
+import Web3 from 'web3'
+const route = useRoute()
+
 var dataset = ref([
   {
     TxnHash: '0x3916d1d5a3e98e5ae9....',
@@ -152,7 +156,32 @@ const goToAccount = (account) => {
   router.push(`/Account/accountOverview/${account}`)
 }
 
-// Watch for changes in dataset and update current page if needed
+const accountAddress = ref('')
+const accountBalance = ref(null) // Initialize balance as null or any appropriate initial value
+
+onMounted(() => {
+  // Execute this code when the component is mounted
+  accountAddress.value = route.params.id // Set the initial value of accountAddress
+  fetchBalance() // Fetch the balance
+})
+
+// Connect to an Ethereum node
+const web3 = new Web3('http://172.188.99.169:8545', { mode: 'no-cors' })
+
+async function fetchBalance() {
+  try {
+    if (!accountAddress.value) return // Skip if address is empty
+    // Get the balance of the address
+    const balance = await web3.eth.getBalance(accountAddress.value)
+    // Convert the balance from wei to ether
+    accountBalance.value = web3.utils.fromWei(balance, 'ether')
+    console.log(accountBalance)
+  } catch (error) {
+    console.error('Error fetching balance:', error)
+    // Handle error gracefully, e.g., set accountBalance to a default value or show an error message
+    accountBalance.value = 0
+  }
+}
 </script>
 
 <template>
@@ -172,7 +201,7 @@ const goToAccount = (account) => {
             >
           </div>
           <div class="add-sub-cont-2">
-            <p>2JLNXF725EKFJD6SG3KK3MVJZKFZMGVVWQZNWTM4YOUH6XVUUHEAWL4ZV4</p>
+            <p>{{ accountAddress }}</p>
           </div>
         </div>
         <div class="balance">
@@ -180,7 +209,7 @@ const goToAccount = (account) => {
             <h3>ETH BALANCE</h3>
           </div>
           <div class="bal-sub-cont">
-            <Icon icon="ri:eth-line" class="eth" /><h2>2,984,943,425,066</h2>
+            <Icon icon="ri:eth-line" class="eth" /><h2>{{ accountBalance }}</h2>
           </div>
         </div>
       </div>
