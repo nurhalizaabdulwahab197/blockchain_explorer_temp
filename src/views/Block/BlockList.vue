@@ -55,12 +55,6 @@ const scrollBlocks = (direction) => {
   fetchData()
 }
 
-onMounted(() => {
-  fetchData()
-  fetchLastBlock()
-  // setInterval(fetchData, 10000) // Fetch block every 10 seconds
-})
-
 const formatHexString = (hexString) => {
   const prefixLength = 18
   const prefix = hexString.slice(0, prefixLength)
@@ -120,11 +114,16 @@ const goToLastPage = () => {
   fetchDataBlockList(currentPage.value)
 }
 
-// Fetch initial data for the first page
 onMounted(() => {
   fetchLastBlock()
   fetchDataBlockList(currentPage.value)
+  fetchData()
 })
+
+setInterval(() => {
+  fetchData()
+  fetchDataBlockList(currentPage.value)
+}, 10000)
 </script>
 
 <template>
