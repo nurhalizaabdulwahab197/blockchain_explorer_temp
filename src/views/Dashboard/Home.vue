@@ -5,32 +5,41 @@ import { options } from './apexChartOpt'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 
-const temp = ref([
-  { id: 1 },
-  { id: 2 },
-  { id: 3 },
-  { id: 4 },
-  { id: 5 },
-  { id: 6 },
-  { id: 7 },
-  { id: 8 },
-  { id: 9 },
-  { id: 10 }
-])
-const chart = ref(null)
-const chartHeight = ref(350)
 const blocks = ref([])
 const trxs = ref([])
+const totalTransactions = ref(0)
+const maxTransactionPerDay = ref(0)
 
-onMounted(() => {
-  const chartOptions = { ...options, chart: { ...options.chart, id: 'chart' } }
-  // chartOptions.chart.width = 400
-  //chartOptions.chart.height = chartHeight.value
-  chart.value = new ApexCharts(document.querySelector('#chart'), chartOptions)
-  chart.value.render()
-})
+const fetchGraphData = () => {
+  fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      const { output } = data
+      const newData = output.map((item) => [new Date(item.date).getTime(), item.transactionCount])
+      console.log(newData)
+      options.series[0].data = newData
+      options.xaxis.min = new Date(output[0].date).getTime()
+      options.xaxis.max = new Date(output[output.length - 1].date).getTime()
 
-const fetchData = () => {
+      // Update ApexCharts with new options
+      const chart = new ApexCharts(document.querySelector('#chart'), options)
+      chart.render()
+
+      // statistic
+      totalTransactions.value = data.statistics.totalTransactions
+      maxTransactionPerDay.value = data.statistics.maxTransactionPerDay
+    })
+    .catch((error) => {
+      console.error('Error fetching data from API:', error)
+    })
+}
+
+const fetchBlockData = () => {
   fetch('http://localhost:8080/api/block/latestBlockList')
     .then((response) => {
       if (!response.ok) {
@@ -46,8 +55,6 @@ const fetchData = () => {
       console.error('There was a problem fetching the data:', error)
     })
 }
-onMounted(fetchData)
-setInterval(fetchData, 20000) //fetch block every 20 seconds
 
 const fetchTrxData = () => {
   fetch('http://localhost:8080/api/transaction/fetch/latestTransactionList')
@@ -66,8 +73,14 @@ const fetchTrxData = () => {
     })
 }
 
-onMounted(fetchTrxData)
-setInterval(fetchTrxData, 20000)
+const fetchData = () => {
+  fetchBlockData()
+  fetchGraphData()
+  fetchTrxData()
+}
+
+onMounted(fetchData)
+setInterval(fetchData, 20000)
 
 const formatHexString = (hexString) => {
   const prefixLength = 5 // Length of the "0x" prefix
@@ -132,14 +145,14 @@ const goToTransaction = (TxnHash) => {
             <Icon icon="fluent:arrow-swap-16-regular" class="detailIcon" />
             <div>
               <p class="detailTitle">TRANSACTIONS</p>
-              <p class="detailVal">2,127,675,815</p>
+              <p class="detailVal">{{ totalTransactions }}</p>
             </div>
           </div>
           <div class="detailBlock">
             <Icon icon="cib:ethereum" class="detailIcon" />
             <div>
               <p class="detailTitle">MAX TRANSACTION/DAY</p>
-              <p class="detailVal"> 188,694,310,338,933</p>
+              <p class="detailVal">{{ maxTransactionPerDay }}</p>
             </div>
           </div>
         </div>
@@ -182,20 +195,20 @@ const goToTransaction = (TxnHash) => {
             <div style="display: flex; align-items: center">
               <Icon icon="cib:ethereum" />
               Hash:
-              <span class="clickable" @click="goToTransaction(trx.id)">
+              <span class="clickable" @click="goToTransaction(trx.hash)">
                 {{ formatHexString(trx.hash) }}
               </span>
             </div>
             <div>
               <div
                 >Form:
-                <span class="clickable" @click="goToAccount(v.id)">{{
+                <span class="clickable" @click="goToAccount(trx.senderAddress)">{{
                   formatHexString(trx.senderAddress)
                 }}</span></div
               >
               <div
                 >To:
-                <span class="clickable" @click="goToAccount(v.id)">{{
+                <span class="clickable" @click="goToAccount(trx.receiverAddress)">{{
                   formatHexString(trx.receiverAddress)
                 }}</span></div
               >
@@ -327,10 +340,15 @@ main {
   border-bottom: 2px solid #4a4a4a;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 .item:last-child {
   border: none;
+}
+
+.latestTransactionContainer .item > div {
+  flex: 1;
 }
 
 .time {
