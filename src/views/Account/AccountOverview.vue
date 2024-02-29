@@ -360,7 +360,8 @@ h3 {
 }
 
 .balance h2 {
-  width: 70%;
+  width: 80%;
+  padding-left: 5px;
   color: #676767;
   word-wrap: break-word;
   flex-wrap: wrap;
@@ -408,8 +409,6 @@ td {
   padding: 12px 15px;
   font-size: 14px;
   white-space: nowrap;
-
-  /* border-bottom: 2px solid #4a4a4a; */
   background-color: #282b2e;
 }
 
@@ -501,104 +500,6 @@ tr:last-child td:last-child {
   cursor: pointer;
 }
 
-@media screen and (width <= 600px) {
-  .info-cont {
-    flex-direction: column;
-    margin: 35px 0;
-  }
-
-  .address,
-  .balance {
-    width: 100%;
-  }
-
-  .btn {
-    margin: 10px 0;
-  }
-
-  .balance h2 {
-    width: 100%;
-  }
-
-  .transaction-cont {
-    width: 100%;
-    height: auto;
-    overflow-x: auto;
-  }
-
-  .paginate {
-    justify-content: center;
-  }
-
-  .copy {
-    font-size: 9.6px;
-  }
-
-  .alertbox {
-    position: absolute;
-    right: 10px;
-    z-index: 10000;
-    display: flex;
-    width: 80%;
-    flex-direction: row;
-  }
-
-  .copymessage {
-    display: flex;
-    width: 100%;
-    padding-left: 25px;
-    margin-right: 8px;
-    background-color: #363737;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  .copymessagetitle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 15px;
-  }
-
-  .visiblecopy {
-    display: none;
-  }
-
-  .copy {
-    display: flex;
-    padding: 5px 10px;
-    font-size: 4px;
-    color: #9c9c9c;
-    background-color: transparent;
-    border: 1px groove #7f7f7f;
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-@media screen and (height <= 717px) {
-  .body {
-    flex-direction: column;
-  }
-
-  .main {
-    height: auto;
-  }
-
-  .footer {
-    margin-top: auto;
-  }
-}
-
-@media screen and (width <= 1050px) {
-  .visiblecopy {
-    display: none;
-  }
-}
-
 .bardesign {
   width: 10px;
   height: 100px;
@@ -637,5 +538,73 @@ tr:last-child td:last-child {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+}
+
+@media screen and (width <= 600px) {
+  .info-cont {
+    flex-direction: column;
+    margin: 35px 0;
+  }
+
+  .address,
+  .balance {
+    width: 100%;
+  }
+
+  .btn {
+    margin: 10px 0;
+  }
+
+  .transaction-cont {
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+  }
+
+  .paginate {
+    justify-content: center;
+  }
+
+  .alertbox {
+    position: absolute;
+    right: 10px;
+    z-index: 10000;
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+  }
+
+  .copymessage {
+    display: flex;
+    width: 100%;
+    padding-left: 25px;
+    margin-right: 8px;
+    background-color: #363737;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .copymessagetitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+}
+
+@media screen and (height <= 717px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .main {
+    height: auto;
+  }
+
+  .footer {
+    margin-top: auto;
+  }
 }
 </style>
