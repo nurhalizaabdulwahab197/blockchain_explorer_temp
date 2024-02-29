@@ -24,12 +24,28 @@ function copyToClipboard(value, messageTitle, message) {
   document.body.appendChild(el)
   el.select()
   el.setSelectionRange(0, 99999) // For mobile devices
+function copyToClipboard(value, messageTitle, message) {
+  const el = document.createElement('input')
+  el.value = value
+  document.body.appendChild(el)
+  el.select()
+  el.setSelectionRange(0, 99999) // For mobile devices
   document.execCommand('copy')
   document.body.removeChild(el)
   showToast.value = true
   setTimeout(() => {
     showToast.value = false
   }, 6000)
+  copyMessageTitle.value = messageTitle
+  copyMessage.value = message
+}
+
+function copyBlockHeight() {
+  copyToClipboard(
+    blockHeight.value,
+    'Block Height copied',
+    'The block height was copied to the clipboard'
+  )
   copyMessageTitle.value = messageTitle
   copyMessage.value = message
 }
@@ -47,6 +63,11 @@ function copyHash() {
 }
 
 function copyMiner() {
+  copyToClipboard(
+    miner.value,
+    'Miner Message copied',
+    'The miner address was copied to the clipboard'
+  )
   copyToClipboard(
     miner.value,
     'Miner Message copied',
@@ -92,7 +113,7 @@ const fetchData = (endpoint) => {
         miner.value = fetchedBlock.miner
         size.value = fetchedBlock.size
         timestamp.value = fetchedBlock.timestamp
-        transactionNumber.value = fetchedBlock.transactionNumber
+        transactionNumber.value = fetchedBlock.transactions.length
         blockReward.value = fetchedBlock.blockReward
         transactionFee.value = fetchedBlock.transactionNumber
         rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
@@ -114,14 +135,8 @@ const fetchDataNumber = () => {
   fetchData(`/block/number/${blockHeight.value}`)
 }
 
-function goToPreviousBlock() {
-  const prevBlockNumber = blockHeight.value - 1
-  router.push(`/blockchain/blockList/blockdetail/${prevBlockNumber}`)
-}
-
-function goToNextBlock() {
-  const nextBlockNumber = blockHeight.value + 1
-  router.push(`/blockchain/blockList/blockdetail/${nextBlockNumber}`)
+const goToBlock = (block) => {
+  router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
 </script>
 
@@ -145,13 +160,13 @@ function goToNextBlock() {
         <h2>Block {{ blockHeight }}</h2>
       </div>
       <div class="block">
-        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToPreviousBlock()" />
+        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToBlock(blockHeight - 1)" />
         <div class="rectangle-container">
           <div class="rectangle"
-            ><div :style="{ height: rectangleHeight + '%' }" class="overlapping-rectangle"></div
+            ><div :style="{ height: rectangleHeight + 'px' }" class="overlapping-rectangle"></div
           ></div>
         </div>
-        <Icon icon="bxs:right-arrow" class="blockarrow" @click="goToNextBlock()" />
+        <Icon icon="bxs:right-arrow" class="blockarrow" @click="goToBlock(blockHeight + 1)" />
       </div>
       <div class="blockinfo">
         <div class="totaltransaction">
@@ -257,8 +272,9 @@ function goToNextBlock() {
 }
 
 .copy:hover {
+  color: white;
   cursor: pointer;
-  background-color: rgb(10 10 10);
+  background-color: #919191;
 }
 
 .visiblecopy {
@@ -411,6 +427,11 @@ function goToNextBlock() {
 
 .blockarrow {
   font-size: 20px;
+  cursor: pointer;
+}
+
+.blockarrow:hover {
+  cursor: pointer;
 }
 
 .blockarrow:hover {

@@ -1,25 +1,89 @@
 <script setup lang="tsx">
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
+import axios from 'axios'
+import router from '@/router'
 
 const searchVal = ref('')
-// const searchBtnClick = ref(false)
+const isSuccess = ref(false)
+const submitForm = () => {
+  const searchValue = searchVal.value
+  isSuccess.value = false
+  console.log('Form submitted with input:', searchValue)
 
-// function toggleBtn() {
-//   searchBtnClick.value = !searchBtnClick.value
-//   console.log(searchBtnClick.value)
-// }
+  axios
+    .get(`http://localhost:8080/api/block/number/${searchValue}`)
+    .then((response) => {
+      if (response.data.output !== null) {
+        isSuccess.value = true
+        router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
+      } else {
+        return axios.get(`http://localhost:8080/api/block/hash/${searchValue}`).catch((error) => {
+          console.log(error)
+          return null // Proceed to the next link
+        })
+      }
+    })
+    .then((response) => {
+      if (isSuccess.value) {
+        return null
+      }
+      if (response && response.data.output !== null) {
+        isSuccess.value = true
+        router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
+      } else {
+        return axios.get(`http://localhost:8080/api/transaction/${searchValue}`).catch((error) => {
+          console.log(error)
+          return null // Proceed to the next link
+        })
+      }
+    })
+    .then((response) => {
+      if (isSuccess.value) {
+        return null
+      }
+      if (response && response.data.output !== null) {
+        isSuccess.value = true
+        router.push(`/blockchain/transactionList/transactionDetail/${searchValue}`)
+      } else {
+        return axios
+          .get(`http://localhost:8080/api/account/accountOverview/${searchValue}`)
+          .catch((error) => {
+            console.log(error)
+            return null // Proceed to the next link
+          })
+      }
+    })
+    .then((response) => {
+      if (isSuccess.value) {
+        return null
+      }
+      if (response && response.data.balance !== null) {
+        isSuccess.value = true
+        router.push(`/account/accountOverview/${searchValue}`)
+      } else if (!isSuccess.value) {
+        // Handle case where all requests fail
+        console.log('No data found for search value:', searchValue)
+        router.push(`/error/searchNotFound`)
+      }
+    })
+    .catch((error) => {
+      // Handle any errors
+      console.error('Error:', error)
+    })
+}
 </script>
 
 <template>
-  <form class="searchBar">
+  <form class="searchBar" @submit.prevent="submitForm">
     <Icon icon="ion:search-outline" class="searchIcon" />
     <input
       type="search"
       class="searchBarInput"
       v-model="searchVal"
-      placeholder="Search for transaction/Block/Txn Hash/Domain Name"
+      placeholder="Search for Block number/Block hash/Transaction hash/Address"
     />
+    <button type="submit" v-show="false"></button>
   </form>
 </template>
 
@@ -32,7 +96,7 @@ const searchVal = ref('')
 
 .searchBarInput {
   width: 100%;
-  padding: 8px 10px 8px 25px;
+  padding: 8px 10px 8px 35px;
   color: black;
   background-color: #d9d9d9;
   border: none;

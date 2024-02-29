@@ -5,28 +5,104 @@ import { options } from './apexChartOpt'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 
-const temp = ref([
-  { id: 1 },
-  { id: 2 },
-  { id: 3 },
-  { id: 4 },
-  { id: 5 },
-  { id: 6 },
-  { id: 7 },
-  { id: 8 },
-  { id: 9 },
-  { id: 10 }
-])
-const chart = ref(null)
-const chartHeight = ref(350)
+const blocks = ref([])
+const trxs = ref([])
+const totalTransactions = ref(0)
+const maxTransactionPerDay = ref(0)
 
-onMounted(() => {
-  const chartOptions = { ...options, chart: { ...options.chart, id: 'chart' } }
-  // chartOptions.chart.width = 400
-  //chartOptions.chart.height = chartHeight.value
-  chart.value = new ApexCharts(document.querySelector('#chart'), chartOptions)
-  chart.value.render()
-})
+const fetchGraphData = () => {
+  fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      const { output } = data
+      const newData = output.map((item) => [new Date(item.date).getTime(), item.transactionCount])
+      console.log(newData)
+      options.series[0].data = newData
+      options.xaxis.min = new Date(output[0].date).getTime()
+      options.xaxis.max = new Date(output[output.length - 1].date).getTime()
+
+      // Update ApexCharts with new options
+      const chart = new ApexCharts(document.querySelector('#chart'), options)
+      chart.render()
+
+      // statistic
+      totalTransactions.value = data.statistics.totalTransactions
+      maxTransactionPerDay.value = data.statistics.maxTransactionPerDay
+    })
+    .catch((error) => {
+      console.error('Error fetching data from API:', error)
+    })
+}
+
+const fetchBlockData = () => {
+  fetch('http://localhost:8080/api/block/latestBlockList')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      blocks.value = data.output
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+const fetchTrxData = () => {
+  fetch('http://localhost:8080/api/transaction/fetch/latestTransactionList')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      trxs.value = data.output
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+const fetchData = () => {
+  fetchBlockData()
+  fetchGraphData()
+  fetchTrxData()
+}
+
+onMounted(fetchData)
+setInterval(fetchData, 20000)
+
+const formatHexString = (hexString) => {
+  const prefixLength = 5 // Length of the "0x" prefix
+  const suffixLength = 5 // Number of characters to display at the end
+
+  // Extract the first and last few characters
+  const prefix = hexString.slice(0, prefixLength)
+  const suffix = hexString.slice(-suffixLength)
+
+  // Create the formatted string with 'X' placeholders in the middle
+  const formattedString = prefix + '...' + suffix
+
+  return formattedString
+}
+
+const calcTimeDiff = (timestamp) => {
+  const blockTimestamp = new Date(timestamp)
+  const currentDate = new Date()
+  const timeDifferenceInMilliseconds = currentDate - blockTimestamp
+  const timeDifferenceInSeconds = Math.floor(timeDifferenceInMilliseconds / 1000)
+  return timeDifferenceInSeconds
+}
 
 const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
@@ -62,21 +138,21 @@ const goToTransaction = (TxnHash) => {
             <Icon icon="clarity:blocks-group-line" class="detailIcon" />
             <div>
               <p class="detailTitle">BLOCKS</p>
-              <p class="detailVal">18,375,205</p>
+              <p class="detailVal">{{ blocks && blocks.length > 0 ? blocks[0].number : 'N/A' }}</p>
             </div>
           </div>
           <div class="detailBlock">
             <Icon icon="fluent:arrow-swap-16-regular" class="detailIcon" />
             <div>
               <p class="detailTitle">TRANSACTIONS</p>
-              <p class="detailVal">2,127,675,815</p>
+              <p class="detailVal">{{ totalTransactions }}</p>
             </div>
           </div>
           <div class="detailBlock">
             <Icon icon="cib:ethereum" class="detailIcon" />
             <div>
               <p class="detailTitle">MAX TRANSACTION/DAY</p>
-              <p class="detailVal"> 188,694,310,338,933</p>
+              <p class="detailVal">{{ maxTransactionPerDay }}</p>
             </div>
           </div>
         </div>
@@ -91,17 +167,19 @@ const goToTransaction = (TxnHash) => {
           </a>
         </div>
         <div class="list">
-          <div class="item" v-for="v in temp" :key="v.id">
+          <div class="item" v-for="block in blocks" :key="block.id">
             <div style="display: flex; align-items: center">
               <Icon icon="clarity:block-line" />
-              <span class="clickable" @click="goToBlock(v.id)">18374438</span>
+              <span class="clickable" @click="goToBlock(block.number)">{{ block.number }}</span>
             </div>
             <div>
               Hash:
-              <span class="clickable" @click="goToBlock(v.id)">0xe3....7fbf</span>
+              <span class="clickable" @click="goToBlock(block.hash)">
+                {{ formatHexString(block.hash) }}
+              </span>
             </div>
-            <div> Txs: 12 </div>
-            <div class="time"> 11 secs ago </div>
+            <div> Txs: {{ block.transactions.length }}</div>
+            <div class="time"> {{ calcTimeDiff(block.timestamp) }} secs ago </div>
           </div>
         </div>
       </div>
@@ -113,23 +191,34 @@ const goToTransaction = (TxnHash) => {
           </a>
         </div>
         <div class="list">
-          <div class="item" v-for="v in temp" :key="v.id">
+          <div class="item" v-for="trx in trxs" :key="trx.id">
             <div style="display: flex; align-items: center">
               <Icon icon="cib:ethereum" />
-              Hash: <span class="clickable" @click="goToTransaction(v.id)"> 0xb2....4dea</span>
+              Hash:
+              <span class="clickable" @click="goToTransaction(trx.hash)">
+                {{ formatHexString(trx.hash) }}
+              </span>
             </div>
             <div>
               <div
-                >Form: <span class="clickable" @click="goToAccount(v.id)">08f3....y5bf</span></div
+                >Form:
+                <span class="clickable" @click="goToAccount(trx.senderAddress)">{{
+                  formatHexString(trx.senderAddress)
+                }}</span></div
               >
-              <div>To: <span class="clickable" @click="goToAccount(v.id)">07r3....7uFe</span></div>
+              <div
+                >To:
+                <span class="clickable" @click="goToAccount(trx.receiverAddress)">{{
+                  formatHexString(trx.receiverAddress)
+                }}</span></div
+              >
             </div>
             <div>
               <div>
                 Amount:
-                <span style="color: #6afd36">0.0034 ETH</span>
+                <span style="color: #6afd36">{{ trx.transactionFee }} ETH</span>
               </div>
-              <div class="time"> 11 secs ago </div>
+              <div class="time"> {{ calcTimeDiff(trx.timestamp) }}secs ago </div>
             </div>
           </div>
         </div>
@@ -251,10 +340,15 @@ main {
   border-bottom: 2px solid #4a4a4a;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 .item:last-child {
   border: none;
+}
+
+.latestTransactionContainer .item > div {
+  flex: 1;
 }
 
 .time {

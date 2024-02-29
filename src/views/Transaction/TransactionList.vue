@@ -1,3 +1,72 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import { Icon } from '@iconify/vue'
+import axios from 'axios'
+import router from '@/router'
+
+interface Transaction {
+  hash: string
+  block: number
+  senderAddress: string
+  amount: number
+  receiverAddress: string
+  timestamp: Date
+}
+
+const transactions = ref<Transaction[]>([])
+const transactionsPerPage = 10 // determine how many transactions to display per page
+const currentPage = ref(1)
+
+const totalPages = computed(() => Math.ceil(transactions.value.length / transactionsPerPage))
+
+const displayedTransactions = computed(() => {
+  const startIndex = (currentPage.value - 1) * transactionsPerPage
+  const endIndex = startIndex + transactionsPerPage
+  return transactions.value.slice(startIndex, endIndex)
+})
+
+const fetchTransactions = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/transaction/')
+    transactions.value = response.data.output
+  } catch (error) {
+    console.error('Error fetching transactions:', error)
+  }
+}
+
+const calculateAge = (timestamp: Date) => {
+  const currentTime = new Date()
+  const ageInSeconds = Math.floor((currentTime.getTime() - new Date(timestamp).getTime()) / 1000)
+  return ageInSeconds
+}
+const goToDetail = (hash: string) => {
+  router.push({ name: 'TransactionDetail', params: { id: hash } })
+}
+onMounted(() => {
+  fetchTransactions()
+  setInterval(fetchTransactions, 10000) // interval to fetch new data
+})
+
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+const formatTimestamp = (timestamp: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }
+
+  const formattedDate = new Date(timestamp).toLocaleString('en-GB', options)
+  return formattedDate.replace(/[/]/g, '-').replace(',', '') // Replace slashes with dashes
+}
+</script>
+
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <div class="transactions-page">
@@ -22,93 +91,30 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Display a fixed number of data rows (e.g., 10 rows) -->
-            <tr v-for="(item, index) in slicedDummyData" :key="index">
-              <td
-                class="clickable"
-                style="
-                  max-width: 180px;
-                  overflow: hidden;
-                  color: #1688f2;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                @click="goToDetail(item.TxnHash)"
-                >{{ item.TxnHash }}</td
-              >
-              <td
-                style="
-                  max-width: 100px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                >{{ item.block }}</td
-              >
-              <td
-                style="
-                  max-width: 170px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                >{{ item.time }}
-              </td>
-              <td
-                class="clickable"
-                style="
-                  max-width: 140px;
-                  overflow: hidden;
-                  color: #1688f2;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                @click="goToAccount(item.from)"
-                >{{ item.from }}</td
-              >
-              <td
-                class="clickable"
-                style="
-                  max-width: 140px;
-                  overflow: hidden;
-                  color: #1688f2;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                @click="goToAccount(item.to)"
-                >{{ item.to }}</td
-              >
-              <td
-                style="
-                  max-width: 100px;
-                  overflow: hidden;
-                  color: #6afd36;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                >{{ item.amount }} ETH</td
-              >
-              <td
-                style="
-                  max-width: 80px;
-                  overflow: hidden;
-                  color: #9c9c9c;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-                >{{ item.age }} secs ago</td
-              >
+            <tr v-for="(item, index) in displayedTransactions" :key="index">
+              <td class="clickable" @click="goToDetail(item.hash)">{{ item.hash }}</td>
+              <td>{{ item.block }}</td>
+              <td>{{ formatTimestamp(item.timestamp) }}</td>
+              <td>{{ item.senderAddress }}</td>
+              <td>{{ item.receiverAddress }}</td>
+              <td>{{ item.amount }} ETH</td>
+              <td>{{ calculateAge(item.timestamp) }} secs ago</td>
             </tr>
-
             <tr>
               <td colspan="7" class="pagination-buttons">
                 <div class="pagination-container">
                   <div class="centered-content">
-                    <button class="first-page-button" @click="goToFirstPage">First Page</button>
-                    <button class="previous-page-button" @click="goToPreviousPage">&lt;</button>
-                    <span class="page-number"> {{ currentPage }}</span>
-                    <button class="next-page-button" @click="goToNextPage">&gt;</button>
-                    <button class="last-page-button" @click="goToLastPage">Last Page</button>
+                    <button class="first-page-button" @click="changePage(1)">First Page</button>
+                    <button class="previous-page-button" @click="changePage(currentPage - 1)"
+                      >&lt;</button
+                    >
+                    <span class="page-number">{{ currentPage }}</span>
+                    <button class="next-page-button" @click="changePage(currentPage + 1)"
+                      >&gt;</button
+                    >
+                    <button class="last-page-button" @click="changePage(totalPages)"
+                      >Last Page</button
+                    >
                   </div>
                 </div>
               </td>
@@ -120,177 +126,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import { Icon } from '@iconify/vue'
-import router from '@/router'
-interface Transaction {
-  TxnHash: string
-  block: number
-  time: string
-  from: string
-  to: string
-  amount: number
-  age: number
-}
-
-const goToDetail = (TxnHash) => {
-  router.push(`/blockchain/transactionList/transactionDetail/${TxnHash}`)
-}
-
-const goToAccount = (account) => {
-  router.push(`/account/accountOverview/${account}`)
-}
-
-const dummyData = ref<Transaction[]>([
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  },
-  {
-    TxnHash: '0x981629818926489127649812709',
-    block: 12345678,
-    time: '2023-10-18 21:52:59',
-    from: '8JKDBSV8712349aefdfqv235bw4t',
-    to: '0x77IUAHSFU32682Bsdvscv234',
-    amount: 0.034,
-    age: 6
-  }
-])
-
-const currentPage = ref(1)
-
-const slicedDummyData = ref<Transaction[]>([])
-
-const goToFirstPage = () => {
-  currentPage.value = 1
-  updateSlicedDummyData()
-}
-
-const goToPreviousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    updateSlicedDummyData()
-  }
-}
-
-const goToNextPage = () => {
-  // Replace 10 with the total number of pages in your data
-  if (currentPage.value < 10) {
-    currentPage.value++
-    updateSlicedDummyData()
-  }
-}
-
-const goToLastPage = () => {
-  // Replace 10 with the total number of pages in your data
-  currentPage.value = Math.ceil(dummyData.value.length / 10)
-  updateSlicedDummyData()
-}
-
-const updateSlicedDummyData = () => {
-  const startIndex = (currentPage.value - 1) * 10
-  const endIndex = startIndex + 10
-  slicedDummyData.value = dummyData.value.slice(startIndex, endIndex)
-}
-
-updateSlicedDummyData()
-</script>
 <style scoped>
 html,
 body {
@@ -463,5 +298,87 @@ tr:last-child td:last-child {
   .logo-section h1 {
     margin-left: 10px;
   }
+}
+
+td:nth-child(1) {
+  max-width: 180px;
+  overflow: hidden;
+  color: #1688f2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(2) {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(3) {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(4) {
+  max-width: 100px;
+  overflow: hidden;
+  color: #1688f2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(5) {
+  max-width: 100px;
+  overflow: hidden;
+  color: #1688f2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(6) {
+  max-width: 100px;
+  overflow: hidden;
+  color: #6afd36;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td:nth-child(7) {
+  max-width: 100px;
+  overflow: hidden;
+  color: #9c9c9c;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+th:nth-child(1) {
+  width: 180px;
+}
+
+th:nth-child(2) {
+  width: 100px;
+}
+
+th:nth-child(3) {
+  width: 170px;
+}
+
+th:nth-child(4) {
+  width: 140px;
+}
+
+th:nth-child(5) {
+  width: 140px;
+}
+
+th:nth-child(6) {
+  width: 100px;
+}
+
+th:nth-child(7) {
+  width: 80px;
 }
 </style>

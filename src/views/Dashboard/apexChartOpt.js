@@ -1,21 +1,8 @@
 // apexChartOpt.js
-const data = []
-
-function addRandomData() {
-  const endTimestamp = new Date('31 Jan 2024').getTime()
-  const currentDate = new Date('1 Jan 2024')
-
-  while (currentDate.getTime() < endTimestamp) {
-    data.push([currentDate.getTime(), Math.floor(Math.random() * (1040 - 840 + 1) + 840)])
-    currentDate.setDate(currentDate.getDate() + 1)
-  }
-}
-addRandomData()
 export const options = {
   series: [
     {
-      name: 'Number of Transactions',
-      data: data
+      name: 'Number of Transactions'
     }
   ],
   chart: {
@@ -50,7 +37,7 @@ export const options = {
   yaxis: {
     labels: {
       formatter: function (val) {
-        return val.toFixed(0) + 'k'
+        return val.toFixed(0)
       },
       style: {
         colors: ['#ffffff']
@@ -64,9 +51,7 @@ export const options = {
       style: {
         color: '#ffffff'
       }
-    },
-    min: 840,
-    max: 1040
+    }
   },
   xaxis: {
     type: 'datetime',
@@ -78,15 +63,13 @@ export const options = {
       style: {
         colors: '#ffffff'
       }
-    },
-    min: new Date('01 Jan 2024').getTime(),
-    max: new Date('31 Jan 2024').getTime()
+    }
   },
   tooltip: {
     shared: false,
     y: {
       formatter: function (val) {
-        return val.toFixed(0) + 'k'
+        return val.toFixed(0)
       }
     },
     x: {
