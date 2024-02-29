@@ -1,5 +1,17 @@
 <template>
   <div class="bodycontent">
+    <div v-if="showToast" class="alertbox">
+      <div class="bardesign"></div
+      ><div class="copymessage"
+        ><div class="copymessagetitle"
+          ><Icon
+            icon="charm:tick-double"
+            style="margin-right: 5px; font-size: 1.5rem; color: blue"
+          />
+          {{ copyMessageTitle }} </div
+        >{{ copyMessage }}</div
+      >
+    </div>
     <div class="title-container">
       <Icon icon="cib:ethereum" class="moneyicon" />
       <div class="title">Transaction Overview</div>
@@ -10,7 +22,7 @@
       <div class="column-container">
         <div class="container-title">
           <div class="firstrowtitle">TRANSACTION ID</div>
-          <button class="rowCopybutton" @click="copyToClipboard(transactionId)">
+          <button class="rowCopybutton" @click="copyTransactionIdToClipboard">
             <Icon icon="iconamoon:copy-bold" />
             <div class="none">CLICK TO COPY</div>
           </button>
@@ -191,27 +203,70 @@ const timestamp = ref('')
 const maxFeePerGas = ref('')
 const maxPriorityFeePerGas = ref('')
 const baseFeePerGas = ref('')
+const showToast = ref(false)
+const copyMessageTitle = ref('')
+const copyMessage = ref('')
 
 const route = useRoute()
 
-const copySenderToClipboard = () => {
-  copyToClipboard(senderAddress.value)
-}
-
-const copyReceiverToClipboard = () => {
-  copyToClipboard(receiverAddress.value)
-}
-
-const copyToClipboard = (text) => {
-  const el = document.createElement('textarea')
-  el.value = text
+function copyToClipboard(value, messageTitle, message) {
+  const el = document.createElement('input')
+  el.value = value
   document.body.appendChild(el)
   el.select()
+  el.setSelectionRange(0, 99999) // For mobile devices
   document.execCommand('copy')
   document.body.removeChild(el)
-  // You can also show a notification or perform any other action after copying
-  // For example, you can use a library like 'vue-toastification' for notifications
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 6000)
+  copyMessageTitle.value = messageTitle
+  copyMessage.value = message
 }
+
+function copySenderToClipboard() {
+  copyToClipboard(
+    senderAddress.value,
+    'Sender Address copied',
+    'The sender address was copied to the clipboard'
+  )
+}
+
+function copyReceiverToClipboard() {
+  copyToClipboard(
+    receiverAddress.value,
+    'Receiver Adress copied',
+    'The receiver address was copied to the clipboard'
+  )
+}
+
+function copyTransactionIdToClipboard() {
+  copyToClipboard(
+    transactionId.value,
+    'Transaction Id copied',
+    'The transaction id was copied to the clipboard'
+  )
+}
+
+// const copySenderToClipboard = () => {
+//   copyToClipboard(senderAddress.value)
+// }
+
+// const copyReceiverToClipboard = () => {
+//   copyToClipboard(receiverAddress.value)
+// }
+
+// const copyToClipboard = (text) => {
+//   const el = document.createElement('textarea')
+//   el.value = text
+//   document.body.appendChild(el)
+//   el.select()
+//   document.execCommand('copy')
+//   document.body.removeChild(el)
+//   // You can also show a notification or perform any other action after copying
+//   // For example, you can use a library like 'vue-toastification' for notifications
+// }
 
 const fetchData = async () => {
   try {
@@ -501,6 +556,41 @@ td {
   color: rgb(24 255 24);
 }
 
+.copymessage {
+  display: flex;
+  width: 100%;
+  padding-left: 30px;
+  margin-right: 10px;
+  background-color: #363737;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.copymessagetitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.bardesign {
+  width: 10px;
+  height: 100px;
+  background-color: #1f51ff;
+  border-radius: 10px;
+}
+
+.alertbox {
+  position: absolute;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  width: 450px;
+  flex-direction: row;
+}
+
 @media screen and (width <= 828px) {
   .title {
     margin-right: 0.5rem;
@@ -538,6 +628,15 @@ td {
     justify-content: left;
   }
 
+  .alertbox {
+    position: absolute;
+    right: 10px;
+    z-index: 10000;
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+  }
+
   .left-container {
     display: flex;
     align-items: center;
@@ -570,6 +669,28 @@ td {
 
   .bodycontent {
     margin: 0 1rem;
+  }
+}
+
+@media screen and (width <= 700px) {
+  .copymessage {
+    display: flex;
+    width: 100%;
+    padding-left: 25px;
+    margin-right: 8px;
+    font-size: 12.8px;
+    background-color: #363737;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .copymessagetitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
   }
 }
 </style>
