@@ -20,6 +20,7 @@ const temp = ref([
 const chart = ref(null)
 const chartHeight = ref(350)
 const blocks = ref([])
+const trxs = ref([])
 
 onMounted(() => {
   const chartOptions = { ...options, chart: { ...options.chart, id: 'chart' } }
@@ -47,6 +48,26 @@ const fetchData = () => {
 }
 onMounted(fetchData)
 setInterval(fetchData, 20000) //fetch block every 20 seconds
+
+const fetchTrxData = () => {
+  fetch('http://localhost:8080/api/transaction/fetch/latestTransactionList')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      trxs.value = data.output
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
+
+onMounted(fetchTrxData)
+setInterval(fetchTrxData, 20000)
 
 const formatHexString = (hexString) => {
   const prefixLength = 5 // Length of the "0x" prefix
@@ -157,23 +178,34 @@ const goToTransaction = (TxnHash) => {
           </a>
         </div>
         <div class="list">
-          <div class="item" v-for="v in temp" :key="v.id">
+          <div class="item" v-for="trx in trxs" :key="trx.id">
             <div style="display: flex; align-items: center">
               <Icon icon="cib:ethereum" />
-              Hash: <span class="clickable" @click="goToTransaction(v.id)"> 0xb2....4dea</span>
+              Hash:
+              <span class="clickable" @click="goToTransaction(trx.id)">
+                {{ formatHexString(trx.hash) }}
+              </span>
             </div>
             <div>
               <div
-                >Form: <span class="clickable" @click="goToAccount(v.id)">08f3....y5bf</span></div
+                >Form:
+                <span class="clickable" @click="goToAccount(v.id)">{{
+                  formatHexString(trx.senderAddress)
+                }}</span></div
               >
-              <div>To: <span class="clickable" @click="goToAccount(v.id)">07r3....7uFe</span></div>
+              <div
+                >To:
+                <span class="clickable" @click="goToAccount(v.id)">{{
+                  formatHexString(trx.receiverAddress)
+                }}</span></div
+              >
             </div>
             <div>
               <div>
                 Amount:
-                <span style="color: #6afd36">0.0034 ETH</span>
+                <span style="color: #6afd36">{{ trx.transactionFee }} ETH</span>
               </div>
-              <div class="time"> 11 secs ago </div>
+              <div class="time"> {{ calcTimeDiff(trx.timestamp) }}secs ago </div>
             </div>
           </div>
         </div>
