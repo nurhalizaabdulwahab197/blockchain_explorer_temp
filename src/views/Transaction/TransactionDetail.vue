@@ -1,28 +1,20 @@
 <template>
   <div class="bodycontent">
-    <div v-if="showToast" class="alertbox">
-      <div class="bardesign"></div
-      ><div class="copymessage"
-        ><div class="copymessagetitle"
-          ><Icon
-            icon="charm:tick-double"
-            style="margin-right: 5px; font-size: 1.5rem; color: blue"
-          />
-          {{ copyMessageTitle }} </div
-        >{{ copyMessage }}</div
-      >
-    </div>
     <div class="title-container">
       <Icon icon="cib:ethereum" class="moneyicon" />
       <div class="title">Transaction Overview</div>
-      <div class="iconbackbutton"><Icon icon="ion:chevron-back" /></div>
-      <div class="iconnextbutton"><Icon icon="ion:chevron-forward" /></div>
+      <div class="iconbackbutton"
+        ><Icon icon="ion:chevron-back" @click="retrievePreviousTransaction"
+      /></div>
+      <div class="iconnextbutton"
+        ><Icon icon="ion:chevron-forward" @click="retrieveNextTransaction"
+      /></div>
     </div>
     <div class="firstrow-container">
       <div class="column-container">
         <div class="container-title">
           <div class="firstrowtitle">TRANSACTION ID</div>
-          <button class="rowCopybutton" @click="copyTransactionIdToClipboard">
+          <button class="rowCopybutton" @click="copyToClipboard(transactionId)">
             <Icon icon="iconamoon:copy-bold" />
             <div class="none">CLICK TO COPY</div>
           </button>
@@ -74,7 +66,7 @@
               <div>AMOUNT :</div>
             </div>
           </td>
-          <td colspan="2" class="amount tablecontent">{{ amount }} ETH</td>
+          <td colspan="2" class="amount tablecontent">{{ amount }}</td>
         </tr>
         <tr>
           <td>
@@ -104,7 +96,7 @@
             <div class="alligncenter">
               <Icon icon="ri:eth-fill" />
               <div class="tablecontent">{{
-                parseFloat(value) > 0 ? `${value} ETH` : '0 ETH ($0.00)'
+                parseFloat(value) > 0 ? `${value} ` : '0 ETH ($0.00)'
               }}</div>
             </div>
           </td>
@@ -119,7 +111,7 @@
           <td>
             <!--{# 1 ETH = 3,257.249999 USD #}-->
             <div class="tablecontent"
-              >{{ gasPrice }} ETH ( ${{ (parseFloat(gasPrice) * 3257.249999).toFixed(2) }} )</div
+              >{{ gasPrice }} ETH (${{ (parseFloat(gasPrice) * 3257.249999).toFixed(2) }})</div
             >
           </td>
         </tr>
@@ -134,10 +126,10 @@
             <div class="transactionfee-content">
               <!--{#A gwei is one-billionth of one ETH.#}-->
               <div class="tablecontent"
-                >{{ transactionFee }} ETH ( ${{
-                  (parseFloat(transactionFee) * 3257.249999).toFixed(2)
+                >{{ transactionFee }} Gwei ({{
+                  (parseFloat(transactionFee) / 1e9).toFixed(9)
                 }}
-                )</div
+                ETH)</div
               >
               <div class="transactionfee-container">
                 <div class="column2-container">
@@ -163,7 +155,7 @@
       <div class="moredetail-container">
         <div class="left-container">
           <Icon icon="cib:ethereum" />
-          <div>Gas Limit & Usage by Txn:</div>
+          <div>Gas Limit & Usage by Txn:{{ gasUsed }}</div>
         </div>
         <div class="right-container">{{
           `${parseFloat(gasLimit)} | ${parseFloat(gasUsed)} (${((parseFloat(gasUsed) / parseFloat(gasLimit)) * 100).toFixed(2)}%)`
@@ -175,7 +167,7 @@
           <div>Gas Fees:</div>
         </div>
         <div class="right-container"
-          >Base: {{ baseFeePerGas }} Gwei | Max: {{ maxFeePerGas }} Gwei | Max Priority:
+          >Base: {{ baseFeePerGas }} Gwei |Max: {{ maxFeePerGas }} Gwei |Max Priority:
           {{ maxPriorityFeePerGas }} Gwei
         </div>
       </div>
@@ -187,6 +179,7 @@ import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import axios from 'axios'
+import router from '@/router'
 
 const transactionId = ref('')
 const block = ref('')
@@ -203,70 +196,27 @@ const timestamp = ref('')
 const maxFeePerGas = ref('')
 const maxPriorityFeePerGas = ref('')
 const baseFeePerGas = ref('')
-const showToast = ref(false)
-const copyMessageTitle = ref('')
-const copyMessage = ref('')
 
 const route = useRoute()
 
-function copyToClipboard(value, messageTitle, message) {
-  const el = document.createElement('input')
-  el.value = value
+const copySenderToClipboard = () => {
+  copyToClipboard(senderAddress.value)
+}
+
+const copyReceiverToClipboard = () => {
+  copyToClipboard(receiverAddress.value)
+}
+
+const copyToClipboard = (text) => {
+  const el = document.createElement('textarea')
+  el.value = text
   document.body.appendChild(el)
   el.select()
-  el.setSelectionRange(0, 99999) // For mobile devices
   document.execCommand('copy')
   document.body.removeChild(el)
-  showToast.value = true
-  setTimeout(() => {
-    showToast.value = false
-  }, 6000)
-  copyMessageTitle.value = messageTitle
-  copyMessage.value = message
+  // You can also show a notification or perform any other action after copying
+  // For example, you can use a library like 'vue-toastification' for notifications
 }
-
-function copySenderToClipboard() {
-  copyToClipboard(
-    senderAddress.value,
-    'Sender Address copied',
-    'The sender address was copied to the clipboard'
-  )
-}
-
-function copyReceiverToClipboard() {
-  copyToClipboard(
-    receiverAddress.value,
-    'Receiver Adress copied',
-    'The receiver address was copied to the clipboard'
-  )
-}
-
-function copyTransactionIdToClipboard() {
-  copyToClipboard(
-    transactionId.value,
-    'Transaction Id copied',
-    'The transaction id was copied to the clipboard'
-  )
-}
-
-// const copySenderToClipboard = () => {
-//   copyToClipboard(senderAddress.value)
-// }
-
-// const copyReceiverToClipboard = () => {
-//   copyToClipboard(receiverAddress.value)
-// }
-
-// const copyToClipboard = (text) => {
-//   const el = document.createElement('textarea')
-//   el.value = text
-//   document.body.appendChild(el)
-//   el.select()
-//   document.execCommand('copy')
-//   document.body.removeChild(el)
-//   // You can also show a notification or perform any other action after copying
-//   // For example, you can use a library like 'vue-toastification' for notifications
-// }
 
 const fetchData = async () => {
   try {
@@ -308,6 +258,29 @@ const formatTimestamp = (timestamp: string) => {
   }
 
   return new Date(timestamp).toLocaleString('en-US', options)
+}
+const retrieveNextTransaction = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/transaction/next/${transactionId.value}`
+    )
+    const nextTransactionHash = response.data.output.hash
+    router.push({ name: 'TransactionDetail', params: { id: nextTransactionHash } })
+  } catch (error) {
+    console.error('Error fetching next transaction:', error)
+  }
+}
+
+const retrievePreviousTransaction = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/transaction/prev/${transactionId.value}`
+    )
+    const previousTransactionHash = response.data.output.hash
+    router.push({ name: 'TransactionDetail', params: { id: previousTransactionHash } })
+  } catch (error) {
+    console.error('Error fetching previous transaction:', error)
+  }
 }
 
 onMounted(() => {
@@ -357,6 +330,7 @@ watch(
   width: 1.5rem;
   height: 1.5rem;
   margin-left: 0.5rem;
+  cursor: pointer;
   background-color: rgb(217 217 217 / 30%);
   border-radius: 50%;
   justify-content: center;
@@ -556,41 +530,6 @@ td {
   color: rgb(24 255 24);
 }
 
-.copymessage {
-  display: flex;
-  width: 100%;
-  padding-left: 30px;
-  margin-right: 10px;
-  background-color: #363737;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.copymessagetitle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 15px;
-  font-size: 20px;
-}
-
-.bardesign {
-  width: 10px;
-  height: 100px;
-  background-color: #1f51ff;
-  border-radius: 10px;
-}
-
-.alertbox {
-  position: absolute;
-  right: 10px;
-  z-index: 10000;
-  display: flex;
-  width: 450px;
-  flex-direction: row;
-}
-
 @media screen and (width <= 828px) {
   .title {
     margin-right: 0.5rem;
@@ -628,15 +567,6 @@ td {
     justify-content: left;
   }
 
-  .alertbox {
-    position: absolute;
-    right: 10px;
-    z-index: 10000;
-    display: flex;
-    width: 80%;
-    flex-direction: row;
-  }
-
   .left-container {
     display: flex;
     align-items: center;
@@ -669,28 +599,6 @@ td {
 
   .bodycontent {
     margin: 0 1rem;
-  }
-}
-
-@media screen and (width <= 700px) {
-  .copymessage {
-    display: flex;
-    width: 100%;
-    padding-left: 25px;
-    margin-right: 8px;
-    font-size: 12.8px;
-    background-color: #363737;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  .copymessagetitle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 15px;
   }
 }
 </style>

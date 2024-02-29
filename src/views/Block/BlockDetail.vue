@@ -139,7 +139,7 @@ const goToBlock = (block) => {
         <h2>Block {{ blockHeight }}</h2>
       </div>
       <div class="block">
-        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToBlock(blockHeight - 1)" />
+        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToBlock(blockHeight - 1)" />s
         <div class="rectangle-container">
           <div class="rectangle"
             ><div :style="{ height: rectangleHeight + 'px' }" class="overlapping-rectangle"></div
