@@ -157,7 +157,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     meta: { hidden: true },
     children: [
       {
-        path: ':id',
+        path: ':address',
         component: () => import('@/views/Account/AccountOverview.vue'),
         name: 'Account Overview',
         meta: {
