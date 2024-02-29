@@ -58,9 +58,9 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">{{
+            <span class="clickable tablecontent address" @click="goToDetail(senderAddress)">{{
               senderAddress
-            }}</a>
+            }}</span>
             <button class="tableCopybutton" @click="copySenderToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -84,9 +84,9 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">{{
+            <span class="clickable tablecontent address" @click="goToDetail(receiverAddress)">{{
               receiverAddress
-            }}</a>
+            }}</span>
             <button class="tableCopybutton" @click="copyReceiverToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -186,6 +186,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
+import router from '@/router'
 import axios from 'axios'
 
 const transactionId = ref('')
@@ -249,25 +250,6 @@ function copyTransactionIdToClipboard() {
   )
 }
 
-// const copySenderToClipboard = () => {
-//   copyToClipboard(senderAddress.value)
-// }
-
-// const copyReceiverToClipboard = () => {
-//   copyToClipboard(receiverAddress.value)
-// }
-
-// const copyToClipboard = (text) => {
-//   const el = document.createElement('textarea')
-//   el.value = text
-//   document.body.appendChild(el)
-//   el.select()
-//   document.execCommand('copy')
-//   document.body.removeChild(el)
-//   // You can also show a notification or perform any other action after copying
-//   // For example, you can use a library like 'vue-toastification' for notifications
-// }
-
 const fetchData = async () => {
   try {
     const response = await axios.get(`http://localhost:8080/api/transaction/${route.params.id}`)
@@ -324,6 +306,10 @@ watch(
     transactionId.value = newId as string
   }
 )
+
+const goToDetail = (account) => {
+  router.push(`/account/accountOverview/${account}`)
+}
 </script>
 
 <style scoped lang="css">
@@ -421,6 +407,11 @@ table tr {
 .tabletitle-container {
   color: black;
   background-color: rgb(200 200 200);
+}
+
+.address {
+  color: blue;
+  cursor: pointer;
 }
 
 .tablerow {
