@@ -628,6 +628,15 @@ td {
     justify-content: left;
   }
 
+  .alertbox {
+    position: absolute;
+    right: 10px;
+    z-index: 10000;
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+  }
+
   .left-container {
     display: flex;
     align-items: center;
@@ -660,6 +669,28 @@ td {
 
   .bodycontent {
     margin: 0 1rem;
+  }
+}
+
+@media screen and (width <= 700px) {
+  .copymessage {
+    display: flex;
+    width: 100%;
+    padding-left: 25px;
+    margin-right: 8px;
+    font-size: 12.8px;
+    background-color: #363737;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .copymessagetitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
   }
 }
 </style>
