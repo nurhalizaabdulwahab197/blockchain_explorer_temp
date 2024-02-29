@@ -79,6 +79,7 @@ const goToBlock = (block) => {
 }
 
 const fetchDataBlockList = (pageNumber) => {
+  fetchLastBlock()
   fetch(`http://localhost:8080/api/block/blockList/${pageNumber}`)
     .then((response) => {
       if (!response.ok) {
