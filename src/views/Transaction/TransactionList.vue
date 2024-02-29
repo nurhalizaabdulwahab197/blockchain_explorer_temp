@@ -65,6 +65,10 @@ const formatTimestamp = (timestamp: Date) => {
   const formattedDate = new Date(timestamp).toLocaleString('en-GB', options)
   return formattedDate.replace(/[/]/g, '-').replace(',', '') // Replace slashes with dashes
 }
+
+const goToAccount = (account) => {
+  router.push(`/account/accountOverview/${account}`)
+}
 </script>
 
 <template>
@@ -95,8 +99,12 @@ const formatTimestamp = (timestamp: Date) => {
               <td class="clickable" @click="goToDetail(item.hash)">{{ item.hash }}</td>
               <td>{{ item.block }}</td>
               <td>{{ formatTimestamp(item.timestamp) }}</td>
-              <td>{{ item.senderAddress }}</td>
-              <td>{{ item.receiverAddress }}</td>
+              <td class="clickable" @click="goToAccount(item.senderAddress)">{{
+                item.senderAddress
+              }}</td>
+              <td class="clickable" @click="goToAccount(item.receiverAddress)">{{
+                item.receiverAddress
+              }}</td>
               <td>{{ item.amount }} ETH</td>
               <td>{{ calculateAge(item.timestamp) }} secs ago</td>
             </tr>
@@ -262,7 +270,7 @@ tr:last-child td:last-child {
   font-weight: bold;
   color: black;
   cursor: pointer;
-  background-color: #909182;
+  background-color: rgb(255 255 255 / 60%);
   border-radius: 20px;
 }
 
@@ -282,7 +290,7 @@ tr:last-child td:last-child {
   font-size: 16px;
   font-weight: bold;
   color: #000;
-  background-color: #909182;
+  background-color: rgb(255 255 255 / 60%);
   border-radius: 5px;
 }
 
