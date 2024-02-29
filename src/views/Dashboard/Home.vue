@@ -80,7 +80,7 @@ const fetchData = () => {
 }
 
 onMounted(fetchData)
-setInterval(fetchData, 20000)
+setInterval(fetchData, 10000)
 
 const formatHexString = (hexString) => {
   const prefixLength = 5 // Length of the "0x" prefix
