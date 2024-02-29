@@ -251,8 +251,9 @@ const goToBlock = (block) => {
 }
 
 .copy:hover {
+  color: white;
   cursor: pointer;
-  background-color: rgb(10 10 10);
+  background-color: #919191;
 }
 
 .visiblecopy {

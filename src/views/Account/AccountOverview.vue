@@ -294,14 +294,16 @@ h1 {
 }
 
 .btn {
+  display: flex;
   width: 150px;
   height: auto;
   padding: 5px 15px;
-  margin: 0 15px 0 0;
   color: #9c9c9c;
+  cursor: pointer;
   background-color: #d9d9d9;
   border: 1px solid #7f7f7f;
   border-radius: 20px;
+  align-items: center;
 }
 
 .btn:active,
@@ -310,9 +312,15 @@ h1 {
   background-color: #000;
 }
 
+.btn:hover {
+  color: white;
+  background-color: #919191;
+  opacity: 1;
+}
+
 .copyIcon {
   padding: 0;
-  margin: 0;
+  margin: 0 2px 0 0;
 }
 
 .address p {
@@ -472,6 +480,7 @@ tr:last-child td:last-child {
 .next {
   padding-top: 6px;
   font-size: 25px;
+  cursor: pointer;
 }
 
 .fpage,
@@ -485,6 +494,11 @@ tr:last-child td:last-child {
   background-color: #fff;
   border-radius: 5px;
   opacity: 0.6;
+}
+
+.fpage,
+.lpage {
+  cursor: pointer;
 }
 
 @media screen and (width <= 600px) {
