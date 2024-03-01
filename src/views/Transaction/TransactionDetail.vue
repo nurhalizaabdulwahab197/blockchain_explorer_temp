@@ -370,6 +370,7 @@ const goToDetail = (account) => {
   width: 1.5rem;
   height: 1.5rem;
   margin-left: 0.5rem;
+  cursor: pointer;
   background-color: rgb(217 217 217 / 30%);
   border-radius: 50%;
   justify-content: center;
