@@ -15,8 +15,12 @@
     <div class="title-container">
       <Icon icon="cib:ethereum" class="moneyicon" />
       <div class="title">Transaction Overview</div>
-      <div class="iconbackbutton"><Icon icon="ion:chevron-back" /></div>
-      <div class="iconnextbutton"><Icon icon="ion:chevron-forward" /></div>
+      <div class="iconbackbutton"
+        ><Icon icon="ion:chevron-back" @click="retrievePreviousTransaction"
+      /></div>
+      <div class="iconnextbutton"
+        ><Icon icon="ion:chevron-forward" @click="retrieveNextTransaction"
+      /></div>
     </div>
     <div class="firstrow-container">
       <div class="column-container">
@@ -290,6 +294,29 @@ const formatTimestamp = (timestamp: string) => {
   }
 
   return new Date(timestamp).toLocaleString('en-US', options)
+}
+
+const retrieveNextTransaction = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/transaction/next/${transactionId.value}`
+    )
+    const nextTransactionHash = response.data.output.hash
+    router.push({ name: 'TransactionDetail', params: { id: nextTransactionHash } })
+  } catch (error) {
+    console.error('Error fetching next transaction:', error)
+  }
+}
+const retrievePreviousTransaction = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/transaction/prev/${transactionId.value}`
+    )
+    const previousTransactionHash = response.data.output.hash
+    router.push({ name: 'TransactionDetail', params: { id: previousTransactionHash } })
+  } catch (error) {
+    console.error('Error fetching previous transaction:', error)
+  }
 }
 
 onMounted(() => {
