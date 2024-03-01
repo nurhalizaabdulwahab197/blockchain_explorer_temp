@@ -437,8 +437,12 @@ table tr {
 }
 
 .address {
-  color: blue;
+  color: #1688f2;
   cursor: pointer;
+}
+
+.address:hover {
+  text-decoration: underline;
 }
 
 .tablerow {
