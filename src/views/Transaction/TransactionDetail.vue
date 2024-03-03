@@ -84,7 +84,7 @@
           <td>
             <div class="tablesubtitle">
               <Icon icon="cib:ethereum" />
-              <div>RECERIVER :</div>
+              <div>RECEIVER :</div>
             </div>
           </td>
           <td class="tablerow">
@@ -241,7 +241,7 @@ function copySenderToClipboard() {
 function copyReceiverToClipboard() {
   copyToClipboard(
     receiverAddress.value,
-    'Receiver Adress copied',
+    'Receiver Address copied',
     'The receiver address was copied to the clipboard'
   )
 }
