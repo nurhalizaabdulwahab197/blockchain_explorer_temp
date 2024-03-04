@@ -232,7 +232,7 @@ const goToTransaction = (TxnHash) => {
             <div>
               <div>
                 Amount:
-                <span style="color: #6afd36">{{ trx.transactionFee }} ETH</span>
+                <span style="color: #6afd36">{{ trx.value }} ETH</span>
               </div>
               <div class="time"> {{ calcTimeDiff(trx.timestamp) }}secs ago </div>
             </div>
