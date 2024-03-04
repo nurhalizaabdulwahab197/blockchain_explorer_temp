@@ -10,6 +10,8 @@ const trxs = ref([])
 const totalTransactions = ref(0)
 const maxTransactionPerDay = ref(0)
 const blockTime = ref(0)
+const chartInitialized = ref(false)
+const chartInstance = ref(null)
 
 const fetchGraphData = () => {
   fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
@@ -27,9 +29,21 @@ const fetchGraphData = () => {
       options.xaxis.min = new Date(output[0].date).getTime()
       options.xaxis.max = new Date(output[output.length - 1].date).getTime()
 
-      // Update ApexCharts with new options
-      const chart = new ApexCharts(document.querySelector('#chart'), options)
-      chart.render()
+      if (!chartInitialized.value) {
+        // Initialize the chart instance if not already initialized
+        chartInstance.value = new ApexCharts(document.querySelector('#chart'), options)
+        chartInstance.value.render()
+        chartInitialized.value = true
+      } else {
+        // Update the existing chart with new data
+        chartInstance.value.updateSeries([{ data: newData }])
+        chartInstance.value.updateOptions({
+          xaxis: {
+            min: new Date(output[0].date).getTime(),
+            max: new Date(output[output.length - 1].date).getTime()
+          }
+        })
+      }
 
       // statistic
       totalTransactions.value = data.statistics.totalTransactions
