@@ -205,7 +205,7 @@ setInterval(() => {
               <td>
                 {{ block.transactions.length }}
               </td>
-              <td style=" display: flex;color: white; gap: 15px">
+              <td style="display: flex; color: white; gap: 15px">
                 <span>Transfer {{ block.transactions.length }}</span>
                 <span>App calls 0</span>
                 <span>Asset config 0</span>
