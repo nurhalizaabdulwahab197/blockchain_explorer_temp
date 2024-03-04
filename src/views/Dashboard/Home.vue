@@ -9,6 +9,7 @@ const blocks = ref([])
 const trxs = ref([])
 const totalTransactions = ref(0)
 const maxTransactionPerDay = ref(0)
+const blockTime = ref(0)
 
 const fetchGraphData = () => {
   fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
@@ -50,6 +51,7 @@ const fetchBlockData = () => {
     .then((data) => {
       console.log(data)
       blocks.value = data.output
+      blockTime.value = data.blockTime
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -131,7 +133,7 @@ const goToTransaction = (TxnHash) => {
             <Icon icon="ion:speedometer-outline" class="detailIcon" />
             <div>
               <p class="detailTitle">BLOCK SPEED</p>
-              <p class="detailVal">3.4secs</p>
+              <p class="detailVal">{{ blockTime }} secs</p>
             </div>
           </div>
           <div class="detailBlock">
