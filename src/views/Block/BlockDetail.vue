@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 const route = useRoute()
-const rectangleHeight = ref(50)
+const rectangleHeight = ref(0)
 const blockHeight = ref('')
 const hash = ref('')
 const miner = ref('')

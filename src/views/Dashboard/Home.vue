@@ -4,6 +4,7 @@ import ApexCharts from 'apexcharts'
 import { options } from './apexChartOpt'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const blocks = ref([])
 const trxs = ref([])
@@ -12,6 +13,10 @@ const maxTransactionPerDay = ref(0)
 const blockTime = ref(0)
 const chartInitialized = ref(false)
 const chartInstance = ref(null)
+const chartOptions = ref(null)
+const loadingGraph = ref(true)
+const loadingBlockTable = ref(true)
+const loadingTransactionTable = ref(true)
 
 const fetchGraphData = () => {
   fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
@@ -19,6 +24,7 @@ const fetchGraphData = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
+      loadingGraph.value = false
       return response.json()
     })
     .then((data) => {
@@ -66,6 +72,7 @@ const fetchBlockData = () => {
       console.log(data)
       blocks.value = data.output
       blockTime.value = data.blockTime
+      loadingBlockTable.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -83,6 +90,7 @@ const fetchTrxData = () => {
     .then((data) => {
       console.log(data)
       trxs.value = data.output
+      loadingTransactionTable.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -140,7 +148,8 @@ const goToTransaction = (TxnHash) => {
         <sub style="font-size: 10px; color: black">(in 30 days)</sub>
       </div>
       <div class="graphDetailContainer">
-        <div class="transactionHistoryGraph" id="chart"> </div>
+        <LoadingSpinner v-if="loadingGraph" :loading="loadingGraph" class="loading-spinner" />
+        <div v-show="!loadingGraph" class="transactionHistoryGraph" id="chart"></div>
         <div class="separator"></div>
         <div class="details">
           <div class="detailBlock">
@@ -182,7 +191,12 @@ const goToTransaction = (TxnHash) => {
             >VIEW ALL BLOCKS <Icon icon="majesticons:arrow-right-line" />
           </a>
         </div>
-        <div class="list">
+        <LoadingSpinner
+          v-if="loadingBlockTable"
+          :loading="loadingBlockTable"
+          class="loading-spinner h-100%"
+        />
+        <div v-else class="list">
           <div class="item" v-for="block in blocks" :key="block.id">
             <div style="display: flex; align-items: center">
               <Icon icon="clarity:block-line" />
@@ -206,7 +220,12 @@ const goToTransaction = (TxnHash) => {
             >VIEW ALL TRANSACTIONS <Icon icon="majesticons:arrow-right-line" />
           </a>
         </div>
-        <div class="list">
+        <LoadingSpinner
+          v-if="loadingTransactionTable"
+          :loading="loadingTransactionTable"
+          class="loading-spinner h-100%"
+        />
+        <div v-else class="list">
           <div class="item" v-for="trx in trxs" :key="trx.id">
             <div style="display: flex; align-items: center">
               <Icon icon="cib:ethereum" />
@@ -320,6 +339,7 @@ main {
 .latestBlockContainer,
 .latestTransactionContainer {
   min-width: 300px;
+  min-height: 300px;
   background-color: #282b2e;
   border-radius: 10px;
   flex: 1;
@@ -385,7 +405,8 @@ main {
 @media screen and (width <= 880px) {
   .graphDetailContainer {
     display: flex;
-    width: 100%;
+
+    /* width: 100%; */
     padding: 20px;
     flex-direction: column;
   }
