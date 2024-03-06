@@ -24,28 +24,12 @@ function copyToClipboard(value, messageTitle, message) {
   document.body.appendChild(el)
   el.select()
   el.setSelectionRange(0, 99999) // For mobile devices
-function copyToClipboard(value, messageTitle, message) {
-  const el = document.createElement('input')
-  el.value = value
-  document.body.appendChild(el)
-  el.select()
-  el.setSelectionRange(0, 99999) // For mobile devices
   document.execCommand('copy')
   document.body.removeChild(el)
   showToast.value = true
   setTimeout(() => {
     showToast.value = false
   }, 6000)
-  copyMessageTitle.value = messageTitle
-  copyMessage.value = message
-}
-
-function copyBlockHeight() {
-  copyToClipboard(
-    blockHeight.value,
-    'Block Height copied',
-    'The block height was copied to the clipboard'
-  )
   copyMessageTitle.value = messageTitle
   copyMessage.value = message
 }
@@ -63,11 +47,6 @@ function copyHash() {
 }
 
 function copyMiner() {
-  copyToClipboard(
-    miner.value,
-    'Miner Message copied',
-    'The miner address was copied to the clipboard'
-  )
   copyToClipboard(
     miner.value,
     'Miner Message copied',
@@ -427,14 +406,6 @@ const goToBlock = (block) => {
 
 .blockarrow {
   font-size: 20px;
-  cursor: pointer;
-}
-
-.blockarrow:hover {
-  cursor: pointer;
-}
-
-.blockarrow:hover {
   cursor: pointer;
 }
 
