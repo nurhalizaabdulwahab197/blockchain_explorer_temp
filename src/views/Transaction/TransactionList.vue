@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
-import axios from 'axios'
 import router from '@/router'
 
 interface Transaction {
@@ -13,25 +12,45 @@ interface Transaction {
   timestamp: Date
 }
 
-const transactions = ref<Transaction[]>([])
-const transactionsPerPage = 10 // determine how many transactions to display per page
+const currentPageTransactions = ref<Transaction[]>([])
 const currentPage = ref(1)
+const maxPageSize = ref(1)
+const lastestTransaction = ref(0)
 
-const totalPages = computed(() => Math.ceil(transactions.value.length / transactionsPerPage))
+const fetchLastTransaction = async () => {
+  fetch('http://localhost:8080/api/transaction/latest')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      lastestTransaction.value = data.output
+      maxPageSize.value = Math.ceil(lastestTransaction.value / 10)
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
 
-const displayedTransactions = computed(() => {
-  const startIndex = (currentPage.value - 1) * transactionsPerPage
-  const endIndex = startIndex + transactionsPerPage
-  return transactions.value.slice(startIndex, endIndex)
-})
-
-const fetchTransactions = async () => {
-  try {
-    const response = await axios.get('http://localhost:8080/api/transaction/')
-    transactions.value = response.data.output
-  } catch (error) {
-    console.error('Error fetching transactions:', error)
-  }
+const fetchDataTransactionList = (pageNumber) => {
+  fetchLastTransaction()
+  fetch(`http://localhost:8080/api/transaction/transactionlist/${pageNumber}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch block list for page ${pageNumber}`)
+      }
+      return response.json()
+    })
+    .then((responseData) => {
+      currentPageTransactions.value = responseData.output
+      console.log(currentPageTransactions.value)
+    })
+    .catch((error) => {
+      console.error('Error fetching block list:', error)
+    })
 }
 
 const calculateAge = (timestamp: Date) => {
@@ -42,16 +61,16 @@ const calculateAge = (timestamp: Date) => {
 const goToDetail = (hash: string) => {
   router.push({ name: 'TransactionDetail', params: { id: hash } })
 }
+
 onMounted(() => {
-  fetchTransactions()
-  setInterval(fetchTransactions, 10000) // interval to fetch new data
+  fetchLastTransaction()
+  fetchDataTransactionList(currentPage.value)
 })
 
-const changePage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
-}
+setInterval(() => {
+  fetchDataTransactionList(currentPage.value)
+}, 10000)
+
 const formatTimestamp = (timestamp: Date) => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -64,6 +83,33 @@ const formatTimestamp = (timestamp: Date) => {
 
   const formattedDate = new Date(timestamp).toLocaleString('en-GB', options)
   return formattedDate.replace(/[/]/g, '-').replace(',', '') // Replace slashes with dashes
+}
+
+const goToAccount = (account) => {
+  router.push(`/account/accountOverview/${account}`)
+}
+
+const goToFirstPage = () => {
+  currentPage.value = 1
+  fetchDataTransactionList(currentPage.value)
+}
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchDataTransactionList(currentPage.value)
+  }
+}
+
+const goToNextPage = () => {
+  if (currentPage.value < maxPageSize.value) {
+    currentPage.value++
+    fetchDataTransactionList(currentPage.value)
+  }
+}
+
+const goToLastPage = () => {
+  currentPage.value = maxPageSize.value
+  fetchDataTransactionList(currentPage.value)
 }
 </script>
 
@@ -91,12 +137,16 @@ const formatTimestamp = (timestamp: Date) => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in displayedTransactions" :key="index">
+            <tr v-for="(item, index) in currentPageTransactions" :key="index">
               <td class="clickable" @click="goToDetail(item.hash)">{{ item.hash }}</td>
               <td>{{ item.block }}</td>
               <td>{{ formatTimestamp(item.timestamp) }}</td>
-              <td>{{ item.senderAddress }}</td>
-              <td>{{ item.receiverAddress }}</td>
+              <td class="clickable" @click="goToAccount(item.senderAddress)">{{
+                item.senderAddress
+              }}</td>
+              <td class="clickable" @click="goToAccount(item.receiverAddress)">{{
+                item.receiverAddress
+              }}</td>
               <td>{{ item.amount }} ETH</td>
               <td>{{ calculateAge(item.timestamp) }} secs ago</td>
             </tr>
@@ -104,17 +154,36 @@ const formatTimestamp = (timestamp: Date) => {
               <td colspan="7" class="pagination-buttons">
                 <div class="pagination-container">
                   <div class="centered-content">
-                    <button class="first-page-button" @click="changePage(1)">First Page</button>
-                    <button class="previous-page-button" @click="changePage(currentPage - 1)"
-                      >&lt;</button
+                    <button
+                      class="first-page-button"
+                      @click="goToFirstPage"
+                      :class="{ disabled: currentPage === 1 }"
                     >
-                    <span class="page-number">{{ currentPage }}</span>
-                    <button class="next-page-button" @click="changePage(currentPage + 1)"
-                      >&gt;</button
+                      First Page
+                    </button>
+                    <button
+                      class="previous-page-button"
+                      @click="goToPreviousPage"
+                      :class="{ disabled: currentPage === 1 }"
                     >
-                    <button class="last-page-button" @click="changePage(totalPages)"
-                      >Last Page</button
+                      &lt;
+                    </button>
+                    <span class="page-number"> {{ currentPage }}</span>
+                    <button
+                      class="next-page-button"
+                      @click="goToNextPage"
+                      :class="{ disabled: currentPage === maxPageSize }"
                     >
+                      &gt;
+                    </button>
+
+                    <button
+                      class="last-page-button"
+                      @click="goToLastPage"
+                      :class="{ disabled: currentPage === maxPageSize }"
+                    >
+                      Last Page
+                    </button>
                   </div>
                 </div>
               </td>
@@ -262,7 +331,7 @@ tr:last-child td:last-child {
   font-weight: bold;
   color: black;
   cursor: pointer;
-  background-color: #909182;
+  background-color: rgb(255 255 255 / 60%);
   border-radius: 20px;
 }
 
@@ -282,7 +351,7 @@ tr:last-child td:last-child {
   font-size: 16px;
   font-weight: bold;
   color: #000;
-  background-color: #909182;
+  background-color: rgb(255 255 255 / 60%);
   border-radius: 5px;
 }
 

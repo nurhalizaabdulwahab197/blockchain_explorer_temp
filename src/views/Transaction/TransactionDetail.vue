@@ -1,16 +1,32 @@
 <template>
   <div class="bodycontent">
+    <div v-if="showToast" class="alertbox">
+      <div class="bardesign"></div
+      ><div class="copymessage"
+        ><div class="copymessagetitle"
+          ><Icon
+            icon="charm:tick-double"
+            style="margin-right: 5px; font-size: 1.5rem; color: blue"
+          />
+          {{ copyMessageTitle }} </div
+        >{{ copyMessage }}</div
+      >
+    </div>
     <div class="title-container">
       <Icon icon="cib:ethereum" class="moneyicon" />
       <div class="title">Transaction Overview</div>
-      <div class="iconbackbutton"><Icon icon="ion:chevron-back" /></div>
-      <div class="iconnextbutton"><Icon icon="ion:chevron-forward" /></div>
+      <div class="iconbackbutton"
+        ><Icon icon="ion:chevron-back" @click="retrievePreviousTransaction"
+      /></div>
+      <div class="iconnextbutton"
+        ><Icon icon="ion:chevron-forward" @click="retrieveNextTransaction"
+      /></div>
     </div>
     <div class="firstrow-container">
       <div class="column-container">
         <div class="container-title">
           <div class="firstrowtitle">TRANSACTION ID</div>
-          <button class="rowCopybutton" @click="copyToClipboard(transactionId)">
+          <button class="rowCopybutton" @click="copyTransactionIdToClipboard">
             <Icon icon="iconamoon:copy-bold" />
             <div class="none">CLICK TO COPY</div>
           </button>
@@ -46,9 +62,9 @@
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">{{
+            <span class="clickable tablecontent address" @click="goToDetail(senderAddress)">{{
               senderAddress
-            }}</a>
+            }}</span>
             <button class="tableCopybutton" @click="copySenderToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -68,13 +84,13 @@
           <td>
             <div class="tablesubtitle">
               <Icon icon="cib:ethereum" />
-              <div>RECERIVER :</div>
+              <div>RECEIVER :</div>
             </div>
           </td>
           <td class="tablerow">
-            <a href="#/account/accountOverview/id=0x3Css" class="tablecontent">{{
+            <span class="clickable tablecontent address" @click="goToDetail(receiverAddress)">{{
               receiverAddress
-            }}</a>
+            }}</span>
             <button class="tableCopybutton" @click="copyReceiverToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -174,6 +190,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
+import router from '@/router'
 import axios from 'axios'
 
 const transactionId = ref('')
@@ -191,26 +208,50 @@ const timestamp = ref('')
 const maxFeePerGas = ref('')
 const maxPriorityFeePerGas = ref('')
 const baseFeePerGas = ref('')
+const showToast = ref(false)
+const copyMessageTitle = ref('')
+const copyMessage = ref('')
 
 const route = useRoute()
 
-const copySenderToClipboard = () => {
-  copyToClipboard(senderAddress.value)
-}
-
-const copyReceiverToClipboard = () => {
-  copyToClipboard(receiverAddress.value)
-}
-
-const copyToClipboard = (text) => {
-  const el = document.createElement('textarea')
-  el.value = text
+function copyToClipboard(value, messageTitle, message) {
+  const el = document.createElement('input')
+  el.value = value
   document.body.appendChild(el)
   el.select()
+  el.setSelectionRange(0, 99999) // For mobile devices
   document.execCommand('copy')
   document.body.removeChild(el)
-  // You can also show a notification or perform any other action after copying
-  // For example, you can use a library like 'vue-toastification' for notifications
+  showToast.value = true
+  setTimeout(() => {
+    showToast.value = false
+  }, 6000)
+  copyMessageTitle.value = messageTitle
+  copyMessage.value = message
+}
+
+function copySenderToClipboard() {
+  copyToClipboard(
+    senderAddress.value,
+    'Sender Address copied',
+    'The sender address was copied to the clipboard'
+  )
+}
+
+function copyReceiverToClipboard() {
+  copyToClipboard(
+    receiverAddress.value,
+    'Receiver Address copied',
+    'The receiver address was copied to the clipboard'
+  )
+}
+
+function copyTransactionIdToClipboard() {
+  copyToClipboard(
+    transactionId.value,
+    'Transaction Id copied',
+    'The transaction id was copied to the clipboard'
+  )
 }
 
 const fetchData = async () => {
@@ -255,6 +296,29 @@ const formatTimestamp = (timestamp: string) => {
   return new Date(timestamp).toLocaleString('en-US', options)
 }
 
+const retrieveNextTransaction = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/transaction/next/${transactionId.value}`
+    )
+    const nextTransactionHash = response.data.output.hash
+    router.push({ name: 'TransactionDetail', params: { id: nextTransactionHash } })
+  } catch (error) {
+    console.error('Error fetching next transaction:', error)
+  }
+}
+const retrievePreviousTransaction = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/transaction/prev/${transactionId.value}`
+    )
+    const previousTransactionHash = response.data.output.hash
+    router.push({ name: 'TransactionDetail', params: { id: previousTransactionHash } })
+  } catch (error) {
+    console.error('Error fetching previous transaction:', error)
+  }
+}
+
 onMounted(() => {
   // Fetch data initially
   fetchData()
@@ -269,6 +333,10 @@ watch(
     transactionId.value = newId as string
   }
 )
+
+const goToDetail = (account) => {
+  router.push(`/account/accountOverview/${account}`)
+}
 </script>
 
 <style scoped lang="css">
@@ -302,6 +370,7 @@ watch(
   width: 1.5rem;
   height: 1.5rem;
   margin-left: 0.5rem;
+  cursor: pointer;
   background-color: rgb(217 217 217 / 30%);
   border-radius: 50%;
   justify-content: center;
@@ -366,6 +435,15 @@ table tr {
 .tabletitle-container {
   color: black;
   background-color: rgb(200 200 200);
+}
+
+.address {
+  color: #1688f2;
+  cursor: pointer;
+}
+
+.address:hover {
+  text-decoration: underline;
 }
 
 .tablerow {
@@ -501,6 +579,41 @@ td {
   color: rgb(24 255 24);
 }
 
+.copymessage {
+  display: flex;
+  width: 100%;
+  padding-left: 30px;
+  margin-right: 10px;
+  background-color: #363737;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.copymessagetitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.bardesign {
+  width: 10px;
+  height: 100px;
+  background-color: #1f51ff;
+  border-radius: 10px;
+}
+
+.alertbox {
+  position: absolute;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  width: 450px;
+  flex-direction: row;
+}
+
 @media screen and (width <= 828px) {
   .title {
     margin-right: 0.5rem;
@@ -538,6 +651,15 @@ td {
     justify-content: left;
   }
 
+  .alertbox {
+    position: absolute;
+    right: 10px;
+    z-index: 10000;
+    display: flex;
+    width: 80%;
+    flex-direction: row;
+  }
+
   .left-container {
     display: flex;
     align-items: center;
@@ -570,6 +692,28 @@ td {
 
   .bodycontent {
     margin: 0 1rem;
+  }
+}
+
+@media screen and (width <= 700px) {
+  .copymessage {
+    display: flex;
+    width: 100%;
+    padding-left: 25px;
+    margin-right: 8px;
+    font-size: 12.8px;
+    background-color: #363737;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .copymessagetitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
   }
 }
 </style>

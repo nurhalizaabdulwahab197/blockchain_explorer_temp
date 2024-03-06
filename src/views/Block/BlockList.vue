@@ -189,49 +189,28 @@ setInterval(() => {
           <tbody>
             <!-- Display a fixed number of data rows (e.g., 10 rows) -->
             <tr v-for="block in currentPageBlocks" :key="block.id">
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
+              <td>
                 {{ block.number }}
               </td>
               <td
-                style="
-                  padding: 20px 1px;
-                  overflow: hidden;
-                  color: #1688f2;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
+                style="padding: 20px 1px; color: #1688f2"
                 class="clickable"
                 @click="goToBlock(block.hash)"
               >
                 {{ formatHexString(block.hash) }}
               </td>
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
+              <td style="color: white">
                 {{ block.timestamp }}
               </td>
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
+              <td>
                 {{ block.transactions.length }}
               </td>
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
-                {{ block.txssummary }}
+              <td style="display: flex; color: white; gap: 15px">
+                <span>Transfer {{ block.transactions.length }}</span>
+                <span>App calls 0</span>
+                <span>Asset config 0</span>
               </td>
-              <td
-                style="
-                  overflow: hidden;
-                  color: #9c9c9c;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-              >
-                {{ calcTimeDiff(block.timestamp) }} secs ago
-              </td>
+              <td style="color: #9c9c9c"> {{ calcTimeDiff(block.timestamp) }} secs ago </td>
             </tr>
 
             <tr>

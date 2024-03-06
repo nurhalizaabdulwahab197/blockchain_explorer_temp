@@ -9,6 +9,9 @@ const blocks = ref([])
 const trxs = ref([])
 const totalTransactions = ref(0)
 const maxTransactionPerDay = ref(0)
+const blockTime = ref(0)
+const chartInitialized = ref(false)
+const chartInstance = ref(null)
 
 const fetchGraphData = () => {
   fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
@@ -26,9 +29,21 @@ const fetchGraphData = () => {
       options.xaxis.min = new Date(output[0].date).getTime()
       options.xaxis.max = new Date(output[output.length - 1].date).getTime()
 
-      // Update ApexCharts with new options
-      const chart = new ApexCharts(document.querySelector('#chart'), options)
-      chart.render()
+      if (!chartInitialized.value) {
+        // Initialize the chart instance if not already initialized
+        chartInstance.value = new ApexCharts(document.querySelector('#chart'), options)
+        chartInstance.value.render()
+        chartInitialized.value = true
+      } else {
+        // Update the existing chart with new data
+        chartInstance.value.updateSeries([{ data: newData }])
+        chartInstance.value.updateOptions({
+          xaxis: {
+            min: new Date(output[0].date).getTime(),
+            max: new Date(output[output.length - 1].date).getTime()
+          }
+        })
+      }
 
       // statistic
       totalTransactions.value = data.statistics.totalTransactions
@@ -50,6 +65,7 @@ const fetchBlockData = () => {
     .then((data) => {
       console.log(data)
       blocks.value = data.output
+      blockTime.value = data.blockTime
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -80,7 +96,7 @@ const fetchData = () => {
 }
 
 onMounted(fetchData)
-setInterval(fetchData, 20000)
+setInterval(fetchData, 10000)
 
 const formatHexString = (hexString) => {
   const prefixLength = 5 // Length of the "0x" prefix
@@ -131,7 +147,7 @@ const goToTransaction = (TxnHash) => {
             <Icon icon="ion:speedometer-outline" class="detailIcon" />
             <div>
               <p class="detailTitle">BLOCK SPEED</p>
-              <p class="detailVal">3.4secs</p>
+              <p class="detailVal">{{ blockTime }} secs</p>
             </div>
           </div>
           <div class="detailBlock">
@@ -216,7 +232,7 @@ const goToTransaction = (TxnHash) => {
             <div>
               <div>
                 Amount:
-                <span style="color: #6afd36">{{ trx.transactionFee }} ETH</span>
+                <span style="color: #6afd36">{{ trx.amount }} ETH</span>
               </div>
               <div class="time"> {{ calcTimeDiff(trx.timestamp) }}secs ago </div>
             </div>

@@ -173,7 +173,13 @@ const getNodeProperty = (property: string) => {
 }
 
 onMounted(() => {
+  const fetchDataInterval = 5000
+
   fetchNodeIds()
+
+  setInterval(() => {
+    fetchNodeIds() // Fetch data every 10 seconds
+  }, fetchDataInterval)
 })
 </script>
 

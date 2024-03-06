@@ -18,6 +18,7 @@ const fetchData = async () => {
 }
 
 onMounted(fetchData)
+setInterval(fetchData, 10000)
 </script>
 
 <template>
