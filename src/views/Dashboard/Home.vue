@@ -1,10 +1,9 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import ApexCharts from 'apexcharts'
-import { options } from './apexChartOpt'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
+import Echart from '@/components/Echart/src/Echart.vue'
 
 const blocks = ref([])
 const trxs = ref([])
@@ -24,31 +23,104 @@ const fetchGraphData = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
-      loadingGraph.value = false
       return response.json()
     })
     .then((data) => {
-      const { output } = data
-      const newData = output.map((item) => [new Date(item.date).getTime(), item.transactionCount])
-      console.log(newData)
-      options.series[0].data = newData
-      options.xaxis.min = new Date(output[0].date).getTime()
-      options.xaxis.max = new Date(output[output.length - 1].date).getTime()
-
-      if (!chartInitialized.value) {
-        // Initialize the chart instance if not already initialized
-        chartInstance.value = new ApexCharts(document.querySelector('#chart'), options)
-        chartInstance.value.render()
-        chartInitialized.value = true
-      } else {
-        // Update the existing chart with new data
-        chartInstance.value.updateSeries([{ data: newData }])
-        chartInstance.value.updateOptions({
-          xaxis: {
-            min: new Date(output[0].date).getTime(),
-            max: new Date(output[output.length - 1].date).getTime()
+      loadingGraph.value = false
+      const output = data.output
+      const dates = output.map((item) => item.date)
+      const transactionCounts = output.map((item) => item.transactionCount)
+      chartOptions.value = {
+        xAxis: {
+          type: 'category',
+          data: dates,
+          axisLabel: {
+            formatter: function (value) {
+              const date = new Date(value)
+              return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) // Format date labels
+            },
+            textStyle: {
+              color: '#ffffff' // Color of x-axis labels
+            }
           }
-        })
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Number of Transactions',
+          nameLocation: 'center',
+          nameRotate: 90,
+          nameTextStyle: {
+            color: '#ffffff', // Color of the Y-axis label
+            fontSize: 14,
+            padding: [0, 0, 10, 0] // Adjust font size if needed
+          },
+          splitLine: {
+            show: false // Hide horizontal grid lines
+          },
+          axisLabel: {
+            formatter: '{value}', // Format y-axis labels
+            textStyle: {
+              color: '#ffffff' // Color of y-axis labels
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Number of Transactions',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  { offset: 0, color: 'rgba(0, 123, 255, 0.5)' }, // Start color
+                  { offset: 1, color: 'rgba(0, 123, 255, 0)' } // End color
+                ]
+              }
+            },
+            data: transactionCounts,
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              color: '#4287f5', // Change line color here
+              width: 3 // Change line width here
+            },
+            showSymbol: false
+          }
+        ],
+        tooltip: {
+          trigger: 'axis', // Show tooltip on hover over points
+          axisPointer: {
+            type: 'cross' // Show tooltip lines across axes
+          },
+          formatter: function (params) {
+            const date = new Date(params[0].axisValue)
+            const formattedDate = date.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric'
+            })
+            const value = params[0].value.toFixed(0)
+            return `<div style="text-align: left;">
+                    <div style="font-weight: 800;">${formattedDate}</div>
+                    <div>Number of transactions: <span style="font-weight: 800">${value}</span></div>
+                </div>`
+          }
+        },
+        grid: {
+          x: 20, // Adjust the left margin if needed
+          y: 30, // Adjust the top margin if needed
+          x2: 20, // Adjust the right margin if needed
+          y2: 30, // Adjust the bottom margin if needed
+          containLabel: true, // Ensure that labels are within the grid area
+          show: false // Hide grid lines
+        },
+        textStyle: {
+          color: '#ffffff' // Default text color
+        },
+        backgroundColor: 'transparent', // Set background color to transparent
+        animation: false
       }
 
       // statistic
@@ -138,6 +210,24 @@ const goToBlock = (block) => {
 const goToTransaction = (TxnHash) => {
   router.push(`/blockchain/transactionList/transactionDetail/${TxnHash}`)
 }
+
+const chartHeight = ref(400) // Initial chart height
+const resizeChartHeight = () => {
+  if (window.innerWidth <= 800) {
+    chartHeight.value = 200
+  } else {
+    chartHeight.value = 400
+  }
+}
+
+onMounted(() => {
+  resizeChartHeight() // Call resizeChartHeight on component mount
+  window.addEventListener('resize', resizeChartHeight) // Listen for window resize events
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeChartHeight)
+})
 </script>
 
 <template>
@@ -149,7 +239,14 @@ const goToTransaction = (TxnHash) => {
       </div>
       <div class="graphDetailContainer">
         <LoadingSpinner v-if="loadingGraph" :loading="loadingGraph" class="loading-spinner" />
-        <div v-show="!loadingGraph" class="transactionHistoryGraph" id="chart"></div>
+        <Echart
+          :options="chartOptions"
+          width="100%"
+          :height="`${chartHeight}px`"
+          v-else
+          id="chart"
+        />
+        <!-- <div class="transactionHistoryGraph" id="chart"></div> -->
         <div class="separator"></div>
         <div class="details">
           <div class="detailBlock">
