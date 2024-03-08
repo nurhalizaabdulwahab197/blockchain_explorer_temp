@@ -129,6 +129,7 @@ const fetchData = (endpoint) => {
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
     })
+    
 }
 
 const fetchDataHash = () => {
