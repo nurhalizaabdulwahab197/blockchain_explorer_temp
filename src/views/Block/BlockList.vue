@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const blocks = ref([])
 const currentPageBlocks = ref([])
@@ -9,6 +10,8 @@ const skipCount = ref(0)
 const currentPage = ref(1)
 const maxPageSize = ref(1)
 const lastestBlock = ref(0)
+const loadingScrollBlock = ref(true)
+const loadingTableBlock = ref(true)
 
 const fetchLastBlock = async () => {
   fetch('http://localhost:8080/api/block/getLastSyncBlock')
@@ -39,6 +42,7 @@ const fetchData = async () => {
     .then((data) => {
       console.log(data)
       blocks.value = data.output
+      loadingScrollBlock.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -84,6 +88,7 @@ const fetchDataBlockList = (pageNumber) => {
     .then((responseData) => {
       currentPageBlocks.value = responseData.output
       console.log(currentPageBlocks.value)
+      loadingTableBlock.value = false
     })
     .catch((error) => {
       console.error('Error fetching block list:', error)
@@ -144,6 +149,11 @@ setInterval(() => {
           @click="scrollBlocks(-1)"
           :class="{ disabled: skipCount.value <= 0 }"
         />
+        <LoadingSpinner
+          v-if="loadingScrollBlock"
+          :loading="loadingScrollBlock"
+          class="loading-spinner h-100%"
+        />
         <div class="block-scroll">
           <div class="block">
             <div
@@ -186,8 +196,13 @@ setInterval(() => {
               <th>Age</th>
             </tr>
           </thead>
+
           <tbody>
-            <!-- Display a fixed number of data rows (e.g., 10 rows) -->
+            <tr v-if="loadingTableBlock">
+              <td colspan="6" style="position: relative; text-align: center">
+                <LoadingSpinner :loading="loadingTableBlock" class="loading-spinner" />
+              </td>
+            </tr>
             <tr v-for="block in currentPageBlocks" :key="block.id">
               <td>
                 {{ block.number }}
