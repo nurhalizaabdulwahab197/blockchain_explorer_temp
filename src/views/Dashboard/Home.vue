@@ -333,7 +333,7 @@ onBeforeUnmount(() => {
             </div>
             <div>
               <div
-                >Form:
+                >From:
                 <span class="clickable" @click="goToAccount(trx.senderAddress)">{{
                   formatHexString(trx.senderAddress)
                 }}</span></div

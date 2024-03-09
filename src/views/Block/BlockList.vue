@@ -203,7 +203,7 @@ setInterval(() => {
                 <LoadingSpinner :loading="loadingTableBlock" class="loading-spinner" />
               </td>
             </tr>
-            <tr v-for="block in currentPageBlocks" :key="block.id">
+            <tr v-else v-for="block in currentPageBlocks" :key="block.id">
               <td>
                 {{ block.number }}
               </td>

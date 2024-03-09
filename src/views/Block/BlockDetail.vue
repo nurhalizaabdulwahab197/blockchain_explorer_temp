@@ -3,6 +3,7 @@ import { Icon } from '@iconify/vue'
 import { ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import LoadingPage from './loadingPage.vue'
 const route = useRoute()
 const rectangleHeight = ref(0)
 const blockHeight = ref('')
@@ -17,6 +18,7 @@ const internalTransaction = ref(0)
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
+const loading = ref(true)
 
 function copyToClipboard(value, messageTitle, message) {
   const el = document.createElement('input')
@@ -121,6 +123,9 @@ const fetchData = (endpoint) => {
         console.error('Fetched block is null')
       }
     })
+    .finally(() => {
+      loading.value = false
+    })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
     })
@@ -142,7 +147,8 @@ const goToBlock = (block) => {
 </script>
 
 <template>
-  <div class="body">
+  <div v-if="loading" class="loading-container"> <loadingPage /> </div>
+  <div v-else class="body">
     <div class="blockDetailContainer">
       <div v-if="showToast" class="alertbox">
         <div class="bardesign"></div
