@@ -256,7 +256,9 @@ function copyTransactionIdToClipboard() {
 
 const fetchData = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/transaction/${route.params.id}`)
+    const response = await axios.get(
+      `https://intanexplorer.azurewebsites.net/api/transaction/${route.params.id}`
+    )
     const transactionData = response.data.output
 
     // Assign data to variables
@@ -299,7 +301,7 @@ const formatTimestamp = (timestamp: string) => {
 const retrieveNextTransaction = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/transaction/next/${transactionId.value}`
+      `https://intanexplorer.azurewebsites.net/api/transaction/next/${transactionId.value}`
     )
     const nextTransactionHash = response.data.output.hash
     router.push({ name: 'TransactionDetail', params: { id: nextTransactionHash } })
@@ -310,7 +312,7 @@ const retrieveNextTransaction = async () => {
 const retrievePreviousTransaction = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/transaction/prev/${transactionId.value}`
+      `https://intanexplorer.azurewebsites.net/api/transaction/prev/${transactionId.value}`
     )
     const previousTransactionHash = response.data.output.hash
     router.push({ name: 'TransactionDetail', params: { id: previousTransactionHash } })

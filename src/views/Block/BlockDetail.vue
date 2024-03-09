@@ -78,7 +78,7 @@ onMounted(() => {
 const lastestBlock = ref(0)
 
 const fetchLastBlock = async () => {
-  fetch('http://localhost:8080/api/block/getLastSyncBlock')
+  fetch('https://intanexplorer.azurewebsites.net/api/block/getLastSyncBlock')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -95,7 +95,7 @@ const fetchLastBlock = async () => {
 }
 
 const fetchData = (endpoint) => {
-  fetch(`http://localhost:8080/api${endpoint}`)
+  fetch(`https://intanexplorer.azurewebsites.net/api${endpoint}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')

@@ -106,7 +106,7 @@ interface NodeDetails {
 // Fetch node details from the backend API
 // const fetchNodeDetails = async (node_id) => {
 //   try {
-//     const response = await axios.get(`http://localhost:8080/api/nodes/${node_id}`)
+//     const response = await axios.get(`https://intanexplorer.azurewebsites.net/api/nodes/${node_id}`)
 //     console.log('API Response:', response.data)
 //     nodeDetails.value = response.data.output
 
@@ -138,7 +138,9 @@ const fetchNodeDetails = async () => {
   }
 
   try {
-    const response = await axios.get(`http://localhost:8080/api/nodes/${selectedNodeId.value}`)
+    const response = await axios.get(
+      `https://intanexplorer.azurewebsites.net/api/nodes/${selectedNodeId.value}`
+    )
     console.log('Node details response:', response.data)
     nodeDetails.value = response.data
     console.log('Updated node details:', nodeDetails.value)
@@ -150,7 +152,7 @@ const fetchNodeDetails = async () => {
 
 const fetchNodeIds = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/nodes')
+    const response = await axios.get('https://intanexplorer.azurewebsites.net/api/nodes')
 
     // Handle different response structures
     if (response.data.output && Array.isArray(response.data.output)) {

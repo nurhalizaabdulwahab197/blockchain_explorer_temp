@@ -5,7 +5,7 @@ const totalTransactionNum = ref(0)
 
 const fetchData = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/transaction')
+    const response = await fetch('https://intanexplorer.azurewebsites.net/api/transaction')
     if (!response.ok) {
       throw new Error('Fetching encountered some error')
     }

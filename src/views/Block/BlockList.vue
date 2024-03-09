@@ -14,7 +14,7 @@ const loadingScrollBlock = ref(true)
 const loadingTableBlock = ref(true)
 
 const fetchLastBlock = async () => {
-  fetch('http://localhost:8080/api/block/getLastSyncBlock')
+  fetch('https://intanexplorer.azurewebsites.net/api/block/getLastSyncBlock')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -32,7 +32,7 @@ const fetchLastBlock = async () => {
 }
 
 const fetchData = async () => {
-  fetch(`http://localhost:8080/api/block/blockListWithSkip/${skipCount.value}`)
+  fetch(`https://intanexplorer.azurewebsites.net/api/block/blockListWithSkip/${skipCount.value}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -78,7 +78,7 @@ const goToBlock = (block) => {
 
 const fetchDataBlockList = (pageNumber) => {
   fetchLastBlock()
-  fetch(`http://localhost:8080/api/block/blockList/${pageNumber}`)
+  fetch(`https://intanexplorer.azurewebsites.net/api/block/blockList/${pageNumber}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Failed to fetch block list for page ${pageNumber}')

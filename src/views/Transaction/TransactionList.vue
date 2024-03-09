@@ -18,7 +18,7 @@ const maxPageSize = ref(1)
 const lastestTransaction = ref(0)
 
 const fetchLastTransaction = async () => {
-  fetch('http://localhost:8080/api/transaction/latest')
+  fetch('https://intanexplorer.azurewebsites.net/api/transaction/latest')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -37,7 +37,7 @@ const fetchLastTransaction = async () => {
 
 const fetchDataTransactionList = (pageNumber) => {
   fetchLastTransaction()
-  fetch(`http://localhost:8080/api/transaction/transactionlist/${pageNumber}`)
+  fetch(`https://intanexplorer.azurewebsites.net/api/transaction/transactionlist/${pageNumber}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Failed to fetch block list for page ${pageNumber}`)

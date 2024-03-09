@@ -18,7 +18,7 @@ const loadingBlockTable = ref(true)
 const loadingTransactionTable = ref(true)
 
 const fetchGraphData = () => {
-  fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
+  fetch('https://intanexplorer.azurewebsites.net/api/transaction/latestThirtyDay/transactionNumber')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok')
@@ -133,7 +133,7 @@ const fetchGraphData = () => {
 }
 
 const fetchBlockData = () => {
-  fetch('http://localhost:8080/api/block/latestBlockList')
+  fetch('https://intanexplorer.azurewebsites.net/api/block/latestBlockList')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -152,7 +152,7 @@ const fetchBlockData = () => {
 }
 
 const fetchTrxData = () => {
-  fetch('http://localhost:8080/api/transaction/fetch/latestTransactionList')
+  fetch('https://intanexplorer.azurewebsites.net/api/transaction/fetch/latestTransactionList')
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')

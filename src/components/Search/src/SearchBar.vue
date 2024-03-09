@@ -12,16 +12,18 @@ const submitForm = () => {
   console.log('Form submitted with input:', searchValue)
 
   axios
-    .get(`http://localhost:8080/api/block/number/${searchValue}`)
+    .get(`https://intanexplorer.azurewebsites.net/api/block/number/${searchValue}`)
     .then((response) => {
       if (response.data.output !== null) {
         isSuccess.value = true
         router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
       } else {
-        return axios.get(`http://localhost:8080/api/block/hash/${searchValue}`).catch((error) => {
-          console.log(error)
-          return null // Proceed to the next link
-        })
+        return axios
+          .get(`https://intanexplorer.azurewebsites.net/api/block/hash/${searchValue}`)
+          .catch((error) => {
+            console.log(error)
+            return null // Proceed to the next link
+          })
       }
     })
     .then((response) => {
@@ -32,10 +34,12 @@ const submitForm = () => {
         isSuccess.value = true
         router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
       } else {
-        return axios.get(`http://localhost:8080/api/transaction/${searchValue}`).catch((error) => {
-          console.log(error)
-          return null // Proceed to the next link
-        })
+        return axios
+          .get(`https://intanexplorer.azurewebsites.net/api/transaction/${searchValue}`)
+          .catch((error) => {
+            console.log(error)
+            return null // Proceed to the next link
+          })
       }
     })
     .then((response) => {
@@ -47,7 +51,7 @@ const submitForm = () => {
         router.push(`/blockchain/transactionList/transactionDetail/${searchValue}`)
       } else {
         return axios
-          .get(`http://localhost:8080/api/account/accountOverview/${searchValue}`)
+          .get(`https://intanexplorer.azurewebsites.net/api/account/accountOverview/${searchValue}`)
           .catch((error) => {
             console.log(error)
             return null // Proceed to the next link

@@ -16,7 +16,7 @@ const copyMessage = ref('')
 const fetchData = async () => {
   const addressFromUrl = route.params.address
   accAddress.value = addressFromUrl
-  fetch(`http://localhost:8080/api/account/accountOverview/${addressFromUrl}`)
+  fetch(`https://intanexplorer.azurewebsites.net/api/account/accountOverview/${addressFromUrl}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
