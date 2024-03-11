@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+// change title with reference to url
+const pageTitle = ref('')
 const dataset = ref([])
 const balance = ref('')
 const accAddress = ref('')
@@ -28,6 +30,7 @@ const fetchData = async () => {
       dataset.value = data.data
       balance.value = data.balance
       updatePaginateData()
+      pageTitle.value = route.meta.title
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -72,11 +75,7 @@ function jumpToLast() {
 function updatePaginateData() {
   const startIndex = (currentPage.value - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  console.log(startIndex)
-  console.log(endIndex)
-  console.log(dataset.value.slice(startIndex, endIndex))
   paginatedData.value = dataset.value.slice(startIndex, endIndex)
-  console.log(paginatedData.value)
 }
 
 updatePaginateData()
@@ -85,7 +84,21 @@ const goToDetail = (TxnHash) => {
   router.push('/blockchain/transactionList/transactionDetail/' + TxnHash)
 }
 
-const goToAccount = (account) => {
+const goToToAccount = (account) => {
+  if (account.input === '0x' && account.receiverAddress !== 'null') {
+    router.push('/account/accountOverview/' + account.receiverAddress)
+  } else if (
+    account.input !== '0x' &&
+    account.receiverAddress !== 'null' &&
+    account.contractAddress === 'null'
+  ) {
+    router.push('/contract/contractOverview/' + account.receiverAddress)
+  } else {
+    router.push('/contract/contractOverview/' + account.contractAddress)
+  }
+}
+
+const goToFromAccount = (account) => {
   router.push('/account/accountOverview/' + account)
 }
 
@@ -130,7 +143,7 @@ function copyToClipboard() {
         >
       </div>
       <div class="header">
-        <Icon icon="codicon:account" class="accountIcon" /><h1>Account Overview</h1>
+        <Icon icon="codicon:account" class="accountIcon" /><h1>{{ pageTitle }}</h1>
       </div>
       <div class="info-cont">
         <div class="address">
@@ -177,12 +190,14 @@ function copyToClipboard() {
                 >
                 <td class="td2">{{ item.block }}</td>
                 <td class="td3">{{ item.timestamp }}</td>
-                <td class="td4 clickable" @click="goToAccount(item.senderAddress)">{{
+                <td class="td4 clickable" @click="goToFromAccount(item.senderAddress)">{{
                   item.senderAddress
                 }}</td>
-                <td class="td5 clickable" @click="goToAccount(item.receiverAddress)">{{
-                  item.receiverAddress
-                }}</td>
+                <td class="td5 clickable" @click="goToToAccount(item)">
+                  <span v-if="item.contractAddress === 'null'">{{ item.receiverAddress }}</span>
+                  <span v-else>{{ item.contractAddress }}</span>
+                </td>
+
                 <td class="td6">{{ item.amount }} ETH</td>
                 <td class="td7">{{ calcTimeDiff(item.timestamp) }} secs ago</td>
               </tr>
