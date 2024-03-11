@@ -9,6 +9,7 @@ interface Transaction {
   senderAddress: string
   amount: number
   receiverAddress: string
+  contractAddress: string
   timestamp: Date
 }
 
@@ -89,6 +90,10 @@ const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
 }
 
+const goToContract = (contract) => {
+  router.push(`/contract/contractOverview/${contract}`)
+}
+
 const goToFirstPage = () => {
   currentPage.value = 1
   fetchDataTransactionList(currentPage.value)
@@ -144,9 +149,17 @@ const goToLastPage = () => {
               <td class="clickable" @click="goToAccount(item.senderAddress)">{{
                 item.senderAddress
               }}</td>
-              <td class="clickable" @click="goToAccount(item.receiverAddress)">{{
-                item.receiverAddress
-              }}</td>
+              <td
+                class="clickable"
+                @click="
+                  () =>
+                    item.receiverAddress !== 'null'
+                      ? goToAccount(item.receiverAddress)
+                      : goToContract(item.contractAddress)
+                "
+              >
+                {{ item.receiverAddress !== 'null' ? item.receiverAddress : item.contractAddress }}
+              </td>
               <td>{{ item.amount }} ETH</td>
               <td>{{ calculateAge(item.timestamp) }} secs ago</td>
             </tr>
