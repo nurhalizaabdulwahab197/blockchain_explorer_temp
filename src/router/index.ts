@@ -157,12 +157,46 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     meta: { hidden: true },
     children: [
       {
-        path: ':id',
+        path: ':address',
         component: () => import('@/views/Account/AccountOverview.vue'),
         name: 'Account Overview',
         meta: {
           title: 'Account Overview',
           icon: 'codicon:account'
+        }
+      }
+    ]
+  },
+  {
+    path: '/contract/contractOverview',
+    component: Layout,
+    name: 'Contract Overview',
+    meta: { hidden: true },
+    children: [
+      {
+        path: ':address',
+        component: () => import('@/views/Account/AccountOverview.vue'),
+        name: 'Contract Overview',
+        meta: {
+          title: 'Contract Overview',
+          icon: 'codicon:account'
+        }
+      }
+    ]
+  },
+  {
+    path: '/error',
+    component: Layout,
+    name: 'Error',
+    meta: { hidden: true },
+    children: [
+      {
+        path: 'searchNotFound',
+        component: () => import('@/views/Error/SearchNotFound.vue'),
+        name: 'Error',
+        meta: {
+          title: t('error'),
+          icon: 'cib:telegram-plane'
         }
       }
     ]

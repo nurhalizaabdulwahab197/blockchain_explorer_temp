@@ -1,14 +1,16 @@
 <script lang="tsx">
 import { defineComponent, computed } from 'vue'
 import { Collapse } from '@/components/Collapse'
-import { LocaleDropdown } from '@/components/LocaleDropdown'
-import { SizeDropdown } from '@/components/SizeDropdown'
-import { Screenfull } from '@/components/Screenfull'
+// import { LocaleDropdown } from '@/components/LocaleDropdown'
+// import { SizeDropdown } from '@/components/SizeDropdown'
+// import { Screenfull } from '@/components/Screenfull'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
-import { ThemeSwitch } from '@/components/ThemeSwitch'
-import { getCssVar } from '@/utils'
+// import { ThemeSwitch } from '@/components/ThemeSwitch'
+// import { getCssVar } from '@/utils'
+import { TotalTransaction } from '@/components/TotalTransaction'
+import { Search } from '@/components/Search'
 
 const { getPrefixCls, variables } = useDesign()
 
@@ -23,30 +25,30 @@ const breadcrumb = computed(() => appStore.getBreadcrumb)
 const hamburger = computed(() => appStore.getHamburger)
 
 // 全屏图标
-const screenfull = computed(() => appStore.getScreenfull)
+// const screenfull = computed(() => appStore.getScreenfull)
 
 // 尺寸图标
-const size = computed(() => appStore.getSize)
+// const size = computed(() => appStore.getSize)
 
 // 布局
 const layout = computed(() => appStore.getLayout)
 
 // 多语言图标
-const locale = computed(() => appStore.getLocale)
+// const locale = computed(() => appStore.getLocale)
 
-const setHeaderTheme = (color: string) => {
-  appStore.setHeaderTheme(color)
-}
+// const setHeaderTheme = (color: string) => {
+//   appStore.setHeaderTheme(color)
+// }
 
-const setMenuTheme = (color: string) => {
-  appStore.setMenuTheme(color)
-}
+// const setMenuTheme = (color: string) => {
+//   appStore.setMenuTheme(color)
+// }
 
-const themeChange = () => {
-  const color = getCssVar('--el-bg-color')
-  setMenuTheme(color)
-  setHeaderTheme(color)
-}
+// const themeChange = () => {
+//   const color = getCssVar('--el-bg-color')
+//   setMenuTheme(color)
+//   setHeaderTheme(color)
+// }
 
 export default defineComponent({
   name: 'ToolHeader',
@@ -68,7 +70,7 @@ export default defineComponent({
           </div>
         ) : undefined}
         <div class="h-full flex items-center">
-          {screenfull.value ? (
+          {/*{screenfull.value ? (
             <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
           ) : undefined}
           {size.value ? (
@@ -80,7 +82,9 @@ export default defineComponent({
               color="var(--top-header-text-color)"
             ></LocaleDropdown>
           ) : undefined}
-          <ThemeSwitch onChange={themeChange} />
+          <ThemeSwitch onChange={themeChange} />*/}
+          <Search></Search>
+          <TotalTransaction></TotalTransaction>
         </div>
       </div>
     )

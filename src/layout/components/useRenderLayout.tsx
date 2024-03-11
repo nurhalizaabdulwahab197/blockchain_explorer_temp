@@ -4,6 +4,8 @@ import { Menu } from '@/components/Menu'
 import { TabMenu } from '@/components/TabMenu'
 import { TagsView } from '@/components/TagsView'
 import { Logo } from '@/components/Logo'
+import { Search } from '@/components/Search'
+import { TotalTransaction } from '@/components/TotalTransaction'
 import AppView from './AppView.vue'
 import ToolHeader from './ToolHeader.vue'
 import { ElScrollbar } from 'element-plus'
@@ -99,7 +101,6 @@ export const useRenderLayout = () => {
             >
               <ToolHeader
                 class={[
-                  'bg-[var(--top-header-bg-color)]',
                   {
                     'layout-border__bottom': !tagsView.value
                   }
@@ -180,15 +181,27 @@ export const useRenderLayout = () => {
       <>
         <div
           class={[
-            'flex items-center justify-between bg-[var(--top-header-bg-color)] relative',
+            'flex items-center gap-20px justify-between relative px-20px',
             {
               'layout-border__bottom': !tagsView.value
-            }
+            },
+            'bg-gradient-to-b from-black from-70% to-slate-700 to-100%'
           ]}
         >
-          {logo.value ? <Logo class="custom-hover"></Logo> : undefined}
-          <Menu class="flex-1 px-10px h-[var(--top-tool-height)]"></Menu>
-          <ToolHeader></ToolHeader>
+          {logo.value ? <Logo class="custom-hover flex-1"></Logo> : undefined}
+          <div
+            class={[
+              'flex item-center w-700px items-center pt-15px flex-2',
+              {
+                'flex-col': true
+              }
+            ]}
+          >
+            <Search></Search>
+            <Menu class="flex-1 px-10px h-auto w-450px"></Menu>
+          </div>
+          {/* <ToolHeader></ToolHeader> */}
+          <TotalTransaction></TotalTransaction>
         </div>
         <div
           class={[
@@ -205,8 +218,7 @@ export const useRenderLayout = () => {
             class={[
               `${prefixCls}-content-scrollbar`,
               {
-                'mt-[var(--tags-view-height)] !pb-[calc(var(--tags-view-height)+var(--app-footer-height))]':
-                  fixedHeader.value,
+                '!pb-[calc(var(--tags-view-height)+var(--app-footer-height))]': fixedHeader.value,
                 'pb-[var(--app-footer-height)]': !fixedHeader.value
               }
             ]}
@@ -216,7 +228,7 @@ export const useRenderLayout = () => {
                 class={[
                   'layout-border__bottom layout-border__top relative',
                   {
-                    '!fixed w-full top-[calc(var(--top-tool-height)+1px)] left-0': fixedHeader.value
+                    '!fixed w-full left-0': fixedHeader.value
                   }
                 ]}
                 style="transition: width var(--transition-time-02), left var(--transition-time-02);"

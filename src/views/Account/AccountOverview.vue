@@ -5,6 +5,8 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+// change title with reference to url
+const pageTitle = ref('')
 const dataset = ref([])
 const balance = ref('')
 const accAddress = ref('')
@@ -16,9 +18,7 @@ const copyMessage = ref('')
 const fetchData = async () => {
   const addressFromUrl = route.params.address
   accAddress.value = addressFromUrl
-  const temp = `http://localhost:8080/api/account/accountOverview/${addressFromUrl}`
-  console.log(temp)
-  fetch(temp)
+  fetch(`http://localhost:8080/api/account/accountOverview/${addressFromUrl}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Fetching encountered some error')
@@ -30,6 +30,7 @@ const fetchData = async () => {
       dataset.value = data.data
       balance.value = data.balance
       updatePaginateData()
+      pageTitle.value = route.meta.title
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -74,9 +75,6 @@ function jumpToLast() {
 function updatePaginateData() {
   const startIndex = (currentPage.value - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  console.log(startIndex)
-  console.log(endIndex)
-  console.log(dataset.value.slice(startIndex, endIndex))
   paginatedData.value = dataset.value.slice(startIndex, endIndex)
   console.log(paginatedData.value)
 }
@@ -87,7 +85,21 @@ const goToDetail = (TxnHash) => {
   router.push('/blockchain/transactionList/transactionDetail/' + TxnHash)
 }
 
-const goToAccount = (account) => {
+const goToToAccount = (account) => {
+  if (account.input === '0x' && account.receiverAddress !== 'null') {
+    router.push('/account/accountOverview/' + account.receiverAddress)
+  } else if (
+    account.input !== '0x' &&
+    account.receiverAddress !== 'null' &&
+    account.contractAddress === 'null'
+  ) {
+    router.push('/contract/contractOverview/' + account.receiverAddress)
+  } else {
+    router.push('/contract/contractOverview/' + account.contractAddress)
+  }
+}
+
+const goToFromAccount = (account) => {
   router.push('/account/accountOverview/' + account)
 }
 
@@ -132,7 +144,7 @@ function copyToClipboard() {
         >
       </div>
       <div class="header">
-        <Icon icon="codicon:account" class="accountIcon" /><h1>Account Overview</h1>
+        <Icon icon="codicon:account" class="accountIcon" /><h1>{{ pageTitle }}</h1>
       </div>
       <div class="info-cont">
         <div class="address">
@@ -179,12 +191,14 @@ function copyToClipboard() {
                 >
                 <td class="td2">{{ item.block }}</td>
                 <td class="td3">{{ item.timestamp }}</td>
-                <td class="td4 clickable" @click="goToAccount(item.senderAddress)">{{
+                <td class="td4 clickable" @click="goToFromAccount(item.senderAddress)">{{
                   item.senderAddress
                 }}</td>
-                <td class="td5 clickable" @click="goToAccount(item.receiverAddress)">{{
-                  item.receiverAddress
-                }}</td>
+                <td class="td5 clickable" @click="goToToAccount(item)">
+                  <span v-if="item.contractAddress === 'null'">{{ item.receiverAddress }}</span>
+                  <span v-else>{{ item.contractAddress }}</span>
+                </td>
+
                 <td class="td6">{{ item.amount }} ETH</td>
                 <td class="td7">{{ calcTimeDiff(item.timestamp) }} secs ago</td>
               </tr>
@@ -260,23 +274,25 @@ h1 {
 .info-cont {
   display: flex;
   width: 90%;
+  gap: 30px;
   height: auto;
   margin: 35px auto 25px;
   flex: 1;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .address,
 .balance {
   display: flex;
-  height: auto;
+  padding: 10px 20px;
   margin-bottom: 15px;
   background-color: #d9d9d9;
   flex-direction: column;
 }
 
 .address {
-  width: 58%;
+  flex: 3;
   border-radius: 8px;
 }
 
@@ -290,27 +306,32 @@ h1 {
 }
 
 .add-sub-cont-2 {
-  display: flex;
-  padding-top: 15px;
-  margin: 5px 15px 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.add-sub-cont h3,
-.add-sub-cont button {
-  padding: 5px 15px;
+  margin: auto 0;
 }
 
 .btn {
+  display: flex;
   width: 150px;
   height: auto;
   padding: 5px 15px;
-  margin: 0 15px 0 0;
   color: #9c9c9c;
+  cursor: pointer;
   background-color: #d9d9d9;
   border: 1px solid #7f7f7f;
   border-radius: 20px;
+  align-items: center;
+}
+
+.btn:active,
+.clicked {
+  color: #fff;
+  background-color: #000;
+}
+
+.btn:hover {
+  color: white;
+  background-color: #919191;
+  opacity: 1;
 }
 
 .btn:active,
@@ -321,29 +342,20 @@ h1 {
 
 .copyIcon {
   padding: 0;
-  margin: 0;
+  margin: 0 2px 0 0;
 }
 
 .address p {
   width: 100%;
-  margin: 0;
+  margin: 0.83em 0;
   font-size: 22px;
   color: #158fff;
   word-wrap: break-word;
 }
 
 .balance {
-  width: 40%;
+  flex: 2;
   border-radius: 8px;
-}
-
-.balance h3 {
-  padding: 5px 15px;
-}
-
-.balance h2 {
-  width: 100%;
-  padding: 5px 8px;
 }
 
 h3 {
@@ -365,13 +377,13 @@ h3 {
 }
 
 .eth {
-  padding: 0 0 0 15px;
   font-size: 30px;
   color: #676767;
 }
 
 .balance h2 {
-  width: 70%;
+  width: 80%;
+  padding-left: 5px;
   color: #676767;
   word-wrap: break-word;
   flex-wrap: wrap;
@@ -419,8 +431,6 @@ td {
   padding: 12px 15px;
   font-size: 14px;
   white-space: nowrap;
-
-  /* border-bottom: 2px solid #4a4a4a; */
   background-color: #282b2e;
 }
 
@@ -443,7 +453,7 @@ tr:last-child td:last-child {
 .td1,
 .td4,
 .td5 {
-  max-width: 200px;
+  max-width: 150px;
   overflow: hidden;
   color: #1688f2;
   text-overflow: ellipsis;
@@ -491,6 +501,7 @@ tr:last-child td:last-child {
 .next {
   padding-top: 6px;
   font-size: 25px;
+  cursor: pointer;
 }
 
 .fpage,
@@ -506,9 +517,55 @@ tr:last-child td:last-child {
   opacity: 0.6;
 }
 
+.fpage,
+.lpage {
+  cursor: pointer;
+}
+
+.bardesign {
+  width: 10px;
+  height: 100px;
+  background-color: #1f51ff;
+  border-radius: 10px;
+}
+
+.copymessagetitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.tickicon {
+  margin-right: 5px;
+  color: #1f51ff;
+}
+
+.alertbox {
+  position: absolute;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  width: 450px;
+  flex-direction: row;
+}
+
+.copymessage {
+  display: flex;
+  width: 100%;
+  padding-left: 30px;
+  margin-right: 10px;
+  background-color: #363737;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 @media screen and (width <= 600px) {
   .info-cont {
     flex-direction: column;
+    margin: 35px 0;
   }
 
   .address,
@@ -516,32 +573,18 @@ tr:last-child td:last-child {
     width: 100%;
   }
 
-  .add-sub-cont,
-  .add-sub-cont-2 {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .btn {
     margin: 10px 0;
   }
 
-  .balance h2 {
-    width: 100%;
-  }
-
   .transaction-cont {
-    width: 90%;
+    width: 100%;
     height: auto;
     overflow-x: auto;
   }
 
   .paginate {
     justify-content: center;
-  }
-
-  .copy {
-    font-size: 9.6px;
   }
 
   .alertbox {
@@ -570,22 +613,6 @@ tr:last-child td:last-child {
     align-items: center;
     margin-bottom: 10px;
     font-size: 15px;
-  }
-
-  .visiblecopy {
-    display: none;
-  }
-
-  .copy {
-    display: flex;
-    padding: 5px 10px;
-    font-size: 4px;
-    color: #9c9c9c;
-    background-color: transparent;
-    border: 1px groove #7f7f7f;
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
   }
 }
 
