@@ -3,7 +3,7 @@ import { Icon } from '@iconify/vue'
 import { ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import LoadingPage from './loadingPage.vue'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 const route = useRoute()
 const rectangleHeight = ref(0)
 const blockHeight = ref('')
@@ -11,6 +11,7 @@ const hash = ref('')
 const miner = ref('')
 const size = ref('')
 const timestamp = ref('')
+const formattedTimestamp = ref('')
 const transactionNumber = ref(0)
 const transactionFee = ref(0)
 const blockReward = ref(0)
@@ -51,7 +52,7 @@ function copyHash() {
 function copyMiner() {
   copyToClipboard(
     miner.value,
-    'Miner Message copied',
+    'Miner Address copied',
     'The miner address was copied to the clipboard'
   )
 }
@@ -119,8 +120,27 @@ const fetchData = (endpoint) => {
         transactionFee.value = fetchedBlock.transactionNumber
         rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
         internalTransaction.value = fetchedBlock.internalTransaction
-      } else {
-        console.error('Fetched block is null')
+
+        const options = {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          timeZone: 'GMT',
+          hour12: false
+        }
+
+        const formattedDate = new Date(timestamp.value).toLocaleString('en-US', options)
+        console.log(formattedDate)
+        const [, dayOfWeek, month, day, year, time, timeZone] = formattedDate.match(
+          /(\w{3}), (\d+)\/(\d+)\/(\d+),\s(\d+:\d+:\d+)/
+        )
+
+        formattedTimestamp.value = `${dayOfWeek}, ${day}-${month}-${year}, ${time} GMT`
+        console.log(dayOfWeek, month, day, year, time, timeZone)
       }
     })
     .finally(() => {
@@ -147,7 +167,9 @@ const goToBlock = (block) => {
 </script>
 
 <template>
-  <div v-if="loading" class="loading-container"> <loadingPage /> </div>
+  <div v-if="loading" class="loading-container"
+    ><div class="loader"><LoadingSpinner /> </div
+  ></div>
   <div v-else class="body">
     <div class="blockDetailContainer">
       <div v-if="showToast" class="alertbox">
@@ -197,7 +219,7 @@ const goToBlock = (block) => {
         </div>
         <div class="timestamp">
           <h3>Timestamp</h3>
-          <p>{{ timestamp }}</p>
+          <p>{{ formattedTimestamp }}</p>
         </div>
       </div>
       <div class="blockdetailtitle">
@@ -473,6 +495,16 @@ table td {
 
 tr:last-child td {
   border-bottom: none !important;
+}
+
+.loader {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+}
+
+.loading-container {
+  height: 100%;
 }
 
 @media screen and (width <= 1050px) {
