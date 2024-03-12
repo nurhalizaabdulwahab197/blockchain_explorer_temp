@@ -11,6 +11,7 @@ interface Transaction {
   receiverAddress: string
   contractAddress: string
   timestamp: Date
+  input: string
 }
 
 const currentPageTransactions = ref<Transaction[]>([])
@@ -152,10 +153,21 @@ const goToLastPage = () => {
               <td
                 class="clickable"
                 @click="
-                  () =>
-                    item.receiverAddress !== 'null'
-                      ? goToAccount(item.receiverAddress)
-                      : goToContract(item.contractAddress)
+                  () => {
+                    if (item.receiverAddress !== 'null') {
+                      if (item.input === '0x') {
+                        goToAccount(item.receiverAddress)
+                      } else {
+                        if (item.contractAddress === 'null') {
+                          goToContract(item.receiverAddress)
+                        } else {
+                          goToAccount(item.receiverAddress)
+                        }
+                      }
+                    } else {
+                      goToContract(item.contractAddress)
+                    }
+                  }
                 "
               >
                 {{ item.receiverAddress !== 'null' ? item.receiverAddress : item.contractAddress }}
