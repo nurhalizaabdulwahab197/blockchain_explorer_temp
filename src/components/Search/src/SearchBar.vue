@@ -72,8 +72,9 @@ const submitForm = () => {
       }
     })
     .catch((error) => {
-      // Handle any errors
       console.error('Error:', error)
+      console.log('No data found for search value:', searchValue)
+      router.push(`/error/searchNotFound`)
     })
 }
 </script>
