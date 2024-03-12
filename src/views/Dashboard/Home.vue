@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
@@ -16,6 +16,8 @@ const chartOptions = ref(null)
 const loadingGraph = ref(true)
 const loadingBlockTable = ref(true)
 const loadingTransactionTable = ref(true)
+
+let intervalId
 
 const fetchGraphData = () => {
   fetch('https://intanexplorer.azurewebsites.net/api/transaction/latestThirtyDay/transactionNumber')
@@ -175,8 +177,17 @@ const fetchData = () => {
   fetchTrxData()
 }
 
-onMounted(fetchData)
-setInterval(fetchData, 10000)
+onMounted(() => {
+  fetchData()
+
+  intervalId = setInterval(fetchData, 10000)
+})
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 
 const formatHexString = (hexString) => {
   const prefixLength = 5 // Length of the "0x" prefix

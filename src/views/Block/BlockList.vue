@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
@@ -12,6 +12,8 @@ const maxPageSize = ref(1)
 const lastestBlock = ref(0)
 const loadingScrollBlock = ref(true)
 const loadingTableBlock = ref(true)
+
+let intervalId
 
 const fetchLastBlock = async () => {
   fetch('https://intanexplorer.azurewebsites.net/api/block/getLastSyncBlock')
@@ -123,12 +125,19 @@ onMounted(() => {
   fetchLastBlock()
   fetchDataBlockList(currentPage.value)
   fetchData()
+
+  // Setup interval to refresh data every 10 seconds
+  intervalId = setInterval(() => {
+    fetchData()
+    fetchDataBlockList(currentPage.value)
+  }, 10000)
 })
 
-setInterval(() => {
-  fetchData()
-  fetchDataBlockList(currentPage.value)
-}, 10000)
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 </script>
 
 <template>

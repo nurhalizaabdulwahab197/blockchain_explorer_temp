@@ -187,12 +187,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import axios from 'axios'
 
+let intervalId: NodeJS.Timeout
 const transactionId = ref('')
 const block = ref('')
 const senderAddress = ref('')
@@ -326,7 +327,14 @@ onMounted(() => {
   fetchData()
 
   // Fetch data every 10 seconds
-  setInterval(fetchData, 10000)
+  intervalId = setInterval(fetchData, 10000)
+})
+
+onUnmounted(() => {
+  // Clear interval when component is unmounted
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
 })
 
 watch(

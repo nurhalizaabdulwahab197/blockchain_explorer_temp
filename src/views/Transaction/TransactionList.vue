@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 
@@ -16,6 +16,8 @@ const currentPageTransactions = ref<Transaction[]>([])
 const currentPage = ref(1)
 const maxPageSize = ref(1)
 const lastestTransaction = ref(0)
+
+let intervalId: NodeJS.Timeout
 
 const fetchLastTransaction = async () => {
   fetch('https://intanexplorer.azurewebsites.net/api/transaction/latest')
@@ -65,11 +67,17 @@ const goToDetail = (hash: string) => {
 onMounted(() => {
   fetchLastTransaction()
   fetchDataTransactionList(currentPage.value)
+
+  intervalId = setInterval(() => {
+    fetchDataTransactionList(currentPage.value)
+  }, 10000)
 })
 
-setInterval(() => {
-  fetchDataTransactionList(currentPage.value)
-}, 10000)
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 
 const formatTimestamp = (timestamp: Date) => {
   const options: Intl.DateTimeFormatOptions = {
