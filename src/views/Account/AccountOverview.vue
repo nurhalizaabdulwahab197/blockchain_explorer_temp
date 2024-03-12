@@ -4,7 +4,6 @@ import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
-import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const route = useRoute()
 // change title with reference to url
