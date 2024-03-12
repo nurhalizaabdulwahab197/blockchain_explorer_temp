@@ -96,8 +96,8 @@
                     if (input === '0x') {
                       goToAccount(receiverAddress)
                     } else {
-                      if (contractAddress) {
-                        goToContract(contractAddress)
+                      if (contractAddress === 'null') {
+                        goToContract(receiverAddress)
                       } else {
                         goToAccount(receiverAddress)
                       }
