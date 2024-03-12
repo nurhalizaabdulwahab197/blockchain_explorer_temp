@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { getLatestTransactions, getTransactionListApiWithPage } from '@/api/transaction'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 interface Transaction {
   hash: string
@@ -10,13 +11,16 @@ interface Transaction {
   senderAddress: string
   amount: number
   receiverAddress: string
+  contractAddress: string
   timestamp: Date
+  input: string
 }
 
 const currentPageTransactions = ref<Transaction[]>([])
 const currentPage = ref(1)
 const maxPageSize = ref(1)
 const lastestTransaction = ref(0)
+const loadingTableTransaction = ref(true)
 
 let intervalId: NodeJS.Timeout
 
@@ -36,6 +40,7 @@ const fetchDataTransactionList = async (pageNumber) => {
   try {
     const data = await getTransactionListApiWithPage(pageNumber)
     currentPageTransactions.value = data.output
+    loadingTableTransaction.value = false
   } catch (error) {
     console.error('There was a problem fetching the data:', error)
   }
@@ -81,6 +86,10 @@ const formatTimestamp = (timestamp: Date) => {
 
 const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
+}
+
+const goToContract = (contract) => {
+  router.push(`/contract/contractOverview/${contract}`)
 }
 
 const goToFirstPage = () => {
@@ -131,6 +140,11 @@ const goToLastPage = () => {
             </tr>
           </thead>
           <tbody>
+            <tr v-if="loadingTableTransaction">
+              <td colspan="7" style="position: relative; text-align: center">
+                <LoadingSpinner :loading="loadingTableTransaction" class="loading-spinner" />
+              </td>
+            </tr>
             <tr v-for="(item, index) in currentPageTransactions" :key="index">
               <td class="clickable" @click="goToDetail(item.hash)">{{ item.hash }}</td>
               <td>{{ item.block }}</td>
@@ -138,9 +152,28 @@ const goToLastPage = () => {
               <td class="clickable" @click="goToAccount(item.senderAddress)">{{
                 item.senderAddress
               }}</td>
-              <td class="clickable" @click="goToAccount(item.receiverAddress)">{{
-                item.receiverAddress
-              }}</td>
+              <td
+                class="clickable"
+                @click="
+                  () => {
+                    if (item.receiverAddress !== 'null') {
+                      if (item.input === '0x') {
+                        goToAccount(item.receiverAddress)
+                      } else {
+                        if (item.contractAddress === 'null') {
+                          goToContract(item.receiverAddress)
+                        } else {
+                          goToAccount(item.receiverAddress)
+                        }
+                      }
+                    } else {
+                      goToContract(item.contractAddress)
+                    }
+                  }
+                "
+              >
+                {{ item.receiverAddress !== 'null' ? item.receiverAddress : item.contractAddress }}
+              </td>
               <td>{{ item.amount }} ETH</td>
               <td>{{ calculateAge(item.timestamp) }} secs ago</td>
             </tr>

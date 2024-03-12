@@ -16,7 +16,7 @@ const loading = ref(true)
 .loading-spinner {
   /* height: 100%;
   background-color: rgba(255, 255, 255, 0.5); */
-  z-index: 9999;
+  z-index: 2;
   display: flex;
   width: 100%;
   justify-content: center;

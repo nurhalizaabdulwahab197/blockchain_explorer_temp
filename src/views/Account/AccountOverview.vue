@@ -4,8 +4,11 @@ import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { getAccountOverview } from '@/api/account'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const route = useRoute()
+// change title with reference to url
+const pageTitle = ref('')
 const dataset = ref([])
 const balance = ref('')
 const accAddress = ref('')
@@ -13,6 +16,7 @@ const isButtonClicked = ref(false)
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
+const loading = ref(true)
 
 const fetchData = async () => {
   const addressFromUrl = route.params.address
@@ -23,10 +27,17 @@ const fetchData = async () => {
     dataset.value = data.data
     balance.value = data.balance
     updatePaginateData()
+    pageTitle.value = route.meta.title
   } catch (error) {
     console.error('There was a problem fetching the data:', error)
+  } finally {
+    loading.value = false
   }
 }
+
+const formattedBalance = computed(() => {
+  return balance.value === '0.' ? '0' : balance.value
+})
 
 // Call fetchData when the component is mounted
 onMounted(() => {
@@ -66,9 +77,6 @@ function jumpToLast() {
 function updatePaginateData() {
   const startIndex = (currentPage.value - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  console.log(startIndex)
-  console.log(endIndex)
-  console.log(dataset.value.slice(startIndex, endIndex))
   paginatedData.value = dataset.value.slice(startIndex, endIndex)
   console.log(paginatedData.value)
 }
@@ -79,7 +87,21 @@ const goToDetail = (TxnHash) => {
   router.push('/blockchain/transactionList/transactionDetail/' + TxnHash)
 }
 
-const goToAccount = (account) => {
+const goToToAccount = (account) => {
+  if (account.input === '0x' && account.receiverAddress !== 'null') {
+    router.push('/account/accountOverview/' + account.receiverAddress)
+  } else if (
+    account.input !== '0x' &&
+    account.receiverAddress !== 'null' &&
+    account.contractAddress === 'null'
+  ) {
+    router.push('/contract/contractOverview/' + account.receiverAddress)
+  } else {
+    router.push('/contract/contractOverview/' + account.contractAddress)
+  }
+}
+
+const goToFromAccount = (account) => {
   router.push('/account/accountOverview/' + account)
 }
 
@@ -89,6 +111,20 @@ const calcTimeDiff = (timestamp) => {
   const timeDifferenceInMilliseconds = currentDate - blockTimestamp
   const timeDifferenceInSeconds = Math.floor(timeDifferenceInMilliseconds / 1000)
   return timeDifferenceInSeconds
+}
+
+const convertTimeStamp = (timestamp) => {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }
+  const formattedDate = new Date(timestamp).toLocaleString('en-US', options)
+  return formattedDate.replace(',', ' ').replace(/\//g, '-') // Remove the comma between date and time
 }
 
 function copyToClipboard() {
@@ -109,7 +145,8 @@ function copyToClipboard() {
 </script>
 
 <template>
-  <div class="body">
+  <LoadingSpinner v-if="loading" class="h-100%" />
+  <div v-else class="body">
     <div class="main">
       <div v-if="showToast" class="alertbox">
         <div class="bardesign"></div
@@ -124,7 +161,7 @@ function copyToClipboard() {
         >
       </div>
       <div class="header">
-        <Icon icon="codicon:account" class="accountIcon" /><h1>Account Overview</h1>
+        <Icon icon="codicon:account" class="accountIcon" /><h1>{{ pageTitle }}</h1>
       </div>
       <div class="info-cont">
         <div class="address">
@@ -145,7 +182,7 @@ function copyToClipboard() {
             <h3>ETH BALANCE</h3>
           </div>
           <div class="bal-sub-cont">
-            <Icon icon="ri:eth-line" class="eth" /><h2>{{ balance }}</h2>
+            <Icon icon="ri:eth-line" class="eth" /><h2>{{ formattedBalance }}</h2>
           </div>
         </div>
       </div>
@@ -170,13 +207,15 @@ function copyToClipboard() {
                   ><span>{{ item.hash }}</span></td
                 >
                 <td class="td2">{{ item.block }}</td>
-                <td class="td3">{{ item.timestamp }}</td>
-                <td class="td4 clickable" @click="goToAccount(item.senderAddress)">{{
+                <td class="td3">{{ convertTimeStamp(item.timestamp) }}</td>
+                <td class="td4 clickable" @click="goToFromAccount(item.senderAddress)">{{
                   item.senderAddress
                 }}</td>
-                <td class="td5 clickable" @click="goToAccount(item.receiverAddress)">{{
-                  item.receiverAddress
-                }}</td>
+                <td class="td5 clickable" @click="goToToAccount(item)">
+                  <span v-if="item.receiverAddress !== 'null'">{{ item.receiverAddress }}</span>
+                  <span v-else>{{ item.contractAddress }}</span>
+                </td>
+
                 <td class="td6">{{ item.amount }} ETH</td>
                 <td class="td7">{{ calcTimeDiff(item.timestamp) }} secs ago</td>
               </tr>
@@ -310,6 +349,12 @@ h1 {
   color: white;
   background-color: #919191;
   opacity: 1;
+}
+
+.btn:active,
+.clicked {
+  color: #fff;
+  background-color: #000;
 }
 
 .copyIcon {
@@ -600,5 +645,51 @@ tr:last-child td:last-child {
   .footer {
     margin-top: auto;
   }
+}
+
+@media screen and (width <= 1050px) {
+  .visiblecopy {
+    display: none;
+  }
+}
+
+.bardesign {
+  width: 10px;
+  height: 100px;
+  background-color: #1f51ff;
+  border-radius: 10px;
+}
+
+.copymessagetitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.tickicon {
+  margin-right: 5px;
+  color: #1f51ff;
+}
+
+.alertbox {
+  position: absolute;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  width: 450px;
+  flex-direction: row;
+}
+
+.copymessage {
+  display: flex;
+  width: 100%;
+  padding-left: 30px;
+  margin-right: 10px;
+  background-color: #363737;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 </style>

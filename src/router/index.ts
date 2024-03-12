@@ -168,6 +168,23 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     ]
   },
   {
+    path: '/contract/contractOverview',
+    component: Layout,
+    name: 'Contract Overview',
+    meta: { hidden: true },
+    children: [
+      {
+        path: ':address',
+        component: () => import('@/views/Account/AccountOverview.vue'),
+        name: 'Contract Overview',
+        meta: {
+          title: 'Contract Overview',
+          icon: 'codicon:account'
+        }
+      }
+    ]
+  },
+  {
     path: '/error',
     component: Layout,
     name: 'Error',
