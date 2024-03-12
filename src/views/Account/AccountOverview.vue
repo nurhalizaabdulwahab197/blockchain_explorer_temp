@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const route = useRoute()
 // change title with reference to url
@@ -14,6 +15,7 @@ const isButtonClicked = ref(false)
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
+const loading = ref('true')
 
 const fetchData = async () => {
   const addressFromUrl = route.params.address
@@ -31,6 +33,9 @@ const fetchData = async () => {
       balance.value = data.balance
       updatePaginateData()
       pageTitle.value = route.meta.title
+    })
+    .finally(() => {
+      loading.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -115,6 +120,20 @@ const calcTimeDiff = (timestamp) => {
   return timeDifferenceInSeconds
 }
 
+const convertTimeStamp = (timestamp) => {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }
+  const formattedDate = new Date(timestamp).toLocaleString('en-US', options)
+  return formattedDate.replace(',', ' ').replace(/\//g, '-') // Remove the comma between date and time
+}
+
 function copyToClipboard() {
   const addValue = document.createElement('input')
   addValue.value = accAddress.value
@@ -133,6 +152,7 @@ function copyToClipboard() {
 </script>
 
 <template>
+  <LoadingSpinner v-if="loading" class="h-100%" />
   <div class="body">
     <div class="main">
       <div v-if="showToast" class="alertbox">
@@ -194,13 +214,18 @@ function copyToClipboard() {
                   ><span>{{ item.hash }}</span></td
                 >
                 <td class="td2">{{ item.block }}</td>
-                <td class="td3">{{ item.timestamp }}</td>
+                <td class="td3">{{ convertTimeStamp(item.timestamp) }}</td>
                 <td class="td4 clickable" @click="goToFromAccount(item.senderAddress)">{{
                   item.senderAddress
                 }}</td>
                 <td class="td5 clickable" @click="goToToAccount(item)">
                   <span v-if="item.contractAddress === 'null'">{{ item.receiverAddress }}</span>
-                  <span v-else>{{ item.contractAddress }}</span>
+                  <span v-else-if="item.receiverAddress === 'null'">{{
+                    item.contractAddress
+                  }}</span>
+                  <span @click="goToFromAccount(item.receiverAddress)" v-else>{{
+                    item.receiverAddress
+                  }}</span>
                 </td>
 
                 <td class="td6">{{ item.amount }} ETH</td>
