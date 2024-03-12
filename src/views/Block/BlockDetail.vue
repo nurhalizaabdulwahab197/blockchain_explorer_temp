@@ -134,11 +134,13 @@ const fetchData = (endpoint) => {
         }
 
         const formattedDate = new Date(timestamp.value).toLocaleString('en-US', options)
+        console.log(formattedDate)
         const [, dayOfWeek, month, day, year, time, timeZone] = formattedDate.match(
           /(\w{3}), (\d+)\/(\d+)\/(\d+),\s(\d+:\d+:\d+)/
         )
 
         formattedTimestamp.value = `${dayOfWeek}, ${day}-${month}-${year}, ${time} GMT`
+        console.log(dayOfWeek, month, day, year, time, timeZone)
       }
     })
     .finally(() => {
