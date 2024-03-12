@@ -1,81 +1,40 @@
 <script setup lang="tsx">
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
-import axios from 'axios'
 import router from '@/router'
-
+import { getSearchResultApi } from '@/api/search'
 const searchVal = ref('')
 const isSuccess = ref(false)
-const submitForm = () => {
+const submitForm = async () => {
   const searchValue = searchVal.value
   isSuccess.value = false
   console.log('Form submitted with input:', searchValue)
 
-  axios
-    .get(`https://intanexplorer.azurewebsites.net/api/block/number/${searchValue}`)
-    .then((response) => {
-      if (response.data.output !== null) {
-        isSuccess.value = true
-        router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
-      } else {
-        return axios
-          .get(`https://intanexplorer.azurewebsites.net/api/block/hash/${searchValue}`)
-          .catch((error) => {
-            console.log(error)
-            return null // Proceed to the next link
-          })
-      }
-    })
-    .then((response) => {
-      if (isSuccess.value) {
-        return null
-      }
-      if (response && response.data.output !== null) {
-        isSuccess.value = true
-        router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
-      } else {
-        return axios
-          .get(`https://intanexplorer.azurewebsites.net/api/transaction/${searchValue}`)
-          .catch((error) => {
-            console.log(error)
-            return null // Proceed to the next link
-          })
-      }
-    })
-    .then((response) => {
-      if (isSuccess.value) {
-        return null
-      }
-      if (response && response.data.output !== null) {
-        isSuccess.value = true
-        router.push(`/blockchain/transactionList/transactionDetail/${searchValue}`)
-      } else {
-        return axios
-          .get(`https://intanexplorer.azurewebsites.net/api/account/accountOverview/${searchValue}`)
-          .catch((error) => {
-            console.log(error)
-            return null // Proceed to the next link
-          })
-      }
-    })
-    .then((response) => {
-      if (isSuccess.value) {
-        return null
-      }
-      if (response && response.data.balance !== null) {
-        isSuccess.value = true
-        router.push(`/account/accountOverview/${searchValue}`)
-      } else if (!isSuccess.value) {
-        // Handle case where all requests fail
-        console.log('No data found for search value:', searchValue)
-        router.push(`/error/searchNotFound`)
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error)
-      console.log('No data found for search value:', searchValue)
-      router.push(`/error/searchNotFound`)
-    })
+  const response = await getSearchResultApi({ searchValue: searchValue })
+  console.log('API Response:', response)
+  if (!response.output.type) {
+    console.log(!response.output)
+    console.log('No data found for search value:', searchValue)
+    router.push(`/error/searchNotFound`)
+  }
+
+  const type = response.output.type
+  console.log('Type:', type)
+  if (type === 'block') {
+    isSuccess.value = true
+    router.push(`/blockchain/blockList/blockdetail/${searchValue}`)
+  } else if (type === 'transaction') {
+    isSuccess.value = true
+    router.push(`/blockchain/transactionList/transactionDetail/${searchValue}`)
+  } else if (type === 'account') {
+    isSuccess.value = true
+    router.push(`/account/accountOverview/${searchValue}`)
+  } else if (type === 'contract') {
+    isSuccess.value = true
+    router.push(`/contract/contractOverview/${searchValue}`)
+  }
+  console.log('No data found for search value:', searchValue)
+  router.push(`/error/searchNotFound`)
 }
 </script>
 

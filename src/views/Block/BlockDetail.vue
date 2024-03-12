@@ -4,6 +4,8 @@ import { ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import LoadingPage from './loadingPage.vue'
+import { getLastSyncBlock, getBlockByEndPoint } from '@/api/block'
+
 const route = useRoute()
 const rectangleHeight = ref(0)
 const blockHeight = ref('')
@@ -80,55 +82,41 @@ onMounted(() => {
 const lastestBlock = ref(0)
 
 const fetchLastBlock = async () => {
-  fetch('https://intanexplorer.azurewebsites.net/api/block/getLastSyncBlock')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      lastestBlock.value = data.output
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getLastSyncBlock()
+
+    console.log(data)
+    lastestBlock.value = data.output
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
-const fetchData = (endpoint) => {
-  fetch(`https://intanexplorer.azurewebsites.net/api${endpoint}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      const fetchedBlock = data.output
+const fetchData = async (endpoint) => {
+  try {
+    const data = await getBlockByEndPoint({ endPoint: endpoint })
+    console.log(data)
+    const fetchedBlock = data.output
 
-      if (fetchedBlock) {
-        blockHeight.value = fetchedBlock.number
-        hash.value = fetchedBlock.hash
-        miner.value = fetchedBlock.miner
-        size.value = fetchedBlock.size
-        timestamp.value = fetchedBlock.timestamp
-        transactionNumber.value = fetchedBlock.transactions.length
-        blockReward.value = fetchedBlock.blockReward
-        transactionFee.value = fetchedBlock.transactionNumber
-        rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
-        internalTransaction.value = fetchedBlock.internalTransaction
-      } else {
-        console.error('Fetched block is null')
-      }
-    })
-    .finally(() => {
-      loading.value = false
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+    if (fetchedBlock) {
+      blockHeight.value = fetchedBlock.number
+      hash.value = fetchedBlock.hash
+      miner.value = fetchedBlock.miner
+      size.value = fetchedBlock.size
+      timestamp.value = fetchedBlock.timestamp
+      transactionNumber.value = fetchedBlock.transactions.length
+      blockReward.value = fetchedBlock.blockReward
+      transactionFee.value = fetchedBlock.transactionNumber
+      rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
+      internalTransaction.value = fetchedBlock.internalTransaction
+    } else {
+      console.error('Fetched block is null')
+    }
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const fetchDataHash = () => {

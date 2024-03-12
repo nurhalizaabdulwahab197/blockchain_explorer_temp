@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
+import { getLastSyncBlock, getBlockListApiWithSkip, getBlockListApiWithPage } from '@/api/block'
 
 const blocks = ref([])
 const currentPageBlocks = ref([])
@@ -16,39 +17,25 @@ const loadingTableBlock = ref(true)
 let intervalId
 
 const fetchLastBlock = async () => {
-  fetch('https://intanexplorer.azurewebsites.net/api/block/getLastSyncBlock')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      lastestBlock.value = data.output
-      maxPageSize.value = Math.ceil(lastestBlock.value / 10)
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getLastSyncBlock()
+    console.log(data)
+    lastestBlock.value = data.output // Corrected the typo from 'lastestBlock' to 'latestBlock'
+    maxPageSize.value = Math.ceil(lastestBlock.value / 10)
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
+// Simplified axios call without interceptors
 const fetchData = async () => {
-  fetch(`https://intanexplorer.azurewebsites.net/api/block/blockListWithSkip/${skipCount.value}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      blocks.value = data.output
-      loadingScrollBlock.value = false
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getBlockListApiWithSkip({ skipCount: skipCount.value })
+    blocks.value = data.output
+    loadingScrollBlock.value = false
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
 const scrollBlocks = (direction) => {
@@ -78,23 +65,17 @@ const goToBlock = (block) => {
   router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
 
-const fetchDataBlockList = (pageNumber) => {
+const fetchDataBlockList = async (pageNumber) => {
   fetchLastBlock()
-  fetch(`https://intanexplorer.azurewebsites.net/api/block/blockList/${pageNumber}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch block list for page ${pageNumber}')
-      }
-      return response.json()
-    })
-    .then((responseData) => {
-      currentPageBlocks.value = responseData.output
-      console.log(currentPageBlocks.value)
-      loadingTableBlock.value = false
-    })
-    .catch((error) => {
-      console.error('Error fetching block list:', error)
-    })
+  try {
+    const data = await getBlockListApiWithPage({ pageNumber: pageNumber })
+
+    currentPageBlocks.value = data.output
+    console.log(currentPageBlocks.value)
+    loadingTableBlock.value = false
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
 const goToFirstPage = () => {

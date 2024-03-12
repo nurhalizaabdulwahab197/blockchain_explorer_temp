@@ -46,8 +46,10 @@ declare global {
   }
 
   declare interface IResponse<T = any> {
+    message: string
     code: number
     data: T extends any ? T : T & any
+    output: T extends any ? T : T & any
   }
 
   declare interface ThemeTypes {

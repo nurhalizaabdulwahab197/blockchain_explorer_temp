@@ -1,15 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { getTransactionList } from '@/api/transaction'
 
 const totalTransactionNum = ref(0)
-
+let intervalId
 const fetchData = async () => {
   try {
-    const response = await fetch('https://intanexplorer.azurewebsites.net/api/transaction')
-    if (!response.ok) {
-      throw new Error('Fetching encountered some error')
-    }
-    const data = await response.json()
+    const data = await getTransactionList()
     totalTransactionNum.value = data.output.length
     console.log(totalTransactionNum.value)
   } catch (error) {
@@ -17,8 +14,16 @@ const fetchData = async () => {
   }
 }
 
-onMounted(fetchData)
-setInterval(fetchData, 10000)
+onMounted(() => {
+  fetchData()
+  intervalId = setInterval(fetchData, 10000)
+})
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 </script>
 
 <template>

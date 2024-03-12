@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import { getLatestTransactions, getTransactionListApiWithPage } from '@/api/transaction'
 
 interface Transaction {
   hash: string
@@ -20,39 +21,24 @@ const lastestTransaction = ref(0)
 let intervalId: NodeJS.Timeout
 
 const fetchLastTransaction = async () => {
-  fetch('https://intanexplorer.azurewebsites.net/api/transaction/latest')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      lastestTransaction.value = data.output
-      maxPageSize.value = Math.ceil(lastestTransaction.value / 10)
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getLatestTransactions()
+    console.log(data)
+    lastestTransaction.value = data.output
+    maxPageSize.value = Math.ceil(lastestTransaction.value / 10)
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
-const fetchDataTransactionList = (pageNumber) => {
+const fetchDataTransactionList = async (pageNumber) => {
   fetchLastTransaction()
-  fetch(`https://intanexplorer.azurewebsites.net/api/transaction/transactionlist/${pageNumber}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch block list for page ${pageNumber}`)
-      }
-      return response.json()
-    })
-    .then((responseData) => {
-      currentPageTransactions.value = responseData.output
-      console.log(currentPageTransactions.value)
-    })
-    .catch((error) => {
-      console.error('Error fetching block list:', error)
-    })
+  try {
+    const data = await getTransactionListApiWithPage(pageNumber)
+    currentPageTransactions.value = data.output
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
 const calculateAge = (timestamp: Date) => {

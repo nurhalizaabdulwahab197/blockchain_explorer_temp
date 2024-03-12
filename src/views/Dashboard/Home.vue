@@ -4,6 +4,8 @@ import { Icon } from '@iconify/vue'
 import router from '@/router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
 import Echart from '@/components/Echart/src/Echart.vue'
+import { getLatestBlockList } from '@/api/block'
+import { getLatestTransactionList, getLatestThirtyDayTransactionNumber } from '@/api/transaction'
 
 const blocks = ref([])
 const trxs = ref([])
@@ -19,156 +21,135 @@ const loadingTransactionTable = ref(true)
 
 let intervalId
 
-const fetchGraphData = () => {
-  fetch('https://intanexplorer.azurewebsites.net/api/transaction/latestThirtyDay/transactionNumber')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      loadingGraph.value = false
-      const output = data.output
-      const dates = output.map((item) => item.date)
-      const transactionCounts = output.map((item) => item.transactionCount)
-      chartOptions.value = {
-        xAxis: {
-          type: 'category',
-          data: dates,
-          axisLabel: {
-            formatter: function (value) {
-              const date = new Date(value)
-              return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) // Format date labels
-            },
-            textStyle: {
-              color: '#ffffff' // Color of x-axis labels
-            }
+const fetchGraphData = async () => {
+  try {
+    const data = await getLatestThirtyDayTransactionNumber()
+    loadingGraph.value = false
+    const output = data.output
+    const dates = output.map((item) => item.date)
+    const transactionCounts = output.map((item) => item.transactionCount)
+    chartOptions.value = {
+      xAxis: {
+        type: 'category',
+        data: dates,
+        axisLabel: {
+          formatter: function (value) {
+            const date = new Date(value)
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) // Format date labels
+          },
+          textStyle: {
+            color: '#ffffff' // Color of x-axis labels
           }
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Number of Transactions',
+        nameLocation: 'center',
+        nameRotate: 90,
+        nameTextStyle: {
+          color: '#ffffff', // Color of the Y-axis label
+          fontSize: 14,
+          padding: [0, 0, 10, 0] // Adjust font size if needed
         },
-        yAxis: {
-          type: 'value',
+        splitLine: {
+          show: false // Hide horizontal grid lines
+        },
+        axisLabel: {
+          formatter: '{value}', // Format y-axis labels
+          textStyle: {
+            color: '#ffffff' // Color of y-axis labels
+          }
+        }
+      },
+      series: [
+        {
           name: 'Number of Transactions',
-          nameLocation: 'center',
-          nameRotate: 90,
-          nameTextStyle: {
-            color: '#ffffff', // Color of the Y-axis label
-            fontSize: 14,
-            padding: [0, 0, 10, 0] // Adjust font size if needed
-          },
-          splitLine: {
-            show: false // Hide horizontal grid lines
-          },
-          axisLabel: {
-            formatter: '{value}', // Format y-axis labels
-            textStyle: {
-              color: '#ffffff' // Color of y-axis labels
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(0, 123, 255, 0.5)' }, // Start color
+                { offset: 1, color: 'rgba(0, 123, 255, 0)' } // End color
+              ]
             }
-          }
-        },
-        series: [
-          {
-            name: 'Number of Transactions',
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  { offset: 0, color: 'rgba(0, 123, 255, 0.5)' }, // Start color
-                  { offset: 1, color: 'rgba(0, 123, 255, 0)' } // End color
-                ]
-              }
-            },
-            data: transactionCounts,
-            type: 'line',
-            smooth: true,
-            lineStyle: {
-              color: '#4287f5', // Change line color here
-              width: 3 // Change line width here
-            },
-            showSymbol: false
-          }
-        ],
-        tooltip: {
-          trigger: 'axis', // Show tooltip on hover over points
-          axisPointer: {
-            type: 'cross' // Show tooltip lines across axes
           },
-          formatter: function (params) {
-            const date = new Date(params[0].axisValue)
-            const formattedDate = date.toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric'
-            })
-            const value = params[0].value.toFixed(0)
-            return `<div style="text-align: left;">
+          data: transactionCounts,
+          type: 'line',
+          smooth: true,
+          lineStyle: {
+            color: '#4287f5', // Change line color here
+            width: 3 // Change line width here
+          },
+          showSymbol: false
+        }
+      ],
+      tooltip: {
+        trigger: 'axis', // Show tooltip on hover over points
+        axisPointer: {
+          type: 'cross' // Show tooltip lines across axes
+        },
+        formatter: function (params) {
+          const date = new Date(params[0].axisValue)
+          const formattedDate = date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric'
+          })
+          const value = params[0].value.toFixed(0)
+          return `<div style="text-align: left;">
                     <div style="font-weight: 800;">${formattedDate}</div>
                     <div>Number of transactions: <span style="font-weight: 800">${value}</span></div>
                 </div>`
-          }
-        },
-        grid: {
-          x: 20, // Adjust the left margin if needed
-          y: 30, // Adjust the top margin if needed
-          x2: 20, // Adjust the right margin if needed
-          y2: 30, // Adjust the bottom margin if needed
-          containLabel: true, // Ensure that labels are within the grid area
-          show: false // Hide grid lines
-        },
-        textStyle: {
-          color: '#ffffff' // Default text color
-        },
-        backgroundColor: 'transparent', // Set background color to transparent
-        animation: false
-      }
+        }
+      },
+      grid: {
+        x: 20, // Adjust the left margin if needed
+        y: 30, // Adjust the top margin if needed
+        x2: 20, // Adjust the right margin if needed
+        y2: 30, // Adjust the bottom margin if needed
+        containLabel: true, // Ensure that labels are within the grid area
+        show: false // Hide grid lines
+      },
+      textStyle: {
+        color: '#ffffff' // Default text color
+      },
+      backgroundColor: 'transparent', // Set background color to transparent
+      animation: false
+    }
 
-      // statistic
-      totalTransactions.value = data.statistics.totalTransactions
-      maxTransactionPerDay.value = data.statistics.maxTransactionPerDay
-    })
-    .catch((error) => {
-      console.error('Error fetching data from API:', error)
-    })
+    // statistic
+    totalTransactions.value = data.statistics.totalTransactions
+    maxTransactionPerDay.value = data.statistics.maxTransactionPerDay
+  } catch (error) {
+    console.error('Error fetching data from API:', error)
+  }
 }
 
-const fetchBlockData = () => {
-  fetch('https://intanexplorer.azurewebsites.net/api/block/latestBlockList')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      blocks.value = data.output
-      blockTime.value = data.blockTime
-      loadingBlockTable.value = false
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+const fetchBlockData = async () => {
+  try {
+    const data = await getLatestBlockList()
+    console.log(data)
+    blocks.value = data.output
+    blockTime.value = data.blockTime
+    loadingBlockTable.value = false
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
-const fetchTrxData = () => {
-  fetch('https://intanexplorer.azurewebsites.net/api/transaction/fetch/latestTransactionList')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      trxs.value = data.output
-      loadingTransactionTable.value = false
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+const fetchTrxData = async () => {
+  try {
+    const data = await getLatestTransactionList()
+    console.log(data)
+    trxs.value = data.output
+    loadingTransactionTable.value = false
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
 const fetchData = () => {

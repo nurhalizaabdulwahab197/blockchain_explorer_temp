@@ -1,7 +1,7 @@
 import { AxiosResponse, InternalAxiosRequestConfig } from './types'
 import { ElMessage } from 'element-plus'
 import qs from 'qs'
-import { SUCCESS_CODE, TRANSFORM_REQUEST_DATA } from '@/constants'
+import { TRANSFORM_REQUEST_DATA } from '@/constants'
 import { useUserStoreWithOut } from '@/store/modules/user'
 import { objToFormData } from '@/utils'
 
@@ -36,16 +36,23 @@ const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
 
 const defaultResponseInterceptors = (response: AxiosResponse) => {
   if (response?.config?.responseType === 'blob') {
-    // 如果是文件流，直接过
+    // If the response is a file stream, return the response directly.
     return response
-  } else if (response.data.code === SUCCESS_CODE) {
+  }
+  // Check the HTTP status code directly
+  if (response.status === 200) {
+    // If the HTTP status code is 200, assume success and return the response data.
     return response.data
   } else {
-    ElMessage.error(response?.data?.message)
-    if (response?.data?.code === 401) {
+    // If the status code is not 200, show an error message.
+    ElMessage.error(response?.statusText)
+    if (response.status === 401) {
+      // Handle logout for 401 Unauthorized.
       const userStore = useUserStoreWithOut()
       userStore.logout()
     }
+    // For other errors, reject the promise with the status text or a default error message.
+    return Promise.reject(response?.statusText || 'An error occurred')
   }
 }
 

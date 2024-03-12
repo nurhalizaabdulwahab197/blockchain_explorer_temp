@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { getAccountOverview } from '@/api/account'
 
 const route = useRoute()
 const dataset = ref([])
@@ -16,22 +17,15 @@ const copyMessage = ref('')
 const fetchData = async () => {
   const addressFromUrl = route.params.address
   accAddress.value = addressFromUrl
-  fetch(`https://intanexplorer.azurewebsites.net/api/account/accountOverview/${addressFromUrl}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      dataset.value = data.data
-      balance.value = data.balance
-      updatePaginateData()
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getAccountOverview({ accountAddress: addressFromUrl })
+    console.log(data)
+    dataset.value = data.data
+    balance.value = data.balance
+    updatePaginateData()
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
 // Call fetchData when the component is mounted

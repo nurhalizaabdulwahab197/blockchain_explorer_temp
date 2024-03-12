@@ -82,8 +82,8 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios'
-import { ref, onMounted, Ref } from 'vue'
+import { ref, onMounted, Ref, onUnmounted } from 'vue'
+import { getNodeDetailApi, getNodeListApi } from '@/api/node'
 
 interface NodeDetails {
   message: string
@@ -129,6 +129,7 @@ interface NodeDetails {
 const nodeDetails: Ref<NodeDetails | null> = ref(null)
 const selectedNodeId: Ref<string | null> = ref(null)
 const selectedIndex: Ref<number | null> = ref(0)
+let intervalId
 
 const fetchNodeDetails = async () => {
   console.log('Fetching details for node:', selectedNodeId.value)
@@ -138,11 +139,9 @@ const fetchNodeDetails = async () => {
   }
 
   try {
-    const response = await axios.get(
-      `https://intanexplorer.azurewebsites.net/api/nodes/${selectedNodeId.value}`
-    )
-    console.log('Node details response:', response.data)
-    nodeDetails.value = response.data
+    const data = await getNodeDetailApi({ selectedNodeId: selectedNodeId.value })
+    console.log('Node details response:', data)
+    nodeDetails.value = { message: data.message, output: data.output }
     console.log('Updated node details:', nodeDetails.value)
   } catch (error) {
     console.error('Error fetching node details:', error)
@@ -152,14 +151,14 @@ const fetchNodeDetails = async () => {
 
 const fetchNodeIds = async () => {
   try {
-    const response = await axios.get('https://intanexplorer.azurewebsites.net/api/nodes')
+    const data = await getNodeListApi()
 
     // Handle different response structures
-    if (response.data.output && Array.isArray(response.data.output)) {
-      nodeDetails.value = response.data
+    if (data.output && Array.isArray(data.output)) {
+      nodeDetails.value = data
       selectedNodeId.value = null // Set selectedNodeId to null initially
     } else {
-      console.error('Unexpected response structure:', response.data)
+      console.error('Unexpected response structure:', data)
     }
   } catch (error) {
     console.error('Error fetching node IDs:', error)
@@ -179,9 +178,15 @@ onMounted(() => {
 
   fetchNodeIds()
 
-  setInterval(() => {
+  intervalId = setInterval(() => {
     fetchNodeIds() // Fetch data every 10 seconds
   }, fetchDataInterval)
+})
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
 })
 </script>
 

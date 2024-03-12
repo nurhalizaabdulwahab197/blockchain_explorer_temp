@@ -191,7 +191,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
-import axios from 'axios'
+import { getNextTransaction, getPrevTransaction, getTransactionDetailApi } from '@/api/transaction'
 
 let intervalId: NodeJS.Timeout
 const transactionId = ref('')
@@ -257,10 +257,8 @@ function copyTransactionIdToClipboard() {
 
 const fetchData = async () => {
   try {
-    const response = await axios.get(
-      `https://intanexplorer.azurewebsites.net/api/transaction/${route.params.id}`
-    )
-    const transactionData = response.data.output
+    const data = await getTransactionDetailApi({ id: route.params.id as string })
+    const transactionData = data.output
 
     // Assign data to variables
     transactionId.value = transactionData.hash
@@ -301,10 +299,8 @@ const formatTimestamp = (timestamp: string) => {
 
 const retrieveNextTransaction = async () => {
   try {
-    const response = await axios.get(
-      `https://intanexplorer.azurewebsites.net/api/transaction/next/${transactionId.value}`
-    )
-    const nextTransactionHash = response.data.output.hash
+    const data = await getNextTransaction({ transactionId: transactionId.value })
+    const nextTransactionHash = data.output.hash
     router.push({ name: 'TransactionDetail', params: { id: nextTransactionHash } })
   } catch (error) {
     console.error('Error fetching next transaction:', error)
@@ -312,10 +308,8 @@ const retrieveNextTransaction = async () => {
 }
 const retrievePreviousTransaction = async () => {
   try {
-    const response = await axios.get(
-      `https://intanexplorer.azurewebsites.net/api/transaction/prev/${transactionId.value}`
-    )
-    const previousTransactionHash = response.data.output.hash
+    const data = await getPrevTransaction({ transactionId: transactionId.value })
+    const previousTransactionHash = data.output.hash
     router.push({ name: 'TransactionDetail', params: { id: previousTransactionHash } })
   } catch (error) {
     console.error('Error fetching previous transaction:', error)
