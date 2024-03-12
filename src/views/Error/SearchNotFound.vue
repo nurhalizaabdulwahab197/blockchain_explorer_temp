@@ -13,7 +13,8 @@ const errorClick = () => {
 
 <template>
   <div class="searchErrorContainer">
-    <h1>No Result Found</h1>
+    <h1>Oops! We couldn't find what you are looking for.</h1>
+    <p>Please enter an address, transaction hash, block number or hash</p>
     <button @click="errorClick">Back</button>
   </div>
 </template>
@@ -31,11 +32,12 @@ const errorClick = () => {
 }
 
 .searchErrorContainer h1 {
-  font-size: 20px;
+  font-size: 25px;
 }
 
 .searchErrorContainer button {
   padding: 5px 15px;
+  margin-top: 10px;
   cursor: pointer;
 }
 </style>
