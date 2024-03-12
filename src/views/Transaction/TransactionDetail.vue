@@ -62,7 +62,7 @@
             </div>
           </td>
           <td class="tablerow">
-            <span class="clickable tablecontent address" @click="goToDetail(senderAddress)">{{
+            <span class="clickable tablecontent address" @click="goToAccount(senderAddress)">{{
               senderAddress
             }}</span>
             <button class="tableCopybutton" @click="copySenderToClipboard">
@@ -88,9 +88,28 @@
             </div>
           </td>
           <td class="tablerow">
-            <span class="clickable tablecontent address" @click="goToDetail(receiverAddress)">{{
-              receiverAddress
-            }}</span>
+            <span
+              class="clickable tablecontent address"
+              @click="
+                () => {
+                  if (receiverAddress !== 'null') {
+                    if (input === '0x') {
+                      goToAccount(receiverAddress)
+                    } else {
+                      if (contractAddress) {
+                        goToContract(contractAddress)
+                      } else {
+                        goToAccount(receiverAddress)
+                      }
+                    }
+                  } else {
+                    goToContract(contractAddress)
+                  }
+                }
+              "
+            >
+              {{ receiverAddress !== 'null' ? receiverAddress : contractAddress }}
+            </span>
             <button class="tableCopybutton" @click="copyReceiverToClipboard">
               <Icon icon="iconamoon:copy-bold" />
               <div class="none">CLICK TO COPY</div>
@@ -146,11 +165,11 @@
               <div class="transactionfee-container">
                 <div class="column2-container">
                   <div class="container-title">NOTE</div>
-                  <div class="center">This sender has created a contract</div>
+                  <div class="center">{{ note }}</div>
                 </div>
                 <div class="column2-container">
                   <div class="container-title">ONCOMPLETE</div>
-                  <div class="center">Create</div>
+                  <div class="center">{{ status }}</div>
                 </div>
               </div>
             </div>
@@ -198,6 +217,10 @@ const block = ref('')
 const senderAddress = ref('')
 const amount = ref('')
 const receiverAddress = ref('')
+const contractAddress = ref('')
+const status = ref('')
+const note = ref('')
+const input = ref('')
 const value = ref('')
 const gasPrice = ref('')
 const transactionFee = ref('')
@@ -255,28 +278,49 @@ function copyTransactionIdToClipboard() {
 }
 
 const fetchData = async () => {
-  try {
-    const response = await axios.get(`http://localhost:8080/api/transaction/${route.params.id}`)
-    const transactionData = response.data.output
+  const response = await axios.get(`http://localhost:8080/api/transaction/${route.params.id}`)
+  const transactionData = response.data.output
 
-    // Assign data to variables
-    transactionId.value = transactionData.hash
-    block.value = transactionData.block
-    senderAddress.value = transactionData.senderAddress
-    amount.value = transactionData.amount
-    receiverAddress.value = transactionData.receiverAddress
-    value.value = transactionData.value
-    gasPrice.value = transactionData.gasPrice
-    transactionFee.value = transactionData.transactionFee
-    gasLimit.value = transactionData.gasLimit
-    gasUsed.value = transactionData.gasUsed
-    gasFees.value = transactionData.gasFees
-    timestamp.value = transactionData.timestamp
-    maxFeePerGas.value = transactionData.maxFeePerGas
-    maxPriorityFeePerGas.value = transactionData.maxPriorityFeePerGas
-    baseFeePerGas.value = transactionData.baseFeePerGas
-  } catch (error) {
-    console.error('Error fetching transaction:', error)
+  transactionId.value = transactionData.hash
+  block.value = transactionData.block
+  senderAddress.value = transactionData.senderAddress
+  amount.value = transactionData.amount
+  receiverAddress.value = transactionData.receiverAddress
+  contractAddress.value = transactionData.contractAddress
+  status.value = transactionData.status
+  input.value = transactionData.input
+  value.value = transactionData.value
+  gasPrice.value = transactionData.gasPrice
+  transactionFee.value = transactionData.transactionFee
+  gasLimit.value = transactionData.gasLimit
+  gasUsed.value = transactionData.gasUsed
+  gasFees.value = transactionData.gasFees
+  timestamp.value = transactionData.timestamp
+  maxFeePerGas.value = transactionData.maxFeePerGas
+  maxPriorityFeePerGas.value = transactionData.maxPriorityFeePerGas
+  baseFeePerGas.value = transactionData.baseFeePerGas
+  const firstThreeChars = transactionId.value.slice(0, 3)
+
+  // Note and Status logic
+  if (contractAddress.value) {
+    if (contractAddress.value === 'null' && firstThreeChars !== '0x0') {
+      status.value = 'Successful'
+      note.value = 'The transaction is successful'
+    } else if (contractAddress.value !== 'null' && firstThreeChars !== '0x0') {
+      status.value = 'Create'
+      note.value = 'The sender has created a contract'
+    } else if (firstThreeChars === '0x0') {
+      status.value = 'Failed'
+      note.value = 'The transaction is unsuccessful'
+    }
+  } else {
+    if (firstThreeChars !== '0x0') {
+      status.value = 'Successful'
+      note.value = 'The transaction is successful'
+    } else if (firstThreeChars === '0x0') {
+      status.value = 'Failed'
+      note.value = 'The transaction is unsuccessful'
+    }
   }
 }
 
@@ -334,8 +378,12 @@ watch(
   }
 )
 
-const goToDetail = (account) => {
+const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
+}
+
+const goToContract = (contract) => {
+  router.push(`/contract/contractOverview/${contract}`)
 }
 </script>
 
