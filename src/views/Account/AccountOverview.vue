@@ -4,6 +4,7 @@ import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const route = useRoute()
 // change title with reference to url
@@ -33,6 +34,9 @@ const fetchData = async () => {
       balance.value = data.balance
       updatePaginateData()
       pageTitle.value = route.meta.title
+    })
+    .finally(() => {
+      loading.value = false
     })
     .finally(() => {
       loading.value = false
@@ -120,6 +124,20 @@ const calcTimeDiff = (timestamp) => {
   return timeDifferenceInSeconds
 }
 
+const convertTimeStamp = (timestamp) => {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }
+  const formattedDate = new Date(timestamp).toLocaleString('en-US', options)
+  return formattedDate.replace(',', ' ').replace(/\//g, '-') // Remove the comma between date and time
+}
+
 function copyToClipboard() {
   const addValue = document.createElement('input')
   addValue.value = accAddress.value
@@ -200,7 +218,7 @@ function copyToClipboard() {
                   ><span>{{ item.hash }}</span></td
                 >
                 <td class="td2">{{ item.block }}</td>
-                <td class="td3">{{ item.timestamp }}</td>
+                <td class="td3">{{ convertTimeStamp(item.timestamp) }}</td>
                 <td class="td4 clickable" @click="goToFromAccount(item.senderAddress)">{{
                   item.senderAddress
                 }}</td>
