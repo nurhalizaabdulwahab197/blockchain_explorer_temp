@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const route = useRoute()
 // change title with reference to url
@@ -14,6 +15,7 @@ const isButtonClicked = ref(false)
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
+const loading = ref(true)
 
 const fetchData = async () => {
   const addressFromUrl = route.params.address
@@ -31,6 +33,9 @@ const fetchData = async () => {
       balance.value = data.balance
       updatePaginateData()
       pageTitle.value = route.meta.title
+    })
+    .finally(() => {
+      loading.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -133,7 +138,8 @@ function copyToClipboard() {
 </script>
 
 <template>
-  <div class="body">
+  <LoadingSpinner v-if="loading" class="h-100%" />
+  <div v-else class="body">
     <div class="main">
       <div v-if="showToast" class="alertbox">
         <div class="bardesign"></div
@@ -199,7 +205,7 @@ function copyToClipboard() {
                   item.senderAddress
                 }}</td>
                 <td class="td5 clickable" @click="goToToAccount(item)">
-                  <span v-if="item.contractAddress === 'null'">{{ item.receiverAddress }}</span>
+                  <span v-if="item.receiverAddress !== 'null'">{{ item.receiverAddress }}</span>
                   <span v-else>{{ item.contractAddress }}</span>
                 </td>
 

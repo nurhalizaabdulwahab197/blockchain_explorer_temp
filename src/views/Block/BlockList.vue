@@ -72,6 +72,20 @@ const calcTimeDiff = (timestamp) => {
   return timeDifferenceInSeconds
 }
 
+const formatTimestamp = (timestamp) => {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }
+
+  const formattedDate = new Date(timestamp).toLocaleString('en-GB', options)
+  return formattedDate.replace(/[/]/g, '-').replace(',', '') // Replace slashes with dashes
+}
+
 const goToBlock = (block) => {
   router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
@@ -215,7 +229,7 @@ setInterval(() => {
                 {{ formatHexString(block.hash) }}
               </td>
               <td style="color: white">
-                {{ block.timestamp }}
+                {{ formatTimestamp(block.timestamp) }}
               </td>
               <td>
                 {{ block.transactions.length }}
