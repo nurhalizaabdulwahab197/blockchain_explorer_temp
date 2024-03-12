@@ -199,7 +199,7 @@ function copyToClipboard() {
                   item.senderAddress
                 }}</td>
                 <td class="td5 clickable" @click="goToToAccount(item)">
-                  <span v-if="item.contractAddress === 'null'">{{ item.receiverAddress }}</span>
+                  <span v-if="item.receiverAddress !== 'null'">{{ item.receiverAddress }}</span>
                   <span v-else>{{ item.contractAddress }}</span>
                 </td>
 
