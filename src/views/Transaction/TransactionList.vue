@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import { getLatestTransactions, getTransactionListApiWithPage } from '@/api/transaction'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 interface Transaction {
@@ -21,41 +22,28 @@ const maxPageSize = ref(1)
 const lastestTransaction = ref(0)
 const loadingTableTransaction = ref(true)
 
+let intervalId: NodeJS.Timeout
+
 const fetchLastTransaction = async () => {
-  fetch('http://localhost:8080/api/transaction/latest')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      lastestTransaction.value = data.output
-      maxPageSize.value = Math.ceil(lastestTransaction.value / 10)
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getLatestTransactions()
+    console.log(data)
+    lastestTransaction.value = data.output
+    maxPageSize.value = Math.ceil(lastestTransaction.value / 10)
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
-const fetchDataTransactionList = (pageNumber) => {
+const fetchDataTransactionList = async (pageNumber) => {
   fetchLastTransaction()
-  fetch(`http://localhost:8080/api/transaction/transactionlist/${pageNumber}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch block list for page ${pageNumber}`)
-      }
-      return response.json()
-    })
-    .then((responseData) => {
-      currentPageTransactions.value = responseData.output
-      console.log(currentPageTransactions.value)
-      loadingTableTransaction.value = false
-    })
-    .catch((error) => {
-      console.error('Error fetching block list:', error)
-    })
+  try {
+    const data = await getTransactionListApiWithPage(pageNumber)
+    currentPageTransactions.value = data.output
+    loadingTableTransaction.value = false
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
 const calculateAge = (timestamp: Date) => {
@@ -70,11 +58,17 @@ const goToDetail = (hash: string) => {
 onMounted(() => {
   fetchLastTransaction()
   fetchDataTransactionList(currentPage.value)
+
+  intervalId = setInterval(() => {
+    fetchDataTransactionList(currentPage.value)
+  }, 10000)
 })
 
-setInterval(() => {
-  fetchDataTransactionList(currentPage.value)
-}, 10000)
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
 
 const formatTimestamp = (timestamp: Date) => {
   const options: Intl.DateTimeFormatOptions = {

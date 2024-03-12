@@ -208,13 +208,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
-import axios from 'axios'
+import { getNextTransaction, getPrevTransaction, getTransactionDetailApi } from '@/api/transaction'
 import LoadingPage from './LoadingPage.vue'
 
+let intervalId: NodeJS.Timeout
 const transactionId = ref('')
 const block = ref('')
 const senderAddress = ref('')
@@ -282,51 +283,55 @@ function copyTransactionIdToClipboard() {
 }
 
 const fetchData = async () => {
-  const response = await axios.get(`http://localhost:8080/api/transaction/${route.params.id}`)
-  const transactionData = response.data.output
+  try {
+    const data = await getTransactionDetailApi({ id: route.params.id as string })
+    const transactionData = data.output
 
-  transactionId.value = transactionData.hash
-  block.value = transactionData.block
-  senderAddress.value = transactionData.senderAddress
-  amount.value = transactionData.amount
-  receiverAddress.value = transactionData.receiverAddress
-  contractAddress.value = transactionData.contractAddress
-  status.value = transactionData.status
-  input.value = transactionData.input
-  value.value = transactionData.value
-  gasPrice.value = transactionData.gasPrice
-  transactionFee.value = transactionData.transactionFee
-  gasLimit.value = transactionData.gasLimit
-  gasUsed.value = transactionData.gasUsed
-  gasFees.value = transactionData.gasFees
-  timestamp.value = transactionData.timestamp
-  maxFeePerGas.value = transactionData.maxFeePerGas
-  maxPriorityFeePerGas.value = transactionData.maxPriorityFeePerGas
-  baseFeePerGas.value = transactionData.baseFeePerGas
-  const firstThreeChars = transactionId.value.slice(0, 3)
+    transactionId.value = transactionData.hash
+    block.value = transactionData.block
+    senderAddress.value = transactionData.senderAddress
+    amount.value = transactionData.amount
+    receiverAddress.value = transactionData.receiverAddress
+    contractAddress.value = transactionData.contractAddress
+    status.value = transactionData.status
+    input.value = transactionData.input
+    value.value = transactionData.value
+    gasPrice.value = transactionData.gasPrice
+    transactionFee.value = transactionData.transactionFee
+    gasLimit.value = transactionData.gasLimit
+    gasUsed.value = transactionData.gasUsed
+    gasFees.value = transactionData.gasFees
+    timestamp.value = transactionData.timestamp
+    maxFeePerGas.value = transactionData.maxFeePerGas
+    maxPriorityFeePerGas.value = transactionData.maxPriorityFeePerGas
+    baseFeePerGas.value = transactionData.baseFeePerGas
+    const firstThreeChars = transactionId.value.slice(0, 3)
 
-  // Note and Status logic
-  if (contractAddress.value) {
-    if (contractAddress.value === 'null' && firstThreeChars !== '0x0') {
-      status.value = 'Successful'
-      note.value = 'The transaction is successful'
-    } else if (contractAddress.value !== 'null' && firstThreeChars !== '0x0') {
-      status.value = 'Create'
-      note.value = 'The sender has created a contract'
-    } else if (firstThreeChars === '0x0') {
-      status.value = 'Failed'
-      note.value = 'The transaction is unsuccessful'
+    // Note and Status logic
+    if (contractAddress.value) {
+      if (contractAddress.value === 'null' && firstThreeChars !== '0x0') {
+        status.value = 'Successful'
+        note.value = 'The transaction is successful'
+      } else if (contractAddress.value !== 'null' && firstThreeChars !== '0x0') {
+        status.value = 'Create'
+        note.value = 'The sender has created a contract'
+      } else if (firstThreeChars === '0x0') {
+        status.value = 'Failed'
+        note.value = 'The transaction is unsuccessful'
+      }
+    } else {
+      if (firstThreeChars !== '0x0') {
+        status.value = 'Successful'
+        note.value = 'The transaction is successful'
+      } else if (firstThreeChars === '0x0') {
+        status.value = 'Failed'
+        note.value = 'The transaction is unsuccessful'
+      }
     }
-  } else {
-    if (firstThreeChars !== '0x0') {
-      status.value = 'Successful'
-      note.value = 'The transaction is successful'
-    } else if (firstThreeChars === '0x0') {
-      status.value = 'Failed'
-      note.value = 'The transaction is unsuccessful'
-    }
+    loading.value = false
+  } catch (error) {
+    console.error('Error fetching transaction:', error)
   }
-  loading.value = false
 }
 
 const formatTimestamp = (timestamp: string) => {
@@ -347,10 +352,8 @@ const formatTimestamp = (timestamp: string) => {
 
 const retrieveNextTransaction = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/api/transaction/next/${transactionId.value}`
-    )
-    const nextTransactionHash = response.data.output.hash
+    const data = await getNextTransaction({ transactionId: transactionId.value })
+    const nextTransactionHash = data.output.hash
     router.push({ name: 'TransactionDetail', params: { id: nextTransactionHash } })
   } catch (error) {
     console.error('Error fetching next transaction:', error)
@@ -358,10 +361,8 @@ const retrieveNextTransaction = async () => {
 }
 const retrievePreviousTransaction = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/api/transaction/prev/${transactionId.value}`
-    )
-    const previousTransactionHash = response.data.output.hash
+    const data = await getPrevTransaction({ transactionId: transactionId.value })
+    const previousTransactionHash = data.output.hash
     router.push({ name: 'TransactionDetail', params: { id: previousTransactionHash } })
   } catch (error) {
     console.error('Error fetching previous transaction:', error)
@@ -373,7 +374,14 @@ onMounted(() => {
   fetchData()
 
   // Fetch data every 10 seconds
-  setInterval(fetchData, 10000)
+  intervalId = setInterval(fetchData, 10000)
+})
+
+onUnmounted(() => {
+  // Clear interval when component is unmounted
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
 })
 
 watch(

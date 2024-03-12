@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { getAccountOverview } from '@/api/account'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const route = useRoute()
@@ -20,29 +21,18 @@ const loading = ref(true)
 const fetchData = async () => {
   const addressFromUrl = route.params.address
   accAddress.value = addressFromUrl
-  fetch(`http://localhost:8080/api/account/accountOverview/${addressFromUrl}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      dataset.value = data.data
-      balance.value = data.balance
-      updatePaginateData()
-      pageTitle.value = route.meta.title
-    })
-    .finally(() => {
-      loading.value = false
-    })
-    .finally(() => {
-      loading.value = false
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getAccountOverview({ accountAddress: addressFromUrl })
+    console.log(data)
+    dataset.value = data.data
+    balance.value = data.balance
+    updatePaginateData()
+    pageTitle.value = route.meta.title
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const formattedBalance = computed(() => {

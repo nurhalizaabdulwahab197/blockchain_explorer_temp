@@ -4,6 +4,8 @@ import { ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import LoadingSpinner from '@/components/Loading/Loading.vue'
+import { getLastSyncBlock, getBlockByEndPoint } from '@/api/block'
+
 const route = useRoute()
 const rectangleHeight = ref(0)
 const blockHeight = ref('')
@@ -81,74 +83,62 @@ onMounted(() => {
 const lastestBlock = ref(0)
 
 const fetchLastBlock = async () => {
-  fetch('http://localhost:8080/api/block/getLastSyncBlock')
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
-      }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      lastestBlock.value = data.output
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+  try {
+    const data = await getLastSyncBlock()
+
+    console.log(data)
+    lastestBlock.value = data.output
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  }
 }
 
-const fetchData = (endpoint) => {
-  fetch(`http://localhost:8080/api${endpoint}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Fetching encountered some error')
+const fetchData = async (endpoint) => {
+  try {
+    const data = await getBlockByEndPoint({ endPoint: endpoint })
+    console.log(data)
+    const fetchedBlock = data.output
+
+    if (fetchedBlock) {
+      blockHeight.value = fetchedBlock.number
+      hash.value = fetchedBlock.hash
+      miner.value = fetchedBlock.miner
+      size.value = fetchedBlock.size
+      timestamp.value = fetchedBlock.timestamp
+      transactionNumber.value = fetchedBlock.transactions.length
+      blockReward.value = fetchedBlock.blockReward
+      transactionFee.value = fetchedBlock.transactionNumber
+      rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
+      internalTransaction.value = fetchedBlock.internalTransaction
+
+      const options = {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZone: 'GMT',
+        hour12: false
       }
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      const fetchedBlock = data.output
 
-      if (fetchedBlock) {
-        blockHeight.value = fetchedBlock.number
-        hash.value = fetchedBlock.hash
-        miner.value = fetchedBlock.miner
-        size.value = fetchedBlock.size
-        timestamp.value = fetchedBlock.timestamp
-        transactionNumber.value = fetchedBlock.transactions.length
-        blockReward.value = fetchedBlock.blockReward
-        transactionFee.value = fetchedBlock.transactionNumber
-        rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
-        internalTransaction.value = fetchedBlock.internalTransaction
+      const formattedDate = new Date(timestamp.value).toLocaleString('en-US', options)
+      console.log(formattedDate)
+      const [, dayOfWeek, month, day, year, time, timeZone] = formattedDate.match(
+        /(\w{3}), (\d+)\/(\d+)\/(\d+),\s(\d+:\d+:\d+)/
+      )
 
-        const options = {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-          timeZone: 'GMT',
-          hour12: false
-        }
-
-        const formattedDate = new Date(timestamp.value).toLocaleString('en-US', options)
-        console.log(formattedDate)
-        const [, dayOfWeek, month, day, year, time, timeZone] = formattedDate.match(
-          /(\w{3}), (\d+)\/(\d+)\/(\d+),\s(\d+:\d+:\d+)/
-        )
-
-        formattedTimestamp.value = `${dayOfWeek}, ${day}-${month}-${year}, ${time} GMT`
-        console.log(dayOfWeek, month, day, year, time, timeZone)
-      }
-    })
-    .finally(() => {
-      loading.value = false
-    })
-    .catch((error) => {
-      console.error('There was a problem fetching the data:', error)
-    })
+      formattedTimestamp.value = `${dayOfWeek}, ${day}-${month}-${year}, ${time} GMT`
+      console.log(dayOfWeek, month, day, year, time, timeZone)
+    } else {
+      console.error('Fetched block is null')
+    }
+  } catch (error) {
+    console.error('There was a problem fetching the data:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const fetchDataHash = () => {
