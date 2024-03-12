@@ -1,4 +1,6 @@
 <template>
+  <div v-if="loading" class="loading-container"> <LoadingPage /> </div>
+
   <div class="bodycontent">
     <div v-if="showToast" class="alertbox">
       <div class="bardesign"></div
@@ -211,6 +213,7 @@ import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
 import axios from 'axios'
+import LoadingPage from './LoadingPage.vue'
 
 const transactionId = ref('')
 const block = ref('')
@@ -234,6 +237,7 @@ const baseFeePerGas = ref('')
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
+const loading = ref(true)
 
 const route = useRoute()
 
@@ -322,6 +326,7 @@ const fetchData = async () => {
       note.value = 'The transaction is unsuccessful'
     }
   }
+  loading.value = false
 }
 
 const formatTimestamp = (timestamp: string) => {

@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 interface Transaction {
   hash: string
@@ -17,6 +18,7 @@ const currentPageTransactions = ref<Transaction[]>([])
 const currentPage = ref(1)
 const maxPageSize = ref(1)
 const lastestTransaction = ref(0)
+const loadingTableTransaction = ref(true)
 
 const fetchLastTransaction = async () => {
   fetch('http://localhost:8080/api/transaction/latest')
@@ -48,6 +50,7 @@ const fetchDataTransactionList = (pageNumber) => {
     .then((responseData) => {
       currentPageTransactions.value = responseData.output
       console.log(currentPageTransactions.value)
+      loadingTableTransaction.value = false
     })
     .catch((error) => {
       console.error('Error fetching block list:', error)
@@ -142,6 +145,11 @@ const goToLastPage = () => {
             </tr>
           </thead>
           <tbody>
+            <tr v-if="loadingTableTransaction">
+              <td colspan="7" style="position: relative; text-align: center">
+                <LoadingSpinner :loading="loadingTableTransaction" class="loading-spinner" />
+              </td>
+            </tr>
             <tr v-for="(item, index) in currentPageTransactions" :key="index">
               <td class="clickable" @click="goToDetail(item.hash)">{{ item.hash }}</td>
               <td>{{ item.block }}</td>
