@@ -1,14 +1,21 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import ApexCharts from 'apexcharts'
-import { options } from './apexChartOpt'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
+import Echart from '@/components/Echart/src/Echart.vue'
 
 const blocks = ref([])
 const trxs = ref([])
 const totalTransactions = ref(0)
 const maxTransactionPerDay = ref(0)
+const blockTime = ref(0)
+const chartInitialized = ref(false)
+const chartInstance = ref(null)
+const chartOptions = ref(null)
+const loadingGraph = ref(true)
+const loadingBlockTable = ref(true)
+const loadingTransactionTable = ref(true)
 
 const fetchGraphData = () => {
   fetch('http://localhost:8080/api/transaction/latestThirtyDay/transactionNumber')
@@ -19,16 +26,102 @@ const fetchGraphData = () => {
       return response.json()
     })
     .then((data) => {
-      const { output } = data
-      const newData = output.map((item) => [new Date(item.date).getTime(), item.transactionCount])
-      console.log(newData)
-      options.series[0].data = newData
-      options.xaxis.min = new Date(output[0].date).getTime()
-      options.xaxis.max = new Date(output[output.length - 1].date).getTime()
-
-      // Update ApexCharts with new options
-      const chart = new ApexCharts(document.querySelector('#chart'), options)
-      chart.render()
+      loadingGraph.value = false
+      const output = data.output
+      const dates = output.map((item) => item.date)
+      const transactionCounts = output.map((item) => item.transactionCount)
+      chartOptions.value = {
+        xAxis: {
+          type: 'category',
+          data: dates,
+          axisLabel: {
+            formatter: function (value) {
+              const date = new Date(value)
+              return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) // Format date labels
+            },
+            textStyle: {
+              color: '#ffffff' // Color of x-axis labels
+            }
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Number of Transactions',
+          nameLocation: 'center',
+          nameRotate: 90,
+          nameTextStyle: {
+            color: '#ffffff', // Color of the Y-axis label
+            fontSize: 14,
+            padding: [0, 0, 10, 0] // Adjust font size if needed
+          },
+          splitLine: {
+            show: false // Hide horizontal grid lines
+          },
+          axisLabel: {
+            formatter: '{value}', // Format y-axis labels
+            textStyle: {
+              color: '#ffffff' // Color of y-axis labels
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Number of Transactions',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  { offset: 0, color: 'rgba(0, 123, 255, 0.5)' }, // Start color
+                  { offset: 1, color: 'rgba(0, 123, 255, 0)' } // End color
+                ]
+              }
+            },
+            data: transactionCounts,
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              color: '#4287f5', // Change line color here
+              width: 3 // Change line width here
+            },
+            showSymbol: false
+          }
+        ],
+        tooltip: {
+          trigger: 'axis', // Show tooltip on hover over points
+          axisPointer: {
+            type: 'cross' // Show tooltip lines across axes
+          },
+          formatter: function (params) {
+            const date = new Date(params[0].axisValue)
+            const formattedDate = date.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric'
+            })
+            const value = params[0].value.toFixed(0)
+            return `<div style="text-align: left;">
+                    <div style="font-weight: 800;">${formattedDate}</div>
+                    <div>Number of transactions: <span style="font-weight: 800">${value}</span></div>
+                </div>`
+          }
+        },
+        grid: {
+          x: 20, // Adjust the left margin if needed
+          y: 30, // Adjust the top margin if needed
+          x2: 20, // Adjust the right margin if needed
+          y2: 30, // Adjust the bottom margin if needed
+          containLabel: true, // Ensure that labels are within the grid area
+          show: false // Hide grid lines
+        },
+        textStyle: {
+          color: '#ffffff' // Default text color
+        },
+        backgroundColor: 'transparent', // Set background color to transparent
+        animation: false
+      }
 
       // statistic
       totalTransactions.value = data.statistics.totalTransactions
@@ -50,6 +143,8 @@ const fetchBlockData = () => {
     .then((data) => {
       console.log(data)
       blocks.value = data.output
+      blockTime.value = data.blockTime
+      loadingBlockTable.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -67,6 +162,7 @@ const fetchTrxData = () => {
     .then((data) => {
       console.log(data)
       trxs.value = data.output
+      loadingTransactionTable.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -108,12 +204,44 @@ const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
 }
 
+const goToToAccount = (account) => {
+  if (account.input === '0x' && account.receiverAddress !== 'null') {
+    router.push('/account/accountOverview/' + account.receiverAddress)
+  } else if (
+    account.input !== '0x' &&
+    account.receiverAddress !== 'null' &&
+    account.contractAddress === 'null'
+  ) {
+    router.push('/contract/contractOverview/' + account.receiverAddress)
+  } else {
+    router.push('/contract/contractOverview/' + account.contractAddress)
+  }
+}
+
 const goToBlock = (block) => {
   router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
 const goToTransaction = (TxnHash) => {
   router.push(`/blockchain/transactionList/transactionDetail/${TxnHash}`)
 }
+
+const chartHeight = ref(400) // Initial chart height
+const resizeChartHeight = () => {
+  if (window.innerWidth <= 800) {
+    chartHeight.value = 200
+  } else {
+    chartHeight.value = 400
+  }
+}
+
+onMounted(() => {
+  resizeChartHeight() // Call resizeChartHeight on component mount
+  window.addEventListener('resize', resizeChartHeight) // Listen for window resize events
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeChartHeight)
+})
 </script>
 
 <template>
@@ -124,14 +252,22 @@ const goToTransaction = (TxnHash) => {
         <sub style="font-size: 10px; color: black">(in 30 days)</sub>
       </div>
       <div class="graphDetailContainer">
-        <div class="transactionHistoryGraph" id="chart"> </div>
+        <LoadingSpinner v-if="loadingGraph" :loading="loadingGraph" class="loading-spinner" />
+        <Echart
+          :options="chartOptions"
+          width="100%"
+          :height="`${chartHeight}px`"
+          v-else
+          id="chart"
+        />
+        <!-- <div class="transactionHistoryGraph" id="chart"></div> -->
         <div class="separator"></div>
         <div class="details">
           <div class="detailBlock">
             <Icon icon="ion:speedometer-outline" class="detailIcon" />
             <div>
               <p class="detailTitle">BLOCK SPEED</p>
-              <p class="detailVal">3.4secs</p>
+              <p class="detailVal">{{ blockTime }} secs</p>
             </div>
           </div>
           <div class="detailBlock">
@@ -166,7 +302,12 @@ const goToTransaction = (TxnHash) => {
             >VIEW ALL BLOCKS <Icon icon="majesticons:arrow-right-line" />
           </a>
         </div>
-        <div class="list">
+        <LoadingSpinner
+          v-if="loadingBlockTable"
+          :loading="loadingBlockTable"
+          class="loading-spinner h-100%"
+        />
+        <div v-else class="list">
           <div class="item" v-for="block in blocks" :key="block.id">
             <div style="display: flex; align-items: center">
               <Icon icon="clarity:block-line" />
@@ -190,7 +331,12 @@ const goToTransaction = (TxnHash) => {
             >VIEW ALL TRANSACTIONS <Icon icon="majesticons:arrow-right-line" />
           </a>
         </div>
-        <div class="list">
+        <LoadingSpinner
+          v-if="loadingTransactionTable"
+          :loading="loadingTransactionTable"
+          class="loading-spinner h-100%"
+        />
+        <div v-else class="list">
           <div class="item" v-for="trx in trxs" :key="trx.id">
             <div style="display: flex; align-items: center">
               <Icon icon="cib:ethereum" />
@@ -201,22 +347,28 @@ const goToTransaction = (TxnHash) => {
             </div>
             <div>
               <div
-                >Form:
+                >From:
                 <span class="clickable" @click="goToAccount(trx.senderAddress)">{{
                   formatHexString(trx.senderAddress)
                 }}</span></div
               >
               <div
                 >To:
-                <span class="clickable" @click="goToAccount(trx.receiverAddress)">{{
-                  formatHexString(trx.receiverAddress)
-                }}</span></div
-              >
+                <span
+                  v-if="trx.receiverAddress !== 'null'"
+                  class="clickable"
+                  @click="goToToAccount(trx)"
+                  >{{ formatHexString(trx.receiverAddress) }}</span
+                >
+                <span v-else class="clickable" @click="goToToAccount(trx)">{{
+                  formatHexString(trx.contractAddress)
+                }}</span>
+              </div>
             </div>
             <div>
               <div>
                 Amount:
-                <span style="color: #6afd36">{{ trx.transactionFee }} ETH</span>
+                <span style="color: #6afd36">{{ trx.amount }} ETH</span>
               </div>
               <div class="time"> {{ calcTimeDiff(trx.timestamp) }}secs ago </div>
             </div>
@@ -304,6 +456,7 @@ main {
 .latestBlockContainer,
 .latestTransactionContainer {
   min-width: 300px;
+  min-height: 300px;
   background-color: #282b2e;
   border-radius: 10px;
   flex: 1;
@@ -369,7 +522,8 @@ main {
 @media screen and (width <= 880px) {
   .graphDetailContainer {
     display: flex;
-    width: 100%;
+
+    /* width: 100%; */
     padding: 20px;
     flex-direction: column;
   }

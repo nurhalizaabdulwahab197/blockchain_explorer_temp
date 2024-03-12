@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import router from '@/router'
+import LoadingSpinner from '@/components/Loading/Loading.vue'
 
 const blocks = ref([])
 const currentPageBlocks = ref([])
@@ -9,6 +10,8 @@ const skipCount = ref(0)
 const currentPage = ref(1)
 const maxPageSize = ref(1)
 const lastestBlock = ref(0)
+const loadingScrollBlock = ref(true)
+const loadingTableBlock = ref(true)
 
 const fetchLastBlock = async () => {
   fetch('http://localhost:8080/api/block/getLastSyncBlock')
@@ -39,6 +42,7 @@ const fetchData = async () => {
     .then((data) => {
       console.log(data)
       blocks.value = data.output
+      loadingScrollBlock.value = false
     })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
@@ -84,6 +88,7 @@ const fetchDataBlockList = (pageNumber) => {
     .then((responseData) => {
       currentPageBlocks.value = responseData.output
       console.log(currentPageBlocks.value)
+      loadingTableBlock.value = false
     })
     .catch((error) => {
       console.error('Error fetching block list:', error)
@@ -144,6 +149,11 @@ setInterval(() => {
           @click="scrollBlocks(-1)"
           :class="{ disabled: skipCount.value <= 0 }"
         />
+        <LoadingSpinner
+          v-if="loadingScrollBlock"
+          :loading="loadingScrollBlock"
+          class="loading-spinner h-100%"
+        />
         <div class="block-scroll">
           <div class="block">
             <div
@@ -186,52 +196,36 @@ setInterval(() => {
               <th>Age</th>
             </tr>
           </thead>
+
           <tbody>
-            <!-- Display a fixed number of data rows (e.g., 10 rows) -->
-            <tr v-for="block in currentPageBlocks" :key="block.id">
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
+            <tr v-if="loadingTableBlock">
+              <td colspan="6" style="position: relative; text-align: center">
+                <LoadingSpinner :loading="loadingTableBlock" class="loading-spinner" />
+              </td>
+            </tr>
+            <tr v-else v-for="block in currentPageBlocks" :key="block.id">
+              <td>
                 {{ block.number }}
               </td>
               <td
-                style="
-                  padding: 20px 1px;
-                  overflow: hidden;
-                  color: #1688f2;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
+                style="padding: 20px 1px; color: #1688f2"
                 class="clickable"
                 @click="goToBlock(block.hash)"
               >
                 {{ formatHexString(block.hash) }}
               </td>
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
+              <td style="color: white">
                 {{ block.timestamp }}
               </td>
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
+              <td>
                 {{ block.transactions.length }}
               </td>
-              <td
-                style="overflow: hidden; color: white; text-overflow: ellipsis; white-space: nowrap"
-              >
-                {{ block.txssummary }}
+              <td style="display: flex; color: white; gap: 15px">
+                <span>Transfer {{ block.transactions.length }}</span>
+                <span>App calls 0</span>
+                <span>Asset config 0</span>
               </td>
-              <td
-                style="
-                  overflow: hidden;
-                  color: #9c9c9c;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
-              >
-                {{ calcTimeDiff(block.timestamp) }} secs ago
-              </td>
+              <td style="color: #9c9c9c"> {{ calcTimeDiff(block.timestamp) }} secs ago </td>
             </tr>
 
             <tr>

@@ -3,8 +3,9 @@ import { Icon } from '@iconify/vue'
 import { ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import LoadingPage from './loadingPage.vue'
 const route = useRoute()
-const rectangleHeight = ref(50)
+const rectangleHeight = ref(0)
 const blockHeight = ref('')
 const hash = ref('')
 const miner = ref('')
@@ -17,6 +18,7 @@ const internalTransaction = ref(0)
 const showToast = ref(false)
 const copyMessageTitle = ref('')
 const copyMessage = ref('')
+const loading = ref(true)
 
 function copyToClipboard(value, messageTitle, message) {
   const el = document.createElement('input')
@@ -62,6 +64,7 @@ function isNumeric(str) {
 }
 
 onMounted(() => {
+  fetchLastBlock()
   const block = route.params.block
   if (startsWith0x(block)) {
     hash.value = block
@@ -73,6 +76,25 @@ onMounted(() => {
     console.log('Error')
   }
 })
+
+const lastestBlock = ref(0)
+
+const fetchLastBlock = async () => {
+  fetch('http://localhost:8080/api/block/getLastSyncBlock')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Fetching encountered some error')
+      }
+      return response.json()
+    })
+    .then((data) => {
+      console.log(data)
+      lastestBlock.value = data.output
+    })
+    .catch((error) => {
+      console.error('There was a problem fetching the data:', error)
+    })
+}
 
 const fetchData = (endpoint) => {
   fetch(`http://localhost:8080/api${endpoint}`)
@@ -101,6 +123,9 @@ const fetchData = (endpoint) => {
         console.error('Fetched block is null')
       }
     })
+    .finally(() => {
+      loading.value = false
+    })
     .catch((error) => {
       console.error('There was a problem fetching the data:', error)
     })
@@ -115,12 +140,15 @@ const fetchDataNumber = () => {
 }
 
 const goToBlock = (block) => {
+  blockHeight.value = block
+  console.log(lastestBlock.value)
   router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
 </script>
 
 <template>
-  <div class="body">
+  <div v-if="loading" class="loading-container"> <loadingPage /> </div>
+  <div v-else class="body">
     <div class="blockDetailContainer">
       <div v-if="showToast" class="alertbox">
         <div class="bardesign"></div
@@ -139,13 +167,18 @@ const goToBlock = (block) => {
         <h2>Block {{ blockHeight }}</h2>
       </div>
       <div class="block">
-        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToBlock(blockHeight - 1)" />s
+        <Icon icon="bxs:left-arrow" class="blockarrow" @click="goToBlock(blockHeight - 1)" />
         <div class="rectangle-container">
           <div class="rectangle"
             ><div :style="{ height: rectangleHeight + 'px' }" class="overlapping-rectangle"></div
           ></div>
         </div>
-        <Icon icon="bxs:right-arrow" class="blockarrow" @click="goToBlock(blockHeight + 1)" />
+        <Icon
+          icon="bxs:right-arrow"
+          class="blockarrow"
+          @click="goToBlock(blockHeight + 1)"
+          v-if="blockHeight < lastestBlock"
+        />
       </div>
       <div class="blockinfo">
         <div class="totaltransaction">
