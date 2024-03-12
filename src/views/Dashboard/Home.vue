@@ -204,6 +204,20 @@ const goToAccount = (account) => {
   router.push(`/account/accountOverview/${account}`)
 }
 
+const goToToAccount = (account) => {
+  if (account.input === '0x' && account.receiverAddress !== 'null') {
+    router.push('/account/accountOverview/' + account.receiverAddress)
+  } else if (
+    account.input !== '0x' &&
+    account.receiverAddress !== 'null' &&
+    account.contractAddress === 'null'
+  ) {
+    router.push('/contract/contractOverview/' + account.receiverAddress)
+  } else {
+    router.push('/contract/contractOverview/' + account.contractAddress)
+  }
+}
+
 const goToBlock = (block) => {
   router.push(`/blockchain/blockList/blockdetail/${block}`)
 }
@@ -340,10 +354,16 @@ onBeforeUnmount(() => {
               >
               <div
                 >To:
-                <span class="clickable" @click="goToAccount(trx.receiverAddress)">{{
-                  formatHexString(trx.receiverAddress)
-                }}</span></div
-              >
+                <span
+                  v-if="trx.receiverAddress !== 'null'"
+                  class="clickable"
+                  @click="goToToAccount(trx)"
+                  >{{ formatHexString(trx.receiverAddress) }}</span
+                >
+                <span v-else class="clickable" @click="goToToAccount(trx)">{{
+                  formatHexString(trx.contractAddress)
+                }}</span>
+              </div>
             </div>
             <div>
               <div>

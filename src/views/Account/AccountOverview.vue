@@ -37,6 +37,10 @@ const fetchData = async () => {
     })
 }
 
+const formattedBalance = computed(() => {
+  return balance.value === '0.' ? '0' : balance.value
+})
+
 // Call fetchData when the component is mounted
 onMounted(() => {
   fetchData()
@@ -165,7 +169,7 @@ function copyToClipboard() {
             <h3>ETH BALANCE</h3>
           </div>
           <div class="bal-sub-cont">
-            <Icon icon="ri:eth-line" class="eth" /><h2>{{ balance }}</h2>
+            <Icon icon="ri:eth-line" class="eth" /><h2>{{ formattedBalance }}</h2>
           </div>
         </div>
       </div>
