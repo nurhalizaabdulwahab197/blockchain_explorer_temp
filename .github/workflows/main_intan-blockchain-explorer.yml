@@ -60,6 +60,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'YOUR_AZURE_APP_NAME'
+          app-name: 'intan-blockchain-explorer'
           slot-name: 'Production'
           package: ./node-app # This should match the name of the uploaded artifact
