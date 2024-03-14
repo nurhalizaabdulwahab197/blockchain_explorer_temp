@@ -32,7 +32,7 @@ jobs:
         
       - name: Zip the application for deployment
         run: |
-          zip -r release.zip dist package.json package-lock.json
+          Compress-Archive -Path "dist-pro", "package.json", "package-lock.json" -DestinationPath "release.zip"
       
       - name: Upload dist artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -57,9 +57,8 @@ jobs:
           
       - name: Unzip dist artifact for deployment and show contents
         run: |
-          unzip release.zip -d ./deployment/
-          ls -l ./deployment/
-          
+           Expand-Archive -Path "release.zip" -DestinationPath ".\deployment\"
+
       - name: Login to Azure
         uses: azure/login@v1
         with:
