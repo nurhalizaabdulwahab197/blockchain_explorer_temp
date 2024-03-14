@@ -29,6 +29,9 @@ const fetchGraphData = async () => {
     const dates = output.map((item) => item.date)
     const transactionCounts = output.map((item) => item.transactionCount)
     chartOptions.value = {
+      grid: {
+        right: '20%'
+      },
       xAxis: {
         type: 'category',
         data: dates,
@@ -47,10 +50,11 @@ const fetchGraphData = async () => {
         name: 'Number of Transactions',
         nameLocation: 'center',
         nameRotate: 90,
+        nameGap: 20,
         nameTextStyle: {
           color: '#ffffff', // Color of the Y-axis label
           fontSize: 14,
-          padding: [0, 0, 10, 0] // Adjust font size if needed
+          padding: [0, 0, 0, 0] // Adjust font size if needed
         },
         splitLine: {
           show: false // Hide horizontal grid lines

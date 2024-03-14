@@ -1,13 +1,6 @@
 <template>
   <div class="nodePageContainer" v-if="nodeDetails">
-    <div class="title">
-      Node
-      <select v-model="selectedIndex" @change="fetchNodeDetails">
-        <option v-for="(node, index) in nodeDetails.output" :value="index" :key="node.node_id">
-          Node {{ index + 1 }}
-        </option>
-      </select>
-    </div>
+    <div class="title"> Node </div>
     <div class="container1">
       <div class="box1">
         <div class="text">STATUS</div>
@@ -83,7 +76,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, Ref, onUnmounted } from 'vue'
-import { getNodeDetailApi, getNodeListApi } from '@/api/node'
+import { getNodeListApi } from '@/api/node'
 
 interface NodeDetails {
   message: string
@@ -131,23 +124,23 @@ const selectedNodeId: Ref<string | null> = ref(null)
 const selectedIndex: Ref<number | null> = ref(0)
 let intervalId
 
-const fetchNodeDetails = async () => {
-  console.log('Fetching details for node:', selectedNodeId.value)
-  if (!selectedNodeId.value || selectedIndex.value === null) {
-    console.warn('Selected node ID or index is null')
-    return
-  }
+// const fetchNodeDetails = async () => {
+//   console.log('Fetching details for node:', selectedNodeId.value)
+//   if (!selectedNodeId.value || selectedIndex.value === null) {
+//     console.warn('Selected node ID or index is null')
+//     return
+//   }
 
-  try {
-    const data = await getNodeDetailApi({ selectedNodeId: selectedNodeId.value })
-    console.log('Node details response:', data)
-    nodeDetails.value = { message: data.message, output: data.output }
-    console.log('Updated node details:', nodeDetails.value)
-  } catch (error) {
-    console.error('Error fetching node details:', error)
-    // Handle error here
-  }
-}
+//   try {
+//     const data = await getNodeDetailApi({ selectedNodeId: selectedNodeId.value })
+//     console.log('Node details response:', data)
+//     nodeDetails.value = { message: data.message, output: data.output }
+//     console.log('Updated node details:', nodeDetails.value)
+//   } catch (error) {
+//     console.error('Error fetching node details:', error)
+//     // Handle error here
+//   }
+// }
 
 const fetchNodeIds = async () => {
   try {

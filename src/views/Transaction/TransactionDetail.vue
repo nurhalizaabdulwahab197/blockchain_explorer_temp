@@ -128,9 +128,7 @@
           <td>
             <div class="alligncenter">
               <Icon icon="ri:eth-fill" />
-              <div class="tablecontent">{{
-                parseFloat(value) > 0 ? `${value} ETH` : '0 ETH ($0.00)'
-              }}</div>
+              <div class="tablecontent">{{ parseFloat(value) > 0 ? `${value} ETH` : '0 ETH' }}</div>
             </div>
           </td>
         </tr>
@@ -143,9 +141,7 @@
           </td>
           <td>
             <!--{# 1 ETH = 3,257.249999 USD #}-->
-            <div class="tablecontent"
-              >{{ gasPrice }} ETH ( ${{ (parseFloat(gasPrice) * 3257.249999).toFixed(2) }} )</div
-            >
+            <div class="tablecontent">{{ gasPrice }} Gwei </div>
           </td>
         </tr>
         <tr>
@@ -158,12 +154,7 @@
           <td>
             <div class="transactionfee-content">
               <!--{#A gwei is one-billionth of one ETH.#}-->
-              <div class="tablecontent"
-                >{{ transactionFee }} ETH ( ${{
-                  (parseFloat(transactionFee) * 3257.249999).toFixed(2)
-                }}
-                )</div
-              >
+              <div class="tablecontent">{{ transactionFee }} ETH </div>
               <div class="transactionfee-container">
                 <div class="column2-container">
                   <div class="container-title">NOTE</div>
