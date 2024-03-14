@@ -32,7 +32,7 @@ jobs:
         
       - name: Zip the application for deployment
         run: |
-          Compress-Archive -Path "dist-pro", "package.json", "package-lock.json" -DestinationPath "release.zip"
+          Compress-Archive -Path "dist-pro", "package.json" -DestinationPath "release.zip"
       
       - name: Upload dist artifact for deployment job
         uses: actions/upload-artifact@v3
