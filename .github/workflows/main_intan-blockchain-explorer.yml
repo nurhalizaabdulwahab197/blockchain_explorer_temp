@@ -57,7 +57,7 @@ jobs:
           
       - name: Unzip dist artifact for deployment and show contents
         run: |
-           Expand-Archive -Path "release.zip" -DestinationPath ".\deployment\"
+           unzip release.zip -d ./deployment/
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -72,5 +72,5 @@ jobs:
         with:
           app-name: 'intan-blockchain-explorer'
           slot-name: 'Production'
-          package: .
+          package: ./deployment/
           
