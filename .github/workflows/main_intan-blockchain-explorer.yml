@@ -48,6 +48,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: node-app
+
+      - name: List files in the working directory
+        run: ls -R
       
       - name: Login to Azure
         uses: azure/login@v1
@@ -62,4 +65,4 @@ jobs:
         with:
           app-name: 'intan-blockchain-explorer'
           slot-name: 'Production'
-          package: ./dist-pro
+          package: .
