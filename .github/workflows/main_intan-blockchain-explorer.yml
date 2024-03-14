@@ -62,4 +62,4 @@ jobs:
         with:
           app-name: 'intan-blockchain-explorer'
           slot-name: 'Production'
-          package: ./node-app # This should match the name of the uploaded artifact
+          package: ./dist-pro
