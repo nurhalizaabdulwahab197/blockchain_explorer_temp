@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - intan-blockchain-explorer
 
 on:
@@ -29,16 +26,13 @@ jobs:
 
       - name: Build
         run: pnpm run build:pro 
-        
-      - name: Zip the application for deployment
-        run: |
-          Compress-Archive -Path "dist-pro", "package.json" -DestinationPath "release.zip"
       
-      - name: Upload dist artifact for deployment job
+      # Only upload the build directory
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: release.zip
+          path: ./dist-pro # Replace with the correct path to your build output
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,27 +44,22 @@ jobs:
       id-token: write #This is required for requesting the JWT
 
     steps:
-      - name: Download dist artifact from build job
+      - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: node-app
-          
-      - name: Unzip dist artifact for deployment and show contents
-        run: |
-           unzip release.zip -d ./deployment/
-
+      
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E476A4441F0741D39F94629E931364C2 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_075D760B44CE4FA19ED850BFADF3C6C2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F20AD61117FC42E5844BA756E4E68EE5 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'intan-blockchain-explorer'
+          app-name: 'YOUR_AZURE_APP_NAME'
           slot-name: 'Production'
-          package: ./deployment/
-          
+          package: ./node-app # This should match the name of the uploaded artifact
