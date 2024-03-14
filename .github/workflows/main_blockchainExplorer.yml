@@ -29,7 +29,7 @@ jobs:
       run: pnpm run build:pro # Using the build script for production as defined in your package.json
 
     - name: Deploy to Firebase
-      uses: w9jds/firebase-action@master
+      uses: w9jds/firebase-action@v13.4.0
       with:
         args: deploy --only hosting --project ${{ secrets.FIREBASE_PROJECT_ID }}
       env:
