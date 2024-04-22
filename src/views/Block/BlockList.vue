@@ -170,7 +170,7 @@ onUnmounted(() => {
                 <div
                   class="overlapping-rectangle"
                   :style="{
-                    height: Math.round((block.gasUsed / block.gasLimit) * 100) + 'px',
+                    height: Math.max(Math.round((block.gasUsed / block.gasLimit) * 100), 10) + 'px',
                     borderRadius: '0 0 30px 30px'
                   }"
                 ></div>

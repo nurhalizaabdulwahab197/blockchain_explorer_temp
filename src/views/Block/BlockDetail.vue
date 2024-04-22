@@ -108,7 +108,10 @@ const fetchData = async (endpoint) => {
       transactionNumber.value = fetchedBlock.transactions.length
       blockReward.value = fetchedBlock.blockReward
       transactionFee.value = fetchedBlock.transactionNumber
-      rectangleHeight.value = (fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100
+      rectangleHeight.value = Math.max(
+        Math.round((fetchedBlock.gasUsed / fetchedBlock.gasLimit) * 100),
+        10
+      )
       internalTransaction.value = fetchedBlock.internalTransaction
 
       const options = {
