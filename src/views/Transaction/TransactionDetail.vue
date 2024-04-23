@@ -181,9 +181,11 @@
           <Icon icon="cib:ethereum" />
           <div>Gas Limit & Usage by Txn:</div>
         </div>
-        <div class="right-container">{{
-          `${parseFloat(gasLimit)} | ${parseFloat(gasUsed)} (${((parseFloat(gasUsed) / parseFloat(gasLimit)) * 100).toFixed(2)}%)`
-        }}</div>
+        <div class="right-container"
+          >{{ parseFloat(gasLimit) }} | {{ parseFloat(gasUsed) }} ({{
+            ((parseFloat(gasUsed) / parseFloat(gasLimit)) * 100).toFixed(2)
+          }}%)</div
+        >
       </div>
       <div class="moredetail-container">
         <div class="left-container">
