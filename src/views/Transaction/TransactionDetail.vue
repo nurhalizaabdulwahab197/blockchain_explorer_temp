@@ -286,7 +286,8 @@ const fetchData = async () => {
     amount.value = transactionData.amount
     receiverAddress.value = transactionData.receiverAddress
     contractAddress.value = transactionData.contractAddress
-    status.value = transactionData.status
+    status.value = transactionData.onComplete
+    note.value = transactionData.note
     input.value = transactionData.input
     value.value = transactionData.value
     gasPrice.value = transactionData.gasPrice
@@ -298,29 +299,28 @@ const fetchData = async () => {
     maxFeePerGas.value = transactionData.maxFeePerGas
     maxPriorityFeePerGas.value = transactionData.maxPriorityFeePerGas
     baseFeePerGas.value = transactionData.baseFeePerGas
-    const firstThreeChars = transactionId.value.slice(0, 3)
 
     // Note and Status logic
-    if (contractAddress.value) {
-      if (contractAddress.value === 'null' && firstThreeChars !== '0x0') {
-        status.value = 'Successful'
-        note.value = 'The transaction is successful'
-      } else if (contractAddress.value !== 'null' && firstThreeChars !== '0x0') {
-        status.value = 'Create'
-        note.value = 'The sender has created a contract'
-      } else if (firstThreeChars === '0x0') {
-        status.value = 'Failed'
-        note.value = 'The transaction is unsuccessful'
-      }
-    } else {
-      if (firstThreeChars !== '0x0') {
-        status.value = 'Successful'
-        note.value = 'The transaction is successful'
-      } else if (firstThreeChars === '0x0') {
-        status.value = 'Failed'
-        note.value = 'The transaction is unsuccessful'
-      }
-    }
+    // if (contractAddress.value) {
+    //   if (contractAddress.value === 'null' && firstThreeChars !== '0x0') {
+    //     status.value = 'Successful'
+    //     note.value = 'The transaction is successful'
+    //   } else if (contractAddress.value !== 'null' && firstThreeChars !== '0x0') {
+    //     status.value = 'Create'
+    //     note.value = 'The sender has created a contract'
+    //   } else if (firstThreeChars === '0x0') {
+    //     status.value = 'Failed'
+    //     note.value = 'The transaction is unsuccessful'
+    //   }
+    // } else {
+    //   if (firstThreeChars !== '0x0') {
+    //     status.value = 'Successful'
+    //     note.value = 'The transaction is successful'
+    //   } else if (firstThreeChars === '0x0') {
+    //     status.value = 'Failed'
+    //     note.value = 'The transaction is unsuccessful'
+    //   }
+    // }
     loading.value = false
   } catch (error) {
     console.error('Error fetching transaction:', error)
