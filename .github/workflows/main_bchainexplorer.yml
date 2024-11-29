@@ -61,6 +61,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'bchainExplorer'
+          app-name: 'bchainexplorer'
           slot-name: 'Production'
           package: .
