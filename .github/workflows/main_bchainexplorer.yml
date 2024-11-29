@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - bchainexplorer
+name: Build and deploy Node.js app to Azure Web App - bchainExplorer
 
 on:
   push:
@@ -21,17 +18,22 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+      - name: Install pnpm
+        run: npm install -g pnpm@8.1.0
+        
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build:pro 
       
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+      # Only upload the build directory
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: .
+          path: ./dist-pro # Replace with the correct path to your build output
+
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,22 +46,21 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: node-app
       
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C45BC97D839047159002F14335F2E8B9 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E57C65B977AF4A0DAF39A67AB25EE7BA }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D64BBA6EF3914757BA11FD917886ABC6 }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'bchainexplorer'
           slot-name: 'Production'
           package: .
-          
