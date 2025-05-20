@@ -20,7 +20,7 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/redirect',
     component: Layout,
-    name: 'Redirect',
+    name: 'Layout',
     children: [
       {
         path: '/redirect/:path(.*)',
@@ -136,7 +136,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/node',
     component: Layout,
-    name: 'Node',
+    name: 'NodeParent',
     meta: {},
     children: [
       {
@@ -153,7 +153,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/account/accountOverview',
     component: Layout,
-    name: 'Account Overview',
+    name: 'Account Overview Parent',
     meta: { hidden: true },
     children: [
       {
@@ -170,7 +170,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/contract/contractOverview',
     component: Layout,
-    name: 'Contract Overview',
+    name: 'Contract Overview Parent',
     meta: { hidden: true },
     children: [
       {
@@ -187,7 +187,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/error',
     component: Layout,
-    name: 'Error',
+    name: 'Error Parent',
     meta: { hidden: true },
     children: [
       {
